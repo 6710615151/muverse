@@ -1,11 +1,14 @@
-# CN230 MUVerse
+# CN230 MUVERSE
 ระบบฐานข้อมูลสำหรับวิชา CN230
 **Tech Stack:** Node.js · Express · PostgreSQL (Neon) · HTML/CSS/JS · Vercel
+---
+
 ## WEBSITE
-เว็บไซต์
-```bash
+---
 https://muverse-cn230-project.vercel.app/
-```
+
+---
+
 ## วิธีติดตั้งและรัน
 
 ### 1. Clone และติดตั้ง dependencies
@@ -37,8 +40,4 @@ npm start      # production
 
 
 ---
-
-
-## Deploy บน Vercel
-
 
