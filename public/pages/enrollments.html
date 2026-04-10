@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CN230 MU-Verse | การลงทะเบียน</title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<div id="toast-container"></div>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">CN230 Project</div>
+      <h1>MU-Verse</h1>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-label">เมนูหลัก</span>
+      <a href="/"            class="nav-link"><span class="icon">⊞</span> Dashboard</a>
+      <a href="/students"    class="nav-link"><span class="icon">🎓</span> นักศึกษา</a>
+      <a href="/courses"     class="nav-link"><span class="icon">📚</span> รายวิชา</a>
+      <a href="/enrollments" class="nav-link"><span class="icon">📋</span> การลงทะเบียน</a>
+      <span class="nav-label">รายงาน</span>
+      <a href="/reports"     class="nav-link"><span class="icon">📊</span> รายงาน & GPA</a>
+    </nav>
+    <div class="sidebar-footer">Mahidol University · 2024</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">📋 การลงทะเบียน</div>
+        <div class="topbar-sub">จัดการการลงทะเบียนเรียนและเกรด</div>
+      </div>
+      <button class="btn btn-primary" onclick="openEnroll()">+ ลงทะเบียน</button>
+    </div>
+
+    <div class="content">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">การลงทะเบียนทั้งหมด</div>
+          <div class="stat-value" id="stat-total">—</div>
+        </div>
+        <div class="stat-card" style="--accent:#4ade80">
+          <div class="stat-label">นักศึกษาที่ลงทะเบียน</div>
+          <div class="stat-value" id="stat-students">—</div>
+        </div>
+        <div class="stat-card" style="--accent:#fbbf24">
+          <div class="stat-label">วิชาที่เปิดสอน</div>
+          <div class="stat-value" id="stat-courses">—</div>
+        </div>
+        <div class="stat-card" style="--accent:#818cf8">
+          <div class="stat-label">ประเมินเกรดแล้ว</div>
+          <div class="stat-value" id="stat-graded">—</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">รายการลงทะเบียนทั้งหมด</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>รหัสนักศึกษา</th>
+                <th>ชื่อนักศึกษา</th>
+                <th>รหัสวิชา</th>
+                <th>ชื่อวิชา</th>
+                <th>ภาคการศึกษา</th>
+                <th>เกรด</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="enroll-tbody">
+              <tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal: Enroll -->
+<div class="modal-overlay" id="enroll-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">ลงทะเบียนเรียน</div>
+      <button class="modal-close" onclick="closeModal('enroll-modal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">นักศึกษา *</label>
+      <select class="form-select" id="field-student-id">
+        <option value="">กำลังโหลด...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">รายวิชา *</label>
+      <select class="form-select" id="field-course-id">
+        <option value="">กำลังโหลด...</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">ภาคการศึกษา *</label>
+        <input class="form-input" id="field-semester" placeholder="เช่น 2024-1" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">เกรด (ถ้ามี)</label>
+        <select class="form-select" id="field-grade">
+          <option value="">ยังไม่มีเกรด</option>
+          <option>A</option><option>B+</option><option>B</option>
+          <option>C+</option><option>C</option><option>D+</option>
+          <option>D</option><option>F</option><option>W</option><option>I</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('enroll-modal')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveEnrollment()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Grade -->
+<div class="modal-overlay" id="grade-modal">
+  <div class="modal" style="max-width:320px">
+    <div class="modal-header">
+      <div class="modal-title">บันทึกเกรด</div>
+      <button class="modal-close" onclick="closeModal('grade-modal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">เกรด *</label>
+      <select class="form-select" id="field-new-grade">
+        <option>A</option><option>B+</option><option>B</option>
+        <option>C+</option><option>C</option><option>D+</option>
+        <option>D</option><option>F</option><option>W</option><option>I</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('grade-modal')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveGrade()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/enrollments.js"></script>
+</body>
+</html>

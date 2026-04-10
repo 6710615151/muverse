@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CN230 MU-Verse | Dashboard</title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<div id="toast-container"></div>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">CN230 Project</div>
+      <h1>MU-Verse</h1>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-label">เมนูหลัก</span>
+      <a href="/"            class="nav-link"><span class="icon">⊞</span> Dashboard</a>
+      <a href="/students"    class="nav-link"><span class="icon">🎓</span> นักศึกษา</a>
+      <a href="/courses"     class="nav-link"><span class="icon">📚</span> รายวิชา</a>
+      <a href="/enrollments" class="nav-link"><span class="icon">📋</span> การลงทะเบียน</a>
+      <span class="nav-label">รายงาน</span>
+      <a href="/reports"     class="nav-link"><span class="icon">📊</span> รายงาน & GPA</a>
+    </nav>
+    <div class="sidebar-footer">Mahidol University · 2024</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Dashboard</div>
+        <div class="topbar-sub">ภาพรวมระบบฐานข้อมูล CN230</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Stat Cards -->
+      <div class="stat-grid" id="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">นักศึกษาทั้งหมด</div>
+          <div class="stat-value" id="s-total">—</div>
+          <div class="stat-sub">คน</div>
+        </div>
+        <div class="stat-card" style="--accent:#4ade80">
+          <div class="stat-label">รายวิชาทั้งหมด</div>
+          <div class="stat-value" id="c-total">—</div>
+          <div class="stat-sub">วิชา</div>
+        </div>
+        <div class="stat-card" style="--accent:#fbbf24">
+          <div class="stat-label">การลงทะเบียน</div>
+          <div class="stat-value" id="e-total">—</div>
+          <div class="stat-sub">รายการ</div>
+        </div>
+        <div class="stat-card" style="--accent:#f87171">
+          <div class="stat-label">สาขาวิชา</div>
+          <div class="stat-value" id="m-total">—</div>
+          <div class="stat-sub">สาขา</div>
+        </div>
+      </div>
+
+      <!-- Quick access -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🎓 นักศึกษาล่าสุด</div>
+              <div class="card-sub">5 รายการล่าสุด</div>
+            </div>
+            <a href="/students" class="btn btn-ghost btn-sm">ดูทั้งหมด</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>รหัส</th><th>ชื่อ</th><th>สาขา</th><th>ปี</th></tr></thead>
+              <tbody id="recent-students"><tr><td colspan="4"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📚 รายวิชา</div>
+              <div class="card-sub">รายวิชาในระบบ</div>
+            </div>
+            <a href="/courses" class="btn btn-ghost btn-sm">ดูทั้งหมด</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>รหัส</th><th>ชื่อวิชา</th><th>หน่วยกิต</th></tr></thead>
+              <tbody id="recent-courses"><tr><td colspan="3"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- API Reference -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔌 API Endpoints</div>
+          <div class="card-sub">RESTful API พร้อมใช้งาน</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+            <div style="color:var(--text-muted);font-size:11px;margin-bottom:8px;font-weight:600">STUDENTS</div>
+            <div style="display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:11px">
+              <div><span style="color:var(--green)">GET</span>    /api/students</div>
+              <div><span style="color:var(--green)">GET</span>    /api/students/:id</div>
+              <div><span style="color:var(--green)">GET</span>    /api/students/search?q=</div>
+              <div><span style="color:var(--accent)">POST</span>   /api/students</div>
+              <div><span style="color:var(--yellow)">PUT</span>    /api/students/:id</div>
+              <div><span style="color:var(--red)">DELETE</span> /api/students/:id</div>
+            </div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+            <div style="color:var(--text-muted);font-size:11px;margin-bottom:8px;font-weight:600">COURSES</div>
+            <div style="display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:11px">
+              <div><span style="color:var(--green)">GET</span>    /api/courses</div>
+              <div><span style="color:var(--green)">GET</span>    /api/courses/:id</div>
+              <div><span style="color:var(--green)">GET</span>    /api/courses/stats</div>
+              <div><span style="color:var(--accent)">POST</span>   /api/courses</div>
+              <div><span style="color:var(--yellow)">PUT</span>    /api/courses/:id</div>
+              <div><span style="color:var(--red)">DELETE</span> /api/courses/:id</div>
+            </div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+            <div style="color:var(--text-muted);font-size:11px;margin-bottom:8px;font-weight:600">ENROLLMENTS</div>
+            <div style="display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:11px">
+              <div><span style="color:var(--green)">GET</span>    /api/enrollments</div>
+              <div><span style="color:var(--green)">GET</span>    /api/enrollments/reports/gpa</div>
+              <div><span style="color:var(--accent)">POST</span>   /api/enrollments</div>
+              <div><span style="color:var(--yellow)">PATCH</span>  /api/enrollments/:id/grade</div>
+              <div><span style="color:var(--red)">DELETE</span> /api/enrollments/:id</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/ui.js"></script>
+<script>
+async function loadDashboard() {
+  try {
+    const [sStats, cStats, eStats] = await Promise.all([
+      Students.stats(),
+      Courses.stats(),
+      Enrollments.stats(),
+    ]);
+    document.getElementById("s-total").textContent = sStats.summary.total_students;
+    document.getElementById("c-total").textContent = cStats.total_courses;
+    document.getElementById("e-total").textContent = eStats.total_enrollments;
+    document.getElementById("m-total").textContent = sStats.summary.total_majors;
+  } catch (e) { /* silent */ }
+
+  try {
+    const students = await Students.getAll();
+    document.getElementById("recent-students").innerHTML = students.slice(0, 5).map(s => `
+      <tr>
+        <td class="mono" style="font-size:12px">${s.student_id}</td>
+        <td>${s.name}</td>
+        <td><span class="badge badge-blue" style="font-size:10px">${s.major}</span></td>
+        <td>ปี ${s.year}</td>
+      </tr>
+    `).join("") || `<tr><td colspan="4" style="color:var(--text-muted);text-align:center">ไม่มีข้อมูล</td></tr>`;
+  } catch (e) { /* silent */ }
+
+  try {
+    const courses = await Courses.getAll();
+    document.getElementById("recent-courses").innerHTML = courses.slice(0, 5).map(c => `
+      <tr>
+        <td class="mono" style="font-size:12px">${c.course_id}</td>
+        <td>${c.course_name}</td>
+        <td><span class="badge badge-green">${c.credits}</span></td>
+      </tr>
+    `).join("") || `<tr><td colspan="3" style="color:var(--text-muted);text-align:center">ไม่มีข้อมูล</td></tr>`;
+  } catch (e) { /* silent */ }
+}
+document.addEventListener("DOMContentLoaded", loadDashboard);
+</script>
+</body>
+</html>

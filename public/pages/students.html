@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CN230 MU-Verse | นักศึกษา</title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<div id="toast-container"></div>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">CN230 Project</div>
+      <h1>MU-Verse</h1>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-label">เมนูหลัก</span>
+      <a href="/"            class="nav-link"><span class="icon">⊞</span> Dashboard</a>
+      <a href="/students"    class="nav-link"><span class="icon">🎓</span> นักศึกษา</a>
+      <a href="/courses"     class="nav-link"><span class="icon">📚</span> รายวิชา</a>
+      <a href="/enrollments" class="nav-link"><span class="icon">📋</span> การลงทะเบียน</a>
+      <span class="nav-label">รายงาน</span>
+      <a href="/reports"     class="nav-link"><span class="icon">📊</span> รายงาน & GPA</a>
+    </nav>
+    <div class="sidebar-footer">Mahidol University · 2024</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">🎓 นักศึกษา</div>
+        <div class="topbar-sub">จัดการข้อมูลนักศึกษาทั้งหมด</div>
+      </div>
+      <button class="btn btn-primary" onclick="openCreate()">+ เพิ่มนักศึกษา</button>
+    </div>
+
+    <div class="content">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">นักศึกษาทั้งหมด</div>
+          <div class="stat-value" id="stat-total">—</div>
+        </div>
+        <div class="stat-card" style="--accent:#4ade80">
+          <div class="stat-label">สาขาวิชา</div>
+          <div class="stat-value" id="stat-majors">—</div>
+        </div>
+        <div class="stat-card" style="--accent:#fbbf24">
+          <div class="stat-label">ชั้นปีเฉลี่ย</div>
+          <div class="stat-value" id="stat-avgyear">—</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">รายชื่อนักศึกษา</div>
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="ค้นหาชื่อ, รหัส, สาขา..." />
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>รหัสนักศึกษา</th>
+                <th>ชื่อ-นามสกุล</th>
+                <th>สาขาวิชา</th>
+                <th>ชั้นปี</th>
+                <th>วันที่เพิ่ม</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="students-tbody">
+              <tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal: Add/Edit Student -->
+<div class="modal-overlay" id="student-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">เพิ่มนักศึกษา</div>
+      <button class="modal-close" onclick="closeModal('student-modal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">รหัสนักศึกษา *</label>
+      <input class="form-input" id="field-student-id" placeholder="เช่น 6501001" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">ชื่อ-นามสกุล *</label>
+      <input class="form-input" id="field-name" placeholder="ชื่อเต็ม" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">สาขาวิชา *</label>
+        <select class="form-select" id="field-major">
+          <option value="">เลือกสาขา</option>
+          <option>Computer Science</option>
+          <option>Information Technology</option>
+          <option>Data Science</option>
+          <option>Computer Engineering</option>
+          <option>Software Engineering</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ชั้นปี *</label>
+        <select class="form-select" id="field-year">
+          <option value="">เลือกปี</option>
+          <option value="1">ปี 1</option>
+          <option value="2">ปี 2</option>
+          <option value="3">ปี 3</option>
+          <option value="4">ปี 4</option>
+          <option value="5">ปี 5</option>
+          <option value="6">ปี 6</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('student-modal')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveStudent()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/students.js"></script>
+</body>
+</html>

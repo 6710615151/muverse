@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CN230 MU-Verse | รายงาน</title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<div id="toast-container"></div>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">CN230 Project</div>
+      <h1>MU-Verse</h1>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-label">เมนูหลัก</span>
+      <a href="/"            class="nav-link"><span class="icon">⊞</span> Dashboard</a>
+      <a href="/students"    class="nav-link"><span class="icon">🎓</span> นักศึกษา</a>
+      <a href="/courses"     class="nav-link"><span class="icon">📚</span> รายวิชา</a>
+      <a href="/enrollments" class="nav-link"><span class="icon">📋</span> การลงทะเบียน</a>
+      <span class="nav-label">รายงาน</span>
+      <a href="/reports"     class="nav-link"><span class="icon">📊</span> รายงาน & GPA</a>
+    </nav>
+    <div class="sidebar-footer">Mahidol University · 2024</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">📊 รายงาน & GPA</div>
+        <div class="topbar-sub">ผลลัพธ์จาก Advanced SQL Queries</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- GPA Report -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🏆 GPA รายนักศึกษา</div>
+            <div class="card-sub">คำนวณจาก AVG + CASE WHEN grade → GPA points</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="loadGpaReport()">↻ รีเฟรช</button>
+        </div>
+        <!-- SQL preview -->
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:16px;overflow-x:auto">
+          <pre style="font-family:var(--mono);font-size:11px;color:var(--text-muted);line-height:1.7;margin:0"><span style="color:#818cf8">SELECT</span> s.student_id, s.name, s.major,
+       COUNT(e.id) AS courses_taken,
+       ROUND(AVG(<span style="color:#818cf8">CASE</span> e.grade
+         <span style="color:#818cf8">WHEN</span> <span style="color:#86efac">'A'</span>  <span style="color:#818cf8">THEN</span> 4.0
+         <span style="color:#818cf8">WHEN</span> <span style="color:#86efac">'B+'</span> <span style="color:#818cf8">THEN</span> 3.5
+         <span style="color:#818cf8">WHEN</span> <span style="color:#86efac">'B'</span>  <span style="color:#818cf8">THEN</span> 3.0
+         <span style="color:#818cf8">...</span>
+       <span style="color:#818cf8">END</span>), 2) AS gpa
+<span style="color:#818cf8">FROM</span> students s
+<span style="color:#818cf8">LEFT JOIN</span> enrollments e <span style="color:#818cf8">ON</span> s.student_id = e.student_id
+<span style="color:#818cf8">GROUP BY</span> s.student_id, s.name, s.major
+<span style="color:#818cf8">ORDER BY</span> gpa <span style="color:#818cf8">DESC NULLS LAST</span></pre>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>รหัส</th>
+                <th>ชื่อ</th>
+                <th>สาขา</th>
+                <th>วิชาที่เรียน</th>
+                <th>GPA</th>
+              </tr>
+            </thead>
+            <tbody id="gpa-tbody">
+              <tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Course Report -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">📚 สถิติรายวิชา</div>
+            <div class="card-sub">จำนวนนักศึกษาที่ลงทะเบียนและจำนวน Grade A</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="loadCourseReport()">↻ รีเฟรช</button>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:16px;overflow-x:auto">
+          <pre style="font-family:var(--mono);font-size:11px;color:var(--text-muted);line-height:1.7;margin:0"><span style="color:#818cf8">SELECT</span> c.course_id, c.course_name,
+       COUNT(e.student_id) AS enrolled_count,
+       SUM(<span style="color:#818cf8">CASE WHEN</span> e.grade = <span style="color:#86efac">'A'</span> <span style="color:#818cf8">THEN</span> 1 <span style="color:#818cf8">ELSE</span> 0 <span style="color:#818cf8">END</span>) AS grade_a_count
+<span style="color:#818cf8">FROM</span> courses c
+<span style="color:#818cf8">LEFT JOIN</span> enrollments e <span style="color:#818cf8">ON</span> c.course_id = e.course_id
+<span style="color:#818cf8">GROUP BY</span> c.course_id, c.course_name
+<span style="color:#818cf8">ORDER BY</span> enrolled_count <span style="color:#818cf8">DESC</span></pre>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>รหัสวิชา</th>
+                <th>ชื่อวิชา</th>
+                <th>จำนวนที่ลงทะเบียน</th>
+                <th>ได้เกรด A</th>
+              </tr>
+            </thead>
+            <tbody id="course-tbody">
+              <tr><td colspan="4"><div class="loading"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/reports.js"></script>
+</body>
+</html>
