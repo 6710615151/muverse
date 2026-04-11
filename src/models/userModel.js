@@ -47,8 +47,6 @@ export async function deleteUser(user_id) {
 }
 
 export async function getUserByEmail(email) {
-    const sql = getDB();
-
     const users = await sql`
         SELECT * FROM users WHERE email = ${email}
     `;
