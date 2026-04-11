@@ -63,7 +63,7 @@ function clearMsg(el) {
 }
 
 const siForm = document.getElementById('sign-in-form');
-const siBtn  = siForm.querySelector('.btn');
+const siBtn = siForm.querySelector('.btnIn');
 const siMsg  = document.getElementById('si-msg');
 
 siForm.addEventListener('submit', async (e) => {
