@@ -8,8 +8,44 @@
 https://muverse-cn230-project.vercel.app/
 
 ---
+### ไฟล์สำหรับ copy และ แก้ไข อยู่ใน folder แล้ว
 
-## วิธีติดตั้งและรัน
+##โครงสร้างที่เราจะแก้ไขกันนะเตง
+
+```
+cn230-muverse/
+├── src/
+│   ├── index.js               # Entry point (import only) สร้าง server
+│   ├── config/
+│   │   ├── db.js              # Neon database
+│   │   └── paths.js           # Static file paths
+│   ├── models/
+│   │   ├── aModel.js          #ตัวอย่าง การเขียน
+│   │   └── usersModel.js       
+│   ├── controllers/
+│   │   ├── aController.js     #ตัวอย่าง การเขียน
+│   │   └── userController.js  
+│   ├── routes/
+│   │   ├── aRoutes.js         #ตัวอย่าง การเขียน
+│   │   ├── usersRoutes.js     
+│   │   └── pageRoutes.js
+│   └── middleware/
+│       └── errorHandler.js
+├── public/
+```
+## PUSH GIT
+
+```bash
+npm git add .
+```
+```bash
+npm git commit -m "เลขversion"
+```
+```bash
+npm git push origin main
+```
+
+## วิธีติดตั้งและรัน อาจจะยังไม่ได้เขียน อันนี้จะใส่ให้อาจารย์
 
 ### 1. Clone และติดตั้ง dependencies
 ```bash
