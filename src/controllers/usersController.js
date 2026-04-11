@@ -1,4 +1,4 @@
-import * as userModel from "../models/userModel";
+import * as userModel from "../models/userModel.js";
 
 export async function getAll(req, res) {
     try {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as ctrl from "../controllers/aController";
+import * as ctrl from "../controllers/aController.js";
 
 const router = Router();
 //มี fuctionอะไรใน contrllor บ้าง 
