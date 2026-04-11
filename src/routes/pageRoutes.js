@@ -9,9 +9,7 @@ const servePage = (page) => (req, res) => {
 };
 
 router.get("/",            servePage("index.html"));
-router.get("/students",    servePage("students.html"));
-router.get("/courses",     servePage("courses.html"));
-router.get("/enrollments", servePage("enrollments.html"));
-router.get("/reports",     servePage("reports.html"));
+router.get("/SignInSignUp",    servePage("auth.html"));
+router.get("/Signup",     servePage("/singin.html"));
 
 export default router;
