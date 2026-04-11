@@ -45,3 +45,13 @@ export async function deleteUser(user_id) {
   `;
   return result[0] || null;
 }
+
+export async function getUserByEmail(email) {
+    const sql = getDB();
+
+    const users = await sql`
+        SELECT * FROM users WHERE email = ${email}
+    `;
+
+    return users[0];
+}

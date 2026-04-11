@@ -30,4 +30,10 @@ export const Users = {
     delete: (id) => apiFetch(`/api/user/${id}`, {
         method: "DELETE",
     }),
+
+    login: (email, password) => apiFetch("/api/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+    }),
 };
+

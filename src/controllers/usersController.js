@@ -111,3 +111,50 @@ export async function remove(req, res) {
         res.status(500).json({ success: false, error: err.message });
     }
 }
+
+export async function login(req, res) {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                error: "Email and password required"
+            });
+        }
+
+        const user = await userModel.getUserByEmail(email);
+
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                error: "Invalid email or password"
+            });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                error: "Invalid email or password"
+            });
+        }
+
+        res.json({
+            success: true,
+            data: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone
+            }
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+}

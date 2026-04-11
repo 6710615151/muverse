@@ -1,64 +1,173 @@
 import { Users } from "./api.js";
 
-let isLogin = true;
+const imgs = document.querySelectorAll('.bg img');
+let cur = 0;
 
-const form = document.getElementById("auth-form");
-const toggleBtn = document.getElementById("toggle-btn");
-const toggleText = document.getElementById("toggle-text");
-const title = document.getElementById("form-title");
-const nameField = document.getElementById("name-field");
-const phoneField = document.getElementById("phone-field");
-const msg = document.getElementById("msg");
+if (imgs.length > 0) {
+  imgs[0].classList.add('active');
 
-toggleBtn.onclick = () => {
-  isLogin = !isLogin;
+  setInterval(() => {
+    imgs[cur].classList.remove('active');
+    cur = (cur + 1) % imgs.length;
+    imgs[cur].classList.add('active');
+  }, 4500);
+}
 
-  if (isLogin) {
-    title.innerText = "Sign In";
-    toggleText.innerText = "Don't have an account?";
-    toggleBtn.innerText = "Sign Up";
-    nameField.style.display = "none";
-    phoneField.style.display = "none";
-  } else {
-    title.innerText = "Sign Up";
-    toggleText.innerText = "Already have an account?";
-    toggleBtn.innerText = "Sign In";
-    nameField.style.display = "block";
-    phoneField.style.display = "block";
-  }
+const container  = document.getElementById('container');
+const toggleBtn  = document.getElementById('toggle-btn');
+const title      = document.getElementById('toggle-title');
+const desc       = document.getElementById('toggle-desc');
+const btnText    = document.getElementById('toggle-btn-text');
+let isSignUp     = false;
+
+const panelCopy = {
+  signIn:  { title: 'Welcome to Muverse',  desc: 'New here? Create you account.', btn: 'Sign Up' },
+  signUp:  { title: 'Welcome Back to Muverse',   desc: 'Already a member? Sign in and dive back into Muverse.',   btn: 'Sign In' },
 };
 
-form.onsubmit = async (e) => {
-  e.preventDefault();
+function animateText(fn) {
+  [title, desc, btnText.parentElement].forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(10px)';
+  });
 
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const phone = document.getElementById("phone").value;
+  setTimeout(() => {
+    fn();
+    [title, desc, btnText.parentElement].forEach(el => {
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    });
+  }, 220);
+}
+
+toggleBtn.addEventListener('click', () => {
+  isSignUp = !isSignUp;
+  container.classList.toggle('signup-mode', isSignUp);
+
+  const copy = isSignUp ? panelCopy.signUp : panelCopy.signIn;
+
+  animateText(() => {
+    title.textContent   = copy.title;
+    desc.textContent    = copy.desc;
+    btnText.textContent = copy.btn;
+  });
+});
+
+function showMsg(el, text, type) {
+  el.textContent = text;
+  el.className = `msg ${type} show`;
+}
+
+function clearMsg(el) {
+  el.className = 'msg';
+}
+
+const siForm = document.getElementById('sign-in-form');
+const siBtn  = siForm.querySelector('.btn');
+const siMsg  = document.getElementById('si-msg');
+
+siForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (siBtn.disabled) return;
+
+  clearMsg(siMsg);
+
+  const email    = document.getElementById('si-email').value.trim();
+  const password = document.getElementById('si-pass').value.trim();
+
+  if (!email || !password) {
+    showMsg(siMsg, 'Please fill in all fields.', 'error');
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    showMsg(siMsg, 'Invalid email format.', 'error');
+    return;
+  }
+
+  siBtn.disabled = true;
+  siBtn.textContent = 'Signing in…';
 
   try {
-    if (isLogin) {
-      const users = await Users.getAll();
+    const user = await Users.login(email, password);
 
-      const user = users.find(
-        (u) => u.email === email && u.password === password
-      );
+    localStorage.setItem('user', JSON.stringify({
+      id: user.id,
+      name: user.name,
+      email: user.email
+    }));
 
-      if (!user) throw new Error("Invalid email or password");
+    showMsg(siMsg, 'Login successful! Redirecting…', 'success');
 
-      msg.innerText = "Login success ";
-      localStorage.setItem("user", JSON.stringify(user));
+    setTimeout(() => {
+      location.href = '../index.html';
+    }, 1000);
 
-      setTimeout(() => (location.href = "index.html"), 1000);
-
-    } else {
-
-      await Users.create({ name, email, password, phone });
-
-      msg.innerText = "Account created ";
-      toggleBtn.click();
-    }
   } catch (err) {
-    msg.innerText = err.message;
+    showMsg(siMsg, err.message || 'Login failed.', 'error');
+  } finally {
+    siBtn.disabled = false;
+    siBtn.textContent = 'Sign In';
   }
-};
+});
+
+const suForm = document.getElementById('sign-up-form');
+const suBtn  = suForm.querySelector('.btn');
+const suMsg  = document.getElementById('su-msg');
+
+suForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (suBtn.disabled) return;
+
+  clearMsg(suMsg);
+
+  const name  = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass  = document.getElementById('su-pass').value.trim();
+  const phone = document.getElementById('su-phone').value.trim();
+
+  if (!name || !email || !pass || !phone) {
+    showMsg(suMsg, 'Please fill in all fields.', 'error');
+    return;
+  }
+
+  if (pass.length < 6) {
+    showMsg(suMsg, 'Password must be at least 6 characters.', 'error');
+    return;
+  }
+
+  suBtn.disabled = true;
+  suBtn.textContent = 'Creating account…';
+
+  try {
+    await Users.create({
+      name,
+      email,
+      password: pass,
+      phone
+    });
+
+    showMsg(suMsg, 'Account created! Please sign in.', 'success');
+
+    setTimeout(() => {
+      container.classList.remove('signup-mode');
+      isSignUp = false;
+
+      const copy = panelCopy.signIn;
+
+      animateText(() => {
+        title.textContent   = copy.title;
+        desc.textContent    = copy.desc;
+        btnText.textContent = copy.btn;
+      });
+
+    }, 1200);
+
+  } catch (err) {
+    showMsg(suMsg, err.message || 'Signup failed.', 'error');
+  } finally {
+    suBtn.disabled = false;
+    suBtn.textContent = 'Create Account';
+  }
+});
