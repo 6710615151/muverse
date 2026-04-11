@@ -16,6 +16,13 @@
       inset: 0;
       z-index: 0;
     }
+
+    .logo {
+            width: 180px;
+            margin-bottom: 20px;
+            transition: 0.4s;
+        }
+
     .bg img {
       position: absolute;
       inset: 0;
@@ -125,7 +132,7 @@
     .container.signup-mode .toggle-panel {
       transform: translateX(-100%);
       border-radius: 28px 0 0 28px;
-      background: linear-gradient(135deg, #ff006e 0%, #ff4d6d 60%, #ff8fa3 100%);
+      background: linear-gradient(135deg, #d89219 0%, #dea84b 60%, #f6d862 100%);
     }
  
     .toggle-content { position: relative; z-index: 1; }
@@ -184,7 +191,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      background: linear-gradient(45deg, #6a00ff, #c77dff);
+      background: linear-gradient(45deg, #f8e728, #fdb137);
       color: white;
       transition: transform 0.25s, box-shadow 0.25s, filter 0.25s;
     }
@@ -197,9 +204,38 @@
       transition: transform 0.5s ease;
     }
     .btn:hover::after { transform: translateX(100%); }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(106,0,255,0.5); filter: brightness(1.1); }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(211, 171, 26, 0.5); filter: brightness(1.1); }
     .btn:active { transform: translateY(0) scale(0.98); }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+ 
+    .btnIn {
+      width: 100%;
+      padding: 13px;
+      border-radius: 50px;
+      border: none;
+      margin-top: 18px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(45deg, #6a00ff, #c77dff);
+      color: white;
+      transition: transform 0.25s, box-shadow 0.25s, filter 0.25s;
+    }
+    .btnIn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+    .btnIn:hover::after { transform: translateX(100%); }
+    .btnIn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(106,0,255,0.5); filter: brightness(1.1); }
+    .btnIn:active { transform: translateY(0) scale(0.98); }
+    .btnIn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
  
     #toggle-btn {
       padding: 11px 30px;
@@ -229,7 +265,7 @@
     #toggle-btn:hover { color: #6a00ff; transform: scale(1.06); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
     #toggle-btn span { position: relative; z-index: 1; }
 
-    .container.signup-mode #toggle-btn:hover { color: #ff006e; }
+    .container.signup-mode #toggle-btn:hover { color: #f6b80f; }
  
     .msg {
       font-size: 13px;
