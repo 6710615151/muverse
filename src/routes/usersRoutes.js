@@ -8,6 +8,6 @@ router.get("/:id",    ctrl.getById);
 router.post("/",      ctrl.create);
 router.put("/:id",    ctrl.update);
 router.delete("/:id", ctrl.remove);
-router.post("/login", ctrl.login);
+router.post("/auth", ctrl.login);
 
 export default router;
