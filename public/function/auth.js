@@ -1,4 +1,4 @@
-const API = "/api/user";
+import { Users } from "./api.js";
 
 let isLogin = true;
 
@@ -7,8 +7,8 @@ const toggleBtn = document.getElementById("toggle-btn");
 const toggleText = document.getElementById("toggle-text");
 const title = document.getElementById("form-title");
 const nameField = document.getElementById("name-field");
+const phoneField = document.getElementById("phone-field");
 const msg = document.getElementById("msg");
-const phoneField = document.getElementById("phone-field")
 
 toggleBtn.onclick = () => {
   isLogin = !isLogin;
@@ -19,7 +19,6 @@ toggleBtn.onclick = () => {
     toggleBtn.innerText = "Sign Up";
     nameField.style.display = "none";
     phoneField.style.display = "none";
-
   } else {
     title.innerText = "Sign Up";
     toggleText.innerText = "Already have an account?";
@@ -36,40 +35,29 @@ form.onsubmit = async (e) => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const phone = document.getElementById("phone").value;
-  
 
   try {
     if (isLogin) {
-      // LOGIN (fake)
-      const res = await fetch(API);
-      const data = await res.json();
+      const users = await Users.getAll();
 
-      const user = data.data.find(u => u.email === email && u.password === password);
+      const user = users.find(
+        (u) => u.email === email && u.password === password
+      );
 
       if (!user) throw new Error("Invalid email or password");
 
       msg.innerText = "Login success ";
       localStorage.setItem("user", JSON.stringify(user));
 
-      setTimeout(() => location.href = "index.html", 1000);
+      setTimeout(() => (location.href = "index.html"), 1000);
 
     } else {
-      // SIGNUP
-      const res = await fetch(API, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ name, email, password ,phone})
-      });
 
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error);
+      await Users.create({ name, email, password, phone });
 
       msg.innerText = "Account created ";
       toggleBtn.click();
-
     }
-
   } catch (err) {
     msg.innerText = err.message;
   }

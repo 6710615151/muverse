@@ -4,7 +4,7 @@ import sql from "../config/db.js";
 // สร้าง และ ส่งออก modal
 
 /* โครงสร้าง
-กรณีที่ทำเป็นเดี่ยวๆ
+กรณีที่ทำเป็นครั้งเดียว
 
 export async function <name>(<parameters>) {
   await sql`

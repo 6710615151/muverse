@@ -1,16 +1,18 @@
 import sql from "../config/db.js";
 
 export async function createUser(name , email , password_hash,phone) {
-  await sql`
-    INSERT INTO users (name, email, password_hash, phone)
-    VALUES (${name}, ${email}, ${password_hash}, ${phone})
-  `;
+  return await sql`
+  INSERT INTO users (name, email, password_hash, phone)
+  VALUES (${name}, ${email}, ${password_hash}, ${phone})
+  RETURNING *
+`;
+
 }
 
 export async function getAllUsers() {
   return await sql`
     SELECT * FROM users
-    ORDER BY course_id ASC
+    ORDER BY user_id ASC
   `;
 }
 
@@ -28,17 +30,17 @@ export async function updateUser(userId, name, email, password,phone) {
     SET name = ${name},
         email = ${email},
         password_hash = ${password},
-        -phone = ${phone},
+        phone = ${phone}
     WHERE user_id = ${userId}
     RETURNING *
   `;
   return result[0] || null;
 }
 
-export async function deleteUser(User_id) {
+export async function deleteUser(user_id) {
   const result = await sql`
-    DELETE FROM usesrs
-    WHERE user_id = ${User_id}
+    DELETE FROM users
+    WHERE user_id = ${user_id}
     RETURNING *
   `;
   return result[0] || null;

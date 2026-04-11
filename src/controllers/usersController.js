@@ -1,4 +1,5 @@
 import * as userModel from "../models/userModel.js";
+import bcrypt from "bcrypt";
 
 export async function getAll(req, res) {
     try {
@@ -12,7 +13,9 @@ export async function getAll(req, res) {
 export async function getById(req, res) {
     try {
         const user = await userModel.getUserById(req.params.id);
-        if (!user) return res.status(404).json({ success: false, error: "User not found" });
+        if (!user) {
+            return res.status(404).json({ success: false, error: "User not found" });
+        }
         res.json({ success: true, data: user });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
@@ -21,15 +24,32 @@ export async function getById(req, res) {
 
 export async function create(req, res) {
     try {
-        const { name, email, password_hash, phone } = req.body;
-        if (!name || !email || !password_hash || !phone) {
-            return res.status(400).json({ success: false, error: "All fields required: name , email , password_hash,phone" });
+        const { name, email, password, phone } = req.body;
+
+        if (!name || !email || !password || !phone) {
+            return res.status(400).json({
+                success: false,
+                error: "All fields required"
+            });
         }
-        const user = await userModel.createUser(name, email, password_hash, phone);
+
+        const password_hash = await bcrypt.hash(password, 10);
+
+        const user = await userModel.createUser(
+            name,
+            email,
+            password_hash,
+            phone
+        );
+
         res.status(201).json({ success: true, data: user });
+
     } catch (err) {
-        if (err.message.includes("duplicate key")) {
-            return res.status(409).json({ success: false, error: "user ID already exists" });
+        if (err.code === "23505") {
+            return res.status(409).json({
+                success: false,
+                error: "Email already exists"
+            });
         }
         res.status(500).json({ success: false, error: err.message });
     }
@@ -38,9 +58,33 @@ export async function create(req, res) {
 export async function update(req, res) {
     try {
         const { name, email, password, phone } = req.body;
-        const course = await usesrModel.updateUser(req.params.id, name, email, password, phone);
-        if (!course) return res.status(404).json({ success: false, error: "Course not found" });
-        res.json({ success: true, data: course });
+
+        if (!name || !email || !password || !phone) {
+            return res.status(400).json({
+                success: false,
+                error: "All fields required"
+            });
+        }
+
+        const password_hash = await bcrypt.hash(password, 10);
+
+        const user = await userModel.updateUser(
+            req.params.id,
+            name,
+            email,
+            password_hash,
+            phone
+        );
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: "User not found"
+            });
+        }
+
+        res.json({ success: true, data: user });
+
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
@@ -48,11 +92,22 @@ export async function update(req, res) {
 
 export async function remove(req, res) {
     try {
-        const course = await userModel.deleteUser(req.params.id);
-        if (!course) return res.status(404).json({ success: false, error: "Course not found" });
-        res.json({ success: true, data: course, message: "Course deleted" });
+        const user = await userModel.deleteUser(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: "User not found"
+            });
+        }
+
+        res.json({
+            success: true,
+            data: user,
+            message: "User deleted"
+        });
+
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
 }
-
