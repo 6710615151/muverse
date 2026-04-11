@@ -10,6 +10,6 @@ const servePage = (page) => (req, res) => {
 
 router.get("/",            servePage("index.html"));
 router.get("/SignInSignUp",    servePage("auth.html"));
-router.get("/Signup",     servePage("/singin.html"));
+router.get("/Signup",     servePage("singin.html"));
 
 export default router;
