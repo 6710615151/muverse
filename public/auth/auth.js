@@ -8,6 +8,7 @@ const toggleText = document.getElementById("toggle-text");
 const title = document.getElementById("form-title");
 const nameField = document.getElementById("name-field");
 const msg = document.getElementById("msg");
+const phoneField = document.getElementById("phone-field")
 
 toggleBtn.onclick = () => {
   isLogin = !isLogin;
@@ -17,11 +18,14 @@ toggleBtn.onclick = () => {
     toggleText.innerText = "Don't have an account?";
     toggleBtn.innerText = "Sign Up";
     nameField.style.display = "none";
+    phoneField.style.display = "none";
+
   } else {
     title.innerText = "Sign Up";
     toggleText.innerText = "Already have an account?";
     toggleBtn.innerText = "Sign In";
     nameField.style.display = "block";
+    phoneField.style.display = "block";
   }
 };
 
@@ -31,6 +35,8 @@ form.onsubmit = async (e) => {
   const name = document.getElementById("name").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  const phone = document.getElementById("phone").value;
+  
 
   try {
     if (isLogin) {
@@ -52,7 +58,7 @@ form.onsubmit = async (e) => {
       const res = await fetch(API, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({ name, email, password ,phone})
       });
 
       const data = await res.json();
