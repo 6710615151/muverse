@@ -48,11 +48,21 @@ npm git push origin main
 ---
 ## Extensions vscode
 แนะนำให้ติดตั้ง ทุกตัวนะจั๊บ
+```
 Ruff
+```
+```
 Colorize
+```
+```
 HTML CSS support
+```
+```
 Indent-rainbow
+```
+```
 Live server
+```
 ---
 ## Testing API
 ```
