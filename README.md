@@ -13,7 +13,7 @@ https://muverse-cn230-project.vercel.app/
 ## โครงสร้างที่เราจะแก้ไขกันนะเตง
 
 ```
-cn230-muverse/
+muverse/
 ├── src/
 │   ├── index.js               # Entry point (import only) สร้าง server
 │   ├── config/
@@ -32,6 +32,7 @@ cn230-muverse/
 │   └── middleware/
 │       └── errorHandler.js
 ├── public/
+---
 ```
 ## PUSH GIT
 
@@ -44,6 +45,46 @@ npm git commit -m "เลขversion"
 ```bash
 npm git push origin main
 ```
+---
+## Extensions vscode
+แนะนำให้ติดตั้ง ทุกตัวนะจั๊บ
+Ruff
+Colorize
+HTML CSS support
+Indent-rainbow
+Live server
+---
+## Testing API
+```
+muverse/
+└── test_api/
+     └── testAPI.html 
+```
+
+กดเข้าfolder muvesre/test-api/testAPI.html 
+คลิ้กขวาที่ไฟล์ testAPI.html  บนสุดจะมีคำว่า open with live server 
+กดเข้าไปเลย แล้วจะขึ้นหน้าเว็บ
+
+
+## * ต้องใส่ Extensions แล้วเท่านั้น * 
+![API](assets/API.png)
+---
+
+1. API ที่จะเทส
+```
+https://muverse-cn230-project.vercel.app/api/<ชื่อ api เทส>
+```
+2. ประเภท API เป็น get post put delete ใส่เอาคิดเอา จะเทสตัวไหน
+
+3. ID กรณีเทสตัว BY id ต่างๆ 
+
+4. json ไฟล์ ดูว่าถ้า api นี้ต้องใส่ req body ก็ใส่ไปให้มัน เช่นพวก post put ใส่ format ให้ถูก 
+### {key : value} เช็ค value ดีๆก่อนส่ง
+```
+{name: "น้องจีเจ"}
+```
+ส่งเสร็จ response จะกลับมา
+
 
 ## วิธีติดตั้งและรัน อาจจะยังไม่ได้เขียน อันนี้จะใส่ให้อาจารย์
 
