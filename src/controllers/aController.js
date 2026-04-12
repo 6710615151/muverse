@@ -1,6 +1,7 @@
 //import Model ของ controller
 import * as UserModel from "../models/userModel";
 //เป็นลักษณะการเขียน การควบคุมการรับ ส่งรีเควส
+//ตัวอย่างข้างล่าง
 export async function getAll(req, res) {
     try {
         const users = await UserModel.getAllUsers();
@@ -52,15 +53,6 @@ export async function remove(req, res) {
         const course = await CourseModel.deleteCourse(req.params.id);
         if (!course) return res.status(404).json({ success: false, error: "Course not found" });
         res.json({ success: true, data: course, message: "Course deleted" });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-}
-
-export async function stats(req, res) {
-    try {
-        const summary = await CourseModel.getCourseStats();
-        res.json({ success: true, data: summary });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
