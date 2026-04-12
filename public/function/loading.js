@@ -1,9 +1,7 @@
-// Hide loading panel when page is ready
 window.addEventListener('load', () => {
   const panel = document.getElementById('loading-panel');
   if (!panel) return;
 
-  // Optional: minimum display time so it doesn't flash too fast
   const MIN_DISPLAY_MS = 1200;
   const startTime = performance.now();
 

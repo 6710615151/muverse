@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>API CRUD Tester</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f0f1a;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .box {
+            max-width: 800px;
+            margin: auto;
+            background: #1b1b2a;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        input,
+        select,
+        textarea,
+        button {
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+        }
+
+        textarea {
+            height: 150px;
+            font-family: monospace;
+        }
+
+        button {
+            background: #6c5ce7;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #574bdb;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 6px;
+            overflow: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="box">
+        <h2>API CRUD Tester</h2>
+
+        <input id="baseUrl" placeholder="Base API URL เช่น http://localhost:3000/api/user">
+
+        <select id="method">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+        </select>
+
+        <input id="id" placeholder="ID (ใช้กับ GET / PUT / DELETE)">
+
+        <textarea id="body">
+{
+  "name": "test",
+  "email": "test@mail.com"
+}
+  </textarea>
+
+        <button onclick="sendRequest()">SEND REQUEST</button>
+
+        <h3>Response</h3>
+        <pre id="output"></pre>
+    </div>
+
+    <script>
+        async function apiFetch(url, options = {}) {
+            const res = await fetch(url, {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                ...options
+            });
+
+            const data = await res.json().catch(() => ({}));
+            return { status: res.status, data };
+        }
+
+        async function sendRequest() {
+            const baseUrl = document.getElementById("baseUrl").value;
+            const method = document.getElementById("method").value;
+            const id = document.getElementById("id").value;
+            const bodyText = document.getElementById("body").value;
+            const output = document.getElementById("output");
+
+            let url = baseUrl;
+
+            // ถ้ามี id ให้ต่อท้าย
+            if (id) url += `/${id}`;
+
+            let options = {
+                method
+            };
+
+            // ใส่ body เฉพาะ method ที่ต้องใช้
+            if (method !== "GET" && method !== "DELETE") {
+                try {
+                    options.body = JSON.stringify(JSON.parse(bodyText));
+                } catch (err) {
+                    output.textContent = "JSON ไม่ถูกต้อง!";
+                    return;
+                }
+            }
+
+            output.textContent = "Loading...";
+
+            try {
+                const res = await apiFetch(url, options);
+
+                output.textContent = JSON.stringify(res, null, 2);
+            } catch (err) {
+                output.textContent = "Error: " + err.message;
+            }
+        }
+    </script>
+
+</body>
+
+</html>
