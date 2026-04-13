@@ -8,7 +8,7 @@
       font-family: 'Segoe UI', sans-serif;
       color: white;
       overflow: hidden;
-      background: #0a0a0f;
+      background: #2a012a;
     }
  
     .bg {
@@ -33,7 +33,7 @@
       transition: opacity 1.6s ease;
       filter: blur(4px) brightness(0.45);
     }
-    .bg img.active { opacity: 1; }
+    .bg img.active { opacity: 0.3; }
  
     .bg::after {
       content: '';
