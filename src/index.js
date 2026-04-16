@@ -24,6 +24,7 @@ app.use(express.static(PUBLIC_DIR));
 app.use("/api/user",    usersRoutes);
 app.use("/api/request", requestRoutes);
 app.use("/api/wallet", walletRoutes);
+
 //Page Routes
 app.use("/", pageRoutes);
 
