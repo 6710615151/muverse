@@ -4,8 +4,8 @@ import sql from "../config/db.js";
 
 export async function createOrder(customer_id, seller_id, total_price) {
   const result = await sql`
-    INSERT INTO orders (customer_id, seller_id, total_price, order_status, payment_status)
-    VALUES (${customer_id}, ${seller_id}, ${total_price}, 'pending', 'unpaid')
+    INSERT INTO orders (customer_id, seller_id, total_price, order_status, payment_status, order_date)
+    VALUES (${customer_id}, ${seller_id}, ${total_price}, 'pending', 'unpaid', NOW())
     RETURNING order_id
   `;
   return result[0].order_id;
