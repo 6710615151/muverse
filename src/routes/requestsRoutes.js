@@ -10,8 +10,8 @@ router.put("/:id",    ctrl.update);
 router.delete("/:id", ctrl.remove);
 
 //router.get("/request/countSVT", ctrl.getCountServiceType);
-router.get("/customerReq", ctrl.getByCustomerId);
-router.put("/updateStatus/id:", ctrl.updateStatus);
+router.get("/customerReq/", ctrl.getByCustomerId);
+router.put("/updateStatus/:id", ctrl.updateStatus);
 
 
 

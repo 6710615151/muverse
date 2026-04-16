@@ -117,10 +117,6 @@ export async function getByCustomerId(req, res) {
 
         const { customer_id } = req.body;
 
-        console.log(customer_id)
-        console.log("hgg")
-        console.log(req.body)
-
 
         const requestData = await RequestModel.getRequestByCustomerId(customer_id);
         if (!requestData) {
@@ -137,10 +133,6 @@ export async function updateStatus(req, res) {
     try {
         const { request_status } = req.body;
 
-        console.log(request_status)
-        console.log("hgg")
-        console.log(req.body)
-    
         if (!request_status) {
             return res.status(400).json({
                 success: false,
