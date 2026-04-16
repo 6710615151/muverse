@@ -9,6 +9,7 @@ import walletRoutes from "./routes/walletRoutes.js";
 import stocksRoutes from "./routes/stocksRoutes.js";
 import ordersRoutes from "./routes/ordersRoutes.js";
 import categories from "./routes/categoriesRoutes.js";
+import serviceTypes from "./routes/serviceTypesRoutes.js"
 
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 import { PUBLIC_DIR } from "./config/paths.js";
@@ -30,6 +31,7 @@ app.use("/api/wallet", walletRoutes);
 app.use("/api/stock", stocksRoutes);
 app.use("/api/order", ordersRoutes);
 app.use("/api/category", categories);
+app.use("/api/serviceTypes", serviceTypes);
 
 //Page Routes
 app.use("/", pageRoutes);
