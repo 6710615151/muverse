@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import usersRoutes    from "./routes/usersRoutes.js";
 import pageRoutes       from "./routes/pageRoutes.js";
+import requestRoutes       from "./routes/requestsRoutes.js";
 
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 import { PUBLIC_DIR } from "./config/paths.js";
@@ -20,6 +21,7 @@ app.use(express.static(PUBLIC_DIR));
 
 // API Routes
 app.use("/api/user",    usersRoutes);
+app.use("/api/request",    requestRoutes);
 
 //Page Routes
 app.use("/", pageRoutes);
