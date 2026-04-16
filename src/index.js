@@ -6,6 +6,9 @@ import usersRoutes    from "./routes/usersRoutes.js";
 import pageRoutes       from "./routes/pageRoutes.js";
 import requestRoutes       from "./routes/requestsRoutes.js";
 import walletRoutes from "./routes/walletRoutes.js";
+import stocksRoutes from "./routes/stocksRoutes.js";
+import ordersRoutes from "./routes/ordersRoutes.js";
+import categories from "./routes/categoriesRoutes.js";
 
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 import { PUBLIC_DIR } from "./config/paths.js";
@@ -24,6 +27,9 @@ app.use(express.static(PUBLIC_DIR));
 app.use("/api/user",    usersRoutes);
 app.use("/api/request", requestRoutes);
 app.use("/api/wallet", walletRoutes);
+app.use("/api/stock", stocksRoutes);
+app.use("/api/order", ordersRoutes);
+app.use("/api/category", categories);
 
 //Page Routes
 app.use("/", pageRoutes);
