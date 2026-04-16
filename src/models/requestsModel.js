@@ -117,8 +117,8 @@ export async function updateRequest(request_id, request_title, request_detail, b
         budget = ${budget},
         request_status = ${request_status},
         customer_id = ${customer_id},
-        category_id = ${category_id},
-        WHERE request_id = ${request_id};
+        category_id = ${category_id}
+        WHERE request_id = ${request_id}
         RETURNING *`;
     return result[0] || null;
 }
@@ -148,8 +148,8 @@ export async function deleteRequest(request_id) {
 export async function updateStatusRequest(request_id,request_status) {
     const result = await sql`
         UPDATE requests_test
-        SET request_status = ${request_status},
-        WHERE request_id = ${request_id};
+        SET request_status = ${request_status}
+        WHERE request_id = ${request_id}
         RETURNING *`;
     return result[0] || null;
 }

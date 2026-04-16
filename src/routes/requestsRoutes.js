@@ -9,9 +9,9 @@ router.post("/",      ctrl.create);
 router.put("/:id",    ctrl.update);
 router.delete("/:id", ctrl.remove);
 
-router.get("/request/countSVT", ctrl.getCountServiceType);
-router.get("/request/customerReq", ctrl.getByCustomerId);
-router.put("/request/updateStatus", ctrl.updateStatus);
+//router.get("/request/countSVT", ctrl.getCountServiceType);
+//router.get("/request/customerReq", ctrl.getByCustomerId);
+//router.put("/request/updateStatus", ctrl.updateStatus);
 
 
 
