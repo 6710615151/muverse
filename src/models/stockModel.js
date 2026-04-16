@@ -4,8 +4,8 @@ import sql from "../config/db.js";
 
 export async function createStock(seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status) {
   await sql`
-    INSERT INTO stocks (seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status)
-    VALUES (${seller_id}, ${category_id}, ${item_name}, ${description}, ${price}, ${stock_quantity}, ${item_type}, ${stock_status})
+    INSERT INTO stocks (seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status, created_at)
+    VALUES (${seller_id}, ${category_id}, ${item_name}, ${description}, ${price}, ${stock_quantity}, ${item_type}, ${stock_status}, NOW())
   `;
 }
 
