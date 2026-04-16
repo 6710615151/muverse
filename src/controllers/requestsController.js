@@ -1,4 +1,4 @@
-import * as RequestModel from "../models/requestsModel";
+import * as RequestModel from "../models/requestsModel.js";
 
 export async function getAll(req, res) {
     try {

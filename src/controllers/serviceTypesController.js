@@ -1,4 +1,4 @@
-import * as serviceModel from "../models/serviceTypesModel";
+import * as serviceModel from "../models/serviceTypesModel.js";
 
 export async function getAll(req, res) {
     try {
