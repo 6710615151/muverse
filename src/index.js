@@ -23,7 +23,7 @@ app.use(express.static(PUBLIC_DIR));
 // API Routes
 app.use("/api/user",    usersRoutes);
 app.use("/api/request", requestRoutes);
-app.use("/api/wallets", walletRoutes);
+app.use("/api/wallet", walletRoutes);
 //Page Routes
 app.use("/", pageRoutes);
 
