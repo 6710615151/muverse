@@ -115,7 +115,7 @@ export async function remove(req, res) {
 export async function getByCustomerId(req, res) {
     try {
 
-        const { customer_id } = req.body;
+        const { customer_id } = req.query;
 
 
         const requestData = await RequestModel.getRequestByCustomerId(customer_id);
