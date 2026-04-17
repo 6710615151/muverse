@@ -95,16 +95,16 @@ export async function payWithWallet(user_id, amount, payment_method) {
 
 //-------------------------------------------------------------------------------//
 // 6. โอนเงินการซื้อขาย 
-export async function transferWallet(buyer_id, seller_id, amount, payment_method) {
+export async function transferWallet(customer_id, seller_id, amount, payment_method) {
   // หักเงินผู้ซื้อ
-  const buyerResult = await sql`
+  const customerResult = await sql`
     UPDATE account_wallet 
     SET wallet = wallet - ${amount} 
-    WHERE user_id = ${buyer_id} AND wallet >= ${amount}
+    WHERE user_id = ${customer_id} AND wallet >= ${amount}
     RETURNING *
   `;
 
-  if (buyerResult.length === 0) {
+  if (customerResult.length === 0) {
     throw new Error("ยอดเงินของผู้ซื้อไม่เพียงพอ");
   }
 
@@ -123,7 +123,7 @@ export async function transferWallet(buyer_id, seller_id, amount, payment_method
   // บันทึกประวัติฝั่งผู้ซื้อ
   await sql`
     INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
-    VALUES (${buyerResult[0].account_id}, 'PAYMENT', ${amount}, ${payment_method}, 'SUCCESS')
+    VALUES (${customerResult[0].account_id}, 'PAYMENT', ${amount}, ${payment_method}, 'SUCCESS')
   `;
 
   // บันทึกประวัติฝั่งผู้ขาย
@@ -133,7 +133,7 @@ export async function transferWallet(buyer_id, seller_id, amount, payment_method
   `;
 
   return {
-    buyer: buyerResult[0],  
+    customer: customerResult[0],
     seller: sellerResult[0]
   };
 } 

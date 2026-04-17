@@ -104,18 +104,18 @@ export async function pay(req, res) {
 export async function transfer(req, res) {
   try {
 
-    const { buyer_id, seller_id, amount, payment_method } = req.body;
+    const { customer_id, seller_id, amount, payment_method } = req.body;
 
-    if (!buyer_id || !seller_id || !amount || amount <= 0 || !payment_method) {
+    if (!customer_id || !seller_id || !amount || amount <= 0 || !payment_method) {
       return res.status(400).json({ success: false, message: 'ข้อมูลการโอนเงินไม่ครบถ้วน' });
     }
 
-    const result = await WalletModel.transferWallet(buyer_id, seller_id, amount, payment_method);
+    const result = await WalletModel.transferWallet(customer_id, seller_id, amount, payment_method);
 
     res.status(200).json({ 
         success: true, 
         message: 'ชำระเงินสำเร็จ', 
-        balance: result.buyer.wallet 
+        balance: result.customer.wallet 
     });
 
 
