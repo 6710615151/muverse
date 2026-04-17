@@ -22,132 +22,120 @@ export async function getWalletByUserId(user_id) {
 }
 
 //-------------------------------------------------------------------------------//
-// 3. เติมเงิน (payment_method: ใส่ชื่อวิธีการเติมเงิน)
+// 3. เติมเงิน
 export async function topupWallet(user_id, amount, payment_method) {
-  return await sql.begin(async (sql) => { 
-    const walletResult = await sql`
-      UPDATE account_wallet 
-      SET wallet = wallet + ${amount}
-      WHERE user_id = ${user_id} 
-      RETURNING *
-    `;
+  const walletResult = await sql`
+    UPDATE account_wallet 
+    SET wallet = wallet + ${amount}
+    WHERE user_id = ${user_id} 
+    RETURNING *
+  `;
 
-    if (walletResult.length === 0) {
-      throw new Error("ไม่พบกระเป๋าเงินของผู้ใช้นี้");
-    }
+  if (walletResult.length === 0) {
+    throw new Error("ไม่พบกระเป๋าเงินของผู้ใช้นี้");
+  }
 
-    // ดึงค่า account_id จาก DB
-    const account_id = walletResult[0].account_id;
+  const account_id = walletResult[0].account_id;
 
-    // บันทึกใน record_wallet
-    await sql`
-      INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
-      VALUES (${account_id}, 'DEPOSIT', ${amount}, ${payment_method}, 'SUCCESS')
-    `;
+  await sql`
+    INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
+    VALUES (${account_id}, 'DEPOSIT', ${amount}, ${payment_method}, 'SUCCESS')
+  `;
 
-    return walletResult[0];
-  });
+  return walletResult[0];
 }
 
 //-------------------------------------------------------------------------------//
 // 4. ถอนเงิน
 export async function withdrawWallet(user_id, amount, payment_method) {
-  return await sql.begin(async (sql) => {
-    const walletResult = await sql`
-      UPDATE account_wallet 
-      SET wallet = wallet - ${amount} 
-      WHERE user_id = ${user_id} AND wallet >= ${amount}
-      RETURNING *
-    `;
+  const walletResult = await sql`
+    UPDATE account_wallet 
+    SET wallet = wallet - ${amount} 
+    WHERE user_id = ${user_id} AND wallet >= ${amount}
+    RETURNING *
+  `;
 
-    if (walletResult.length === 0) {
-      throw new Error("ไม่พบกระเป๋าเงิน หรือ ยอดเงินไม่เพียงพอสำหรับการถอน");
-    }
+  if (walletResult.length === 0) {
+    throw new Error("ไม่พบกระเป๋าเงิน หรือ ยอดเงินไม่เพียงพอสำหรับการถอน");
+  }
 
-    const account_id = walletResult[0].account_id;
+  const account_id = walletResult[0].account_id;
 
-    // บันทึกใน record_wallet
-    await sql`
-      INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
-      VALUES (${account_id}, 'WITHDRAW', ${amount}, ${payment_method}, 'SUCCESS')
-    `;
+  await sql`
+    INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
+    VALUES (${account_id}, 'WITHDRAW', ${amount}, ${payment_method}, 'SUCCESS')
+  `;
 
-    return walletResult[0]; 
-  });
+  return walletResult[0]; 
 }
 
 //-------------------------------------------------------------------------------//
 // 5. ชำระเงิน (มีไว้ก่อนยังไม่ใช้จริง)
 export async function payWithWallet(user_id, amount, payment_method) {
-  return await sql.begin(async (sql) => {
-    const walletResult = await sql`
-      UPDATE account_wallet 
-      SET wallet = wallet - ${amount} 
-      WHERE user_id = ${user_id} AND wallet >= ${amount}
-      RETURNING *
-    `;
+  const walletResult = await sql`
+    UPDATE account_wallet 
+    SET wallet = wallet - ${amount} 
+    WHERE user_id = ${user_id} AND wallet >= ${amount}
+    RETURNING *
+  `;
 
-    if (walletResult.length === 0) {
-      throw new Error("ไม่พบกระเป๋าเงิน หรือ ยอดเงินไม่เพียงพอ");
-    }
+  if (walletResult.length === 0) {
+    throw new Error("ไม่พบกระเป๋าเงิน หรือ ยอดเงินไม่เพียงพอ");
+  }
 
-    const account_id = walletResult[0].account_id;
+  const account_id = walletResult[0].account_id;
 
-    // บันทึกใน record_wallet
-    await sql`
-      INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
-      VALUES (${account_id}, 'PAYMENT', ${amount}, ${payment_method}, 'SUCCESS')
-    `;
+  await sql`
+    INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
+    VALUES (${account_id}, 'PAYMENT', ${amount}, ${payment_method}, 'SUCCESS')
+  `;
 
-    return walletResult[0];
-  });
+  return walletResult[0];
 }
 
 //-------------------------------------------------------------------------------//
 // 6. โอนเงินการซื้อขาย 
 export async function transferWallet(buyer_id, seller_id, amount, payment_method) {
-  return await sql.begin(async (sql) => {
-    // หักเงินผู้ซื้อ
-    const buyerResult = await sql`
-      UPDATE account_wallet 
-      SET wallet = wallet - ${amount} 
-      WHERE user_id = ${buyer_id} AND wallet >= ${amount}
-      RETURNING *
-    `;
+  // หักเงินผู้ซื้อ
+  const buyerResult = await sql`
+    UPDATE account_wallet 
+    SET wallet = wallet - ${amount} 
+    WHERE user_id = ${buyer_id} AND wallet >= ${amount}
+    RETURNING *
+  `;
 
-    if (buyerResult.length === 0) {
-      throw new Error("ยอดเงินของผู้ซื้อไม่เพียงพอ");
-    }
+  if (buyerResult.length === 0) {
+    throw new Error("ยอดเงินของผู้ซื้อไม่เพียงพอ");
+  }
 
-    // เพิ่มเงินผู้ขาย
-    const sellerResult = await sql`
-      UPDATE account_wallet 
-      SET wallet = wallet + ${amount} 
-      WHERE user_id = ${seller_id}
-      RETURNING *
-    `;
+  // เพิ่มเงินผู้ขาย
+  const sellerResult = await sql`
+    UPDATE account_wallet 
+    SET wallet = wallet + ${amount} 
+    WHERE user_id = ${seller_id}
+    RETURNING *
+  `;
 
-    if (sellerResult.length === 0) {
-      throw new Error("ไม่พบกระเป๋าเงินของผู้ขาย");
-    }
+  if (sellerResult.length === 0) {
+    throw new Error("ไม่พบกระเป๋าเงินของผู้ขาย");
+  }
 
-    // บันทึกใน record_wallet)
-    await sql`
-      INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
-      VALUES (${buyerResult[0].account_id}, 'PAYMENT', ${amount}, ${payment_method}, 'SUCCESS')
-    `;
+  // บันทึกประวัติฝั่งผู้ซื้อ
+  await sql`
+    INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
+    VALUES (${buyerResult[0].account_id}, 'PAYMENT', ${amount}, ${payment_method}, 'SUCCESS')
+  `;
 
-    // บันทึกใน record_wallet 
-    await sql`
-      INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
-      VALUES (${sellerResult[0].account_id}, 'INCOME', ${amount}, ${payment_method}, 'SUCCESS')
-    `;
+  // บันทึกประวัติฝั่งผู้ขาย
+  await sql`
+    INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
+    VALUES (${sellerResult[0].account_id}, 'INCOME', ${amount}, ${payment_method}, 'SUCCESS')
+  `;
 
-    return {
-      buyer: buyerResult[0],  
-      seller: sellerResult[0]
-    };
-  });
+  return {
+    buyer: buyerResult[0],  
+    seller: sellerResult[0]
+  };
 } 
 
 //-------------------------------------------------------------------------------//
