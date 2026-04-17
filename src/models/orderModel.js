@@ -4,8 +4,8 @@ import sql from "../config/db.js";
 
 export async function createOrder(customer_id, seller_id, total_price) {
   const result = await sql`
-    INSERT INTO orders (customer_id, seller_id, total_price, order_status, payment_status)
-    VALUES (${customer_id}, ${seller_id}, ${total_price}, 'pending', 'unpaid')
+    INSERT INTO orders (customer_id, seller_id, total_price, order_status, payment_status, order_date)
+    VALUES (${customer_id}, ${seller_id}, ${total_price}, 'pending', 'unpaid', NOW())
     RETURNING order_id
   `;
   return result[0].order_id;
@@ -18,8 +18,7 @@ export async function getOrdersBySeller(seller_id) {
     SELECT o.*,
            u.name AS customer_name
     FROM orders o
-    JOIN customers c ON o.customer_id = c.customer_id
-    JOIN users u ON c.user_id = u.user_id
+    JOIN users u ON o.customer_id = u.user_id
     WHERE o.seller_id = ${seller_id}
     ORDER BY o.order_date DESC
   `;
@@ -48,8 +47,7 @@ export async function getOrdersByCustomer(customer_id) {
     SELECT o.*,
            u.name AS seller_name
     FROM orders o
-    JOIN sellers s ON o.seller_id = s.seller_id
-    JOIN users u ON s.user_id = u.user_id
+    JOIN users u ON o.seller_id = u.user_id
     WHERE o.customer_id = ${customer_id}
     ORDER BY o.order_date DESC
   `;

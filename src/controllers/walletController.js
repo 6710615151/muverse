@@ -4,9 +4,9 @@ import * as WalletModel from '../models/walletModel.js';
 //1. ดูยอดเงินคงเหลือ
 export async function getBalance(req, res) {
   try {
-    const { userId } = req.params;
+    const { user_id } = req.params;
 
-    const wallet = await WalletModel.getWalletByUserId(userId);
+    const wallet = await WalletModel.getWalletByUserId(user_id);
 
     if (!wallet) {
       return res.status(404).json({ success: false, message: 'ไม่พบกระเป๋าเงินในระบบ' });
@@ -23,13 +23,13 @@ export async function getBalance(req, res) {
 //2. เติมเงิน
 export async function topup(req, res) {
   try {
-    const { userId, amount, paymentMethod } = req.body;
+    const { user_id, amount, payment_method } = req.body;
 
-    if (!userId || !amount || amount <= 0 || !paymentMethod) {
+    if (!user_id || !amount || amount <= 0 || !payment_method) {
       return res.status(400).json({ success: false, message: 'ข้อมูลไม่ครบถ้วน หรือยอดเงินไม่ถูกต้อง' });
     }
 
-    const updatedWallet = await WalletModel.topupWallet(userId, amount, paymentMethod);
+    const updatedWallet = await WalletModel.topupWallet(user_id, amount, payment_method);
     
     res.status(200).json({ 
         success: true, 
@@ -41,20 +41,24 @@ export async function topup(req, res) {
         return res.status(404).json({ success: false, message: error.message });
     }
     console.error("Error in topup:", error);
-    res.status(500).json({ success: false, message: 'เติมเงินล้มเหลว กรุณาลองใหม่' });
+    res.status(500).json({ 
+        success: false, 
+        message: 'เติมเงินล้มเหลว', 
+        error: error.message // 
+    });
   }
 }
 // ------------------------------------------------------------------------------- //
 //3. ถอนเงิน
 export async function withdraw(req, res) {
   try {
-    const { userId, amount, paymentMethod } = req.body;
+    const { user_id, amount, payment_method } = req.body;
 
-    if (!userId || !amount || amount <= 0 || !paymentMethod) {
+    if (!user_id || !amount || amount <= 0 || !payment_method) {
       return res.status(400).json({ success: false, message: 'ข้อมูลไม่ครบถ้วน หรือยอดเงินไม่ถูกต้อง' });
     }
 
-    const updatedWallet = await WalletModel.withdrawWallet(userId, amount, paymentMethod);
+    const updatedWallet = await WalletModel.withdrawWallet(user_id, amount, payment_method);
     
     res.status(200).json({ 
         success: true, 
@@ -73,13 +77,13 @@ export async function withdraw(req, res) {
 //4.จ่ายเงินให้แพลตฟอร์ม (มีไว้ก่อนยังไม่ใช้จริง)
 export async function pay(req, res) {
   try {
-    const { userId, amount, paymentMethod } = req.body;
+    const { user_id, amount, payment_method } = req.body;
 
-    if (!userId || !amount || amount <= 0 || !paymentMethod) {
+    if (!user_id || !amount || amount <= 0 || !payment_method) {
       return res.status(400).json({ success: false, message: 'ข้อมูลการชำระเงินไม่ครบถ้วน' });
     }
 
-    const updatedWallet = await WalletModel.payWithWallet(userId, amount, paymentMethod);
+    const updatedWallet = await WalletModel.payWithWallet(user_id, amount, payment_method);
     
     res.status(200).json({ 
         success: true, 
@@ -100,18 +104,18 @@ export async function pay(req, res) {
 export async function transfer(req, res) {
   try {
 
-    const { buyerId, sellerId, amount, paymentMethod } = req.body;
+    const { customer_id, seller_id, amount, payment_method } = req.body;
 
-    if (!buyerId || !sellerId || !amount || amount <= 0 || !paymentMethod) {
+    if (!customer_id || !seller_id || !amount || amount <= 0 || !payment_method) {
       return res.status(400).json({ success: false, message: 'ข้อมูลการโอนเงินไม่ครบถ้วน' });
     }
 
-    const result = await WalletModel.transferWallet(buyerId, sellerId, amount, paymentMethod);
+    const result = await WalletModel.transferWallet(customer_id, seller_id, amount, payment_method);
 
     res.status(200).json({ 
         success: true, 
         message: 'ชำระเงินสำเร็จ', 
-        balance: result.buyer.wallet 
+        balance: result.customer.wallet 
     });
 
 
@@ -130,9 +134,9 @@ export async function transfer(req, res) {
 // 6. ดึงStatement
 export async function getRecords(req, res) {
   try {
-    const { userId } = req.params;
+    const { user_id } = req.params;
     
-    const records = await WalletModel.getWalletRecords(userId);
+    const records = await WalletModel.getWalletRecords(user_id);
     
     res.status(200).json({ 
         success: true, 

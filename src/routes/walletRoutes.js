@@ -4,7 +4,7 @@ import * as WalletController from '../controllers/walletController.js';
 const router = express.Router();
 
 // 1. ดูยอดเงิน
-router.get('/balance/:userId', WalletController.getBalance);
+router.get('/balance/:user_id', WalletController.getBalance);
 
 // 2. เติมเงิน
 router.post('/topup', WalletController.topup);
@@ -19,6 +19,6 @@ router.post('/pay', WalletController.pay);
 router.post('/transfer', WalletController.transfer);
 
 // 6. ดูประวัติธุรกรรม
-router.get('/records/:userId', WalletController.getRecords);
+router.get('/records/:user_id', WalletController.getRecords);
 
 export default router;

@@ -27,8 +27,8 @@ export async function getServiceById(service_type_id) {
 export async function updateService(service_type_id,name) {
     const result = await sql`
         UPDATE service_types
-        SET name = ${name},
-        WHERE service_type_id = ${service_type_id};
+        SET name = ${name}
+        WHERE service_type_id = ${service_type_id}
         RETURNING *`;
     return result[0] || null;
 }

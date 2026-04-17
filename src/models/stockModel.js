@@ -4,8 +4,8 @@ import sql from "../config/db.js";
 
 export async function createStock(seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status) {
   await sql`
-    INSERT INTO stocks (seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status)
-    VALUES (${seller_id}, ${category_id}, ${item_name}, ${description}, ${price}, ${stock_quantity}, ${item_type}, ${stock_status})
+    INSERT INTO stocks (seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status, created_at)
+    VALUES (${seller_id}, ${category_id}, ${item_name}, ${description}, ${price}, ${stock_quantity}, ${item_type}, ${stock_status}, NOW())
   `;
 }
 
@@ -33,7 +33,7 @@ export async function getStocksBySeller(seller_id) {
   return await sql`
     SELECT s.*, c.name AS category_name
     FROM stocks s
-    JOIN categories c ON s.category_id = c.category_id
+    LEFT JOIN categories c ON s.category_id = c.category_id
     WHERE s.seller_id = ${seller_id}
     ORDER BY s.created_at DESC
   `;
@@ -45,7 +45,7 @@ export async function getAllStocks() {
   return await sql`
     SELECT s.*, c.name AS category_name
     FROM stocks s
-    JOIN categories c ON s.category_id = c.category_id
+    LEFT JOIN categories c ON s.category_id = c.category_id
     WHERE s.stock_status = 'available'
     ORDER BY s.created_at DESC
   `;
@@ -55,7 +55,7 @@ export async function getStockById(stock_id) {
   const result = await sql`
     SELECT s.*, c.name AS category_name
     FROM stocks s
-    JOIN categories c ON s.category_id = c.category_id
+    LEFT JOIN categories c ON s.category_id = c.category_id
     WHERE s.stock_id = ${stock_id}
   `;
   return result[0] || null;
