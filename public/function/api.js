@@ -106,3 +106,48 @@ export const Wallet = {
 
     getRecords: (user_id) => apiFetch(`/api/wallet/records/${user_id}`)
 };
+
+export const Requests = {
+    getRequests: () => apiFetch("/api/request"),
+
+    getByIdCustomer: (customer_id) => apiFetch(`/api/request/customerReq?customer_id=${customer_id}`),
+
+    updateRequestStatus: (id, body) => apiFetch(`/api/updateStatus/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+    }),
+    
+    getByIdRequest: (id) => apiFetch(`/api/request/${id}`),
+
+    createRequest: (body) => apiFetch("/api/request", {
+        method: "POST", body: JSON.stringify(body),
+    }),
+
+    updateRequest: (id, body) => apiFetch(`/api/request/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+    }),
+
+    deleteRequest: (id) => apiFetch(`/api/request/${id}`, {
+        method: "DELETE",
+    }),
+};
+
+export const serviceType = {
+    getAll: () => apiFetch("/api/serviceTypes"),
+    getById: (id) => apiFetch(`/api/serviceTypes/${id}`),
+
+    create: (body) => apiFetch("/api/serviceTypes", {
+        method: "POST", body: JSON.stringify(body),
+    }),
+
+    update: (id, body) => apiFetch(`/api/serviceTypes/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+    }),
+
+    delete: (id) => apiFetch(`/api/serviceTypes/${id}`, {
+        method: "DELETE",
+    }),
+
+};
