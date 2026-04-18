@@ -134,19 +134,19 @@ export const Requests = {
 };
 
 export const serviceType = {
-    getAll: () => apiFetch("/api/serviceTypes"),
-    getById: (id) => apiFetch(`/api/serviceTypes/${id}`),
+    getAllServiceType: () => apiFetch("/api/serviceTypes"),
+    getByIdServiceType: (id) => apiFetch(`/api/serviceTypes/${id}`),
 
-    create: (body) => apiFetch("/api/serviceTypes", {
+    createServiceType: (body) => apiFetch("/api/serviceTypes", {
         method: "POST", body: JSON.stringify(body),
     }),
 
-    update: (id, body) => apiFetch(`/api/serviceTypes/${id}`, {
+    updateServiceType: (id, body) => apiFetch(`/api/serviceTypes/${id}`, {
         method: "PUT",
         body: JSON.stringify(body),
     }),
 
-    delete: (id) => apiFetch(`/api/serviceTypes/${id}`, {
+    deleteServiceType: (id) => apiFetch(`/api/serviceTypes/${id}`, {
         method: "DELETE",
     }),
 
