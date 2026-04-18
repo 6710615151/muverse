@@ -1,3 +1,5 @@
+import { withdraw } from "../../src/controllers/walletController";
+
 async function apiFetch(url, options = {}) {
     const res = await fetch(url, {
         headers: {
@@ -83,3 +85,24 @@ export const Order = {
         body: JSON.stringify(body),
     })
 }
+
+export const Wallet = {
+    getBalance: (user_id) => apiFetch(`/api/wallet/balance/${user_id}`),
+
+    topup: (body) => apiFetch("/api/wallet/topup", {
+        method: "POST",
+        body: JSON.stringify(body),
+    }),
+
+    withdraw: (body) => apiFetch("/api/wallet/withdraw", {
+        method: "POST",
+        body: JSON.stringify(body),
+    }),
+
+    transfer: (body) => apiFetch("api/wallet/transfer",{
+        method: "POST",
+        body: JSON.stringify(body),
+    }),
+
+    getRecords: (user_id) => apiFetch(`/api/wallet/records/${user_id}`)
+};
