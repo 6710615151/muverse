@@ -1,3 +1,4 @@
+import { changeRole } from "./changeRole";
 const Router = (() => {
 
     const State = {
@@ -18,9 +19,11 @@ const Router = (() => {
 
     const _cache = {};
 
+    //แก้ตรงนี้
     const PAGE_INIT = {
         market: () => {
             console.log('init market');
+            
         },
         booking: () => {
             console.log('init booking');
@@ -33,6 +36,7 @@ const Router = (() => {
         },
         user: () => {
             console.log('init user');
+            changeRole.init()
         }
     };
 
