@@ -1,4 +1,3 @@
-import { changeRole } from "./changeRole";
 const Router = (() => {
 
     const State = {
@@ -36,7 +35,6 @@ const Router = (() => {
         },
         user: () => {
             console.log('init user');
-            changeRole.init()
         }
     };
 
