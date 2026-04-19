@@ -1,0 +1,292 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Sarabun', sans-serif;
+  background: radial-gradient(circle at 20% 20%, #1a0f2a, #050308 70%);
+  color: #eee;
+  overflow: hidden;
+}
+
+#particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+
+#nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 16px 40px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 10;
+
+  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.nav-logo {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+
+.nav-badge {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+
+.nav-tabs {
+  position: fixed;
+  top: 70px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  z-index: 10;
+}
+
+.nav-tab {
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  color: #ccc;
+  cursor: pointer;
+  transition: 0.3s;
+  backdrop-filter: blur(10px);
+}
+
+.nav-tab:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.1);
+}
+
+.nav-tab.active {
+  color: #fff;
+  box-shadow: 0 0 20px rgba(200,100,255,0.4);
+}
+
+
+.page {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.6s;
+}
+
+.page.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+
+.canvas-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#amb-copper { background: radial-gradient(circle, rgba(255,120,60,0.15), transparent 70%); }
+#amb-silver { background: radial-gradient(circle, rgba(180,200,255,0.15), transparent 70%); }
+#amb-gold   { background: radial-gradient(circle, rgba(255,200,80,0.2), transparent 70%); }
+
+
+.content {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  height: 100%;
+  padding: 120px 80px;
+  gap: 60px;
+}
+
+.left-panel {
+  width: 40%;
+}
+
+.right-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tier-tag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.7;
+  margin-bottom: 20px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.line {
+  width: 30px;
+  height: 1px;
+  background: #fff;
+}
+
+.amulet-title {
+  font-family: 'Cinzel', serif;
+  font-size: 64px;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.amulet-sub {
+  opacity: 0.6;
+  margin-bottom: 30px;
+}
+
+.stats-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  background: rgba(255,255,255,0.05);
+  padding: 12px 16px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.stat-label {
+  font-size: 12px;
+  opacity: 0.6;
+  display: block;
+}
+
+.stat-value {
+  font-size: 16px;
+}
+
+.desc-text {
+  opacity: 0.7;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.btn-buy {
+  padding: 14px 30px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: #fff;
+
+  background: linear-gradient(135deg, #7b2ff7, #f107a3);
+  box-shadow: 0 0 20px rgba(180,80,255,0.5);
+
+  transition: 0.3s;
+}
+
+.btn-buy:hover {
+  transform: scale(1.05);
+}
+
+.edition-badge {
+  position: absolute;
+  bottom: 40px;
+  right: 60px;
+  text-align: right;
+  opacity: 0.6;
+}
+
+.edition-num {
+  font-size: 32px;
+  font-family: 'Cinzel';
+}
+
+.edition-label {
+  font-size: 12px;
+}
+
+.loading-label {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+#confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.4s;
+  z-index: 50;
+}
+
+#confirm-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.conf-icon {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+
+.conf-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.conf-sub {
+  opacity: 0.6;
+  margin-bottom: 20px;
+}
+
+.conf-close {
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .content {
+    flex-direction: column;
+    padding: 100px 20px;
+  }
+
+  .left-panel {
+    width: 100%;
+  }
+
+  .amulet-title {
+    font-size: 40px;
+  }
+}
