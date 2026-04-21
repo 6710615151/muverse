@@ -2,14 +2,14 @@ import sql from "../config/db.js";
 
 // --- Digital Item Admin ---
 
-export async function createStock(seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status) {
+export async function createStock(seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status, url) {
   await sql`
-    INSERT INTO stocks (seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status, created_at)
-    VALUES (${seller_id}, ${category_id}, ${item_name}, ${description}, ${price}, ${stock_quantity}, ${item_type}, ${stock_status}, NOW())
+    INSERT INTO stocks (seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status,url, created_at)
+    VALUES (${seller_id}, ${category_id}, ${item_name}, ${description}, ${price}, ${stock_quantity}, ${item_type}, ${stock_status},${url},NOW())
   `;
 }
 
-export async function updateStock(stock_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status) {
+export async function updateStock(stock_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status,url) {
   await sql`
     UPDATE stocks
     SET category_id     = ${category_id},
@@ -18,7 +18,8 @@ export async function updateStock(stock_id, category_id, item_name, description,
         price           = ${price},
         stock_quantity  = ${stock_quantity},
         item_type       = ${item_type},
-        stock_status    = ${stock_status}
+        stock_status    = ${stock_status},
+        url             = ${url}
     WHERE stock_id = ${stock_id}
   `;
 }

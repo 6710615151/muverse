@@ -4,13 +4,13 @@ import * as stockModel from "../models/stockModel.js";
 
 export async function create(req, res) {
   try {
-    const { seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status } = req.body;
+    const { seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status,url } = req.body;
 
-    if (!seller_id || !category_id || !item_name || !price || !stock_quantity || !item_type || !stock_status) {
+    if (!seller_id || !category_id || !item_name || !price || !stock_quantity || !item_type || !stock_status || !url) {
       return res.status(400).json({ success: false, error: "All fields required" });
     }
 
-    await stockModel.createStock(seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status);
+    await stockModel.createStock(seller_id, category_id, item_name, description, price, stock_quantity, item_type, stock_status,url);
     res.status(201).json({ success: true, message: "Stock created" });
 
   } catch (err) {
@@ -20,13 +20,13 @@ export async function create(req, res) {
 
 export async function update(req, res) {
   try {
-    const { category_id, item_name, description, price, stock_quantity, item_type, stock_status } = req.body;
+    const { category_id, item_name, description, price, stock_quantity, item_type, stock_status,url} = req.body;
 
-    if (!category_id || !item_name || !price || !stock_quantity || !item_type || !stock_status) {
+    if (!category_id || !item_name || !price || !stock_quantity || !item_type || !stock_status || !url) {
       return res.status(400).json({ success: false, error: "All fields required" });
     }
 
-    await stockModel.updateStock(req.params.id, category_id, item_name, description, price, stock_quantity, item_type, stock_status);
+    await stockModel.updateStock(req.params.id, category_id, item_name, description, price, stock_quantity, item_type, stock_status,url);
     res.json({ success: true, message: "Stock updated" });
 
   } catch (err) {
