@@ -1,4 +1,61 @@
-<div id = "booking">
-   <h1>booking</h1>
+<div id="booking">
+
+  <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
+    <div>
+      <h1 class="page-header__title">My Bookings</h1>
+      <p class="page-header__sub">Services you have requested or hired others to do</p>
+    </div>
+    <button class="btn btn--primary" id="btnNewRequest">+ New Request</button>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-bar">
+    <div class="filter-bar__tabs">
+      <button class="filter-tab active" data-status="all">All</button>
+      <button class="filter-tab" data-status="pending">Pending</button>
+      <button class="filter-tab" data-status="accepted">Accepted</button>
+      <button class="filter-tab" data-status="done">Done</button>
+    </div>
+  </div>
+
+  <!-- List -->
+  <div style="padding: 32px 64px;">
+    <div class="booking-list" id="requestList">
+      <p style="color: var(--clr-text-muted); text-align:center; padding: 40px 0;">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Modal: New Request -->
+  <div class="modal-overlay" id="modalNewRequest">
+    <div class="modal" style="max-width:520px; text-align:left; padding:36px;">
+      <h2 style="font-family:var(--font-display); font-size:1.8rem; color:var(--clr-cream); margin-bottom:24px;">New Request</h2>
+
+      <div class="form-grid">
+        <div class="form-field form-field--full">
+          <label class="form-label">Title</label>
+          <input class="form-input" id="inputTitle" placeholder="e.g. Hire merit maker, Hire booth setup" />
+        </div>
+        <div class="form-field form-field--full">
+          <label class="form-label">Detail</label>
+          <textarea class="form-input form-textarea" id="inputDetail" placeholder="Describe the work you need..."></textarea>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Budget (THB)</label>
+          <input class="form-input" id="inputBudget" type="number" placeholder="0" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Category</label>
+          <select class="form-input filter-select" id="inputCategory" style="width:100%;">
+            <option value="">-- Select category --</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn--ghost" id="btnCancelRequest">Cancel</button>
+        <button class="btn btn--primary" id="btnSubmitRequest">Submit</button>
+      </div>
+    </div>
+  </div>
 
 </div>

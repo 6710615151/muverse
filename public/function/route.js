@@ -1,3 +1,5 @@
+import { Booking } from "./booking.js";
+
 const Router = (() => {
 
     const State = {
@@ -25,10 +27,7 @@ const Router = (() => {
             
         },
         booking: () => {
-            console.log('init booking');
-            // if (typeof BookingFlow !== 'undefined') {
-            //     BookingFlow.init();
-            // }
+            Booking.init();
         },
         wallet: () => {
             console.log('init wallet');
