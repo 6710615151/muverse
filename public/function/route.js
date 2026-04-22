@@ -1,4 +1,5 @@
 import { Booking } from "./booking.js";
+import { Market, Shop } from "./market.js";
 
 const Router = (() => {
 
@@ -10,6 +11,7 @@ const Router = (() => {
 
     const PAGE_MAP = {
         market: '../../pages/customer/pages/market.html',
+        shop:   '../../pages/customer/pages/shop.html',
         booking: '../../pages/customer/pages/booking.html',
         wallet: '../../pages/customer/pages/wallet.html',
         user: '../../pages/customer/pages/user.html',
@@ -22,10 +24,8 @@ const Router = (() => {
 
     //แก้ตรงนี้
     const PAGE_INIT = {
-        market: () => {
-            console.log('init market');
-            
-        },
+        market: () => Market.init(),
+        shop:   () => Shop.init(),
         booking: () => {
             Booking.init();
         },

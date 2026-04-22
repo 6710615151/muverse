@@ -1,0 +1,70 @@
+<div id="shop-page">
+
+  <!-- ─── Shop Hero (feature-banner) ─── -->
+  <div class="section" style="padding-bottom:0">
+    <div class="feature-banner">
+
+      <!-- Left: Shop Info -->
+      <div>
+        <button class="btn btn--ghost btn--sm" id="shop-back-btn"
+          style="margin-bottom:28px">← กลับ Marketplace</button>
+
+        <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;flex-wrap:wrap">
+          <div class="dash-profile__avatar"
+            style="width:68px;height:68px;font-size:1.8rem;flex-shrink:0;border:2px solid var(--clr-border)"
+            id="shop-avatar">?</div>
+          <div>
+            <p class="feature-banner__tag" id="shop-rating">⭐ —</p>
+            <h1 class="feature-banner__title" style="margin-bottom:4px" id="shop-name">
+              กำลังโหลด...
+            </h1>
+          </div>
+        </div>
+
+        <p class="feature-banner__desc" style="margin-bottom:24px" id="shop-item-count">
+          — รายการสินค้า
+        </p>
+      </div>
+
+      <!-- Right: Decorative -->
+      <div class="feature-banner__visual">
+        <div class="feature-banner__glow"></div>
+        <div class="feature-banner__badge">
+          <span style="font-size:1.2rem">✦</span>
+          <span>Verified Seller</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── Shop Products ─── -->
+  <div class="section" style="padding-top:40px">
+
+    <div class="section__header">
+      <h2 class="section__title">สินค้าในร้าน</h2>
+      <p class="marketplace-count">
+        ทั้งหมด <strong id="shop-count">0</strong> รายการ
+      </p>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px">
+      <input type="text" id="shop-search" class="form-input"
+        placeholder="ค้นหาสินค้าในร้าน..." style="width:220px;padding:8px 14px">
+      <select id="shop-sort" class="filter-select">
+        <option value="">เรียงลำดับ</option>
+        <option value="price-asc">ราคา ↑ น้อยไปมาก</option>
+        <option value="price-desc">ราคา ↓ มากไปน้อย</option>
+        <option value="name">ชื่อ A–Z</option>
+      </select>
+    </div>
+
+    <div class="product-grid" id="shop-grid">
+      <div style="grid-column:1/-1;padding:80px;text-align:center;color:var(--clr-text-muted)">
+        <p style="font-size:2rem;margin-bottom:12px">⏳</p>
+        <p>กำลังโหลดสินค้า...</p>
+      </div>
+    </div>
+
+  </div>
+</div>
