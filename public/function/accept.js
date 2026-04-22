@@ -1,13 +1,15 @@
 import { Requests, Category } from "./api.js";
 
-const listEl = document.getElementById("request-list");
-const msgEl  = document.getElementById("msg");
+const listEl   = document.getElementById("requestList");
+const filterBtns = document.querySelectorAll(".filter-tab");
 
-let categories = [];
+let categories   = [];
+let allRequests  = [];
+let activeStatus = "all";
 
-function showMsg(text) {
-    msgEl.textContent = text;
-    setTimeout(() => msgEl.textContent = "", 2500);
+function categoryName(category_id) {
+    const cat = categories.find(c => c.category_id === category_id);
+    return cat ? cat.name : "-";
 }
 
 function badgeClass(status) {
@@ -16,30 +18,30 @@ function badgeClass(status) {
     return "badge pending";
 }
 
-function categoryName(category_id) {
-    const cat = categories.find(c => c.category_id === category_id);
-    return cat ? cat.name : "-";
-}
-
 function renderRequests(requests) {
-    if (!requests.length) {
-        listEl.innerHTML = `<p class="empty">No requests found.</p>`;
+    const filtered = activeStatus === "all"
+        ? requests
+        : requests.filter(r => r.request_status === activeStatus);
+
+    if (!filtered.length) {
+        listEl.innerHTML = `<p style="color:var(--clr-text-muted);text-align:center;padding:40px 0;">No requests found.</p>`;
         return;
     }
 
-    listEl.innerHTML = requests.map(r => `
-        <div class="card" data-id="${r.request_id}">
-            <div class="card-title">${r.request_title}</div>
-            <div class="card-detail">${r.request_detail || "-"}</div>
-            <div class="card-meta">
-                <span>Budget: ${r.budget ?? "-"}</span>
-                <span>Category: ${categoryName(r.category_id)}</span>
+    listEl.innerHTML = filtered.map(r => `
+        <div class="booking-card" data-id="${r.request_id}">
+            <div class="booking-card__header">
+                <span class="booking-card__title">${r.request_title}</span>
                 <span class="${badgeClass(r.request_status)}">${r.request_status}</span>
             </div>
-            <div class="card-actions">
-                <button class="btn-accept"  data-id="${r.request_id}" data-status="accepted">Accept</button>
-                <button class="btn-reject"  data-id="${r.request_id}" data-status="rejected">Reject</button>
-                <button class="btn-pending" data-id="${r.request_id}" data-status="pending">Pending</button>
+            <p class="booking-card__detail">${r.request_detail || "-"}</p>
+            <div class="booking-card__meta">
+                <span>Budget: ${r.budget ?? "-"} THB</span>
+                <span>Category: ${categoryName(r.category_id)}</span>
+            </div>
+            <div class="booking-card__actions">
+                <button class="btn btn--primary" data-id="${r.request_id}" data-status="accepted">Accept</button>
+                <button class="btn btn--ghost"   data-id="${r.request_id}" data-status="rejected">Reject</button>
             </div>
         </div>
     `).join("");
@@ -53,32 +55,39 @@ async function updateStatus(btn) {
     const id     = btn.dataset.id;
     const status = btn.dataset.status;
 
-    const card = listEl.querySelector(`.card[data-id="${id}"]`);
+    const card = listEl.querySelector(`[data-id="${id}"]`);
     card.querySelectorAll("button").forEach(b => b.disabled = true);
 
     try {
         await Requests.updateRequestStatus(id, { request_status: status });
-        showMsg(`Request #${id} updated to "${status}"`);
         await loadRequests();
     } catch (err) {
-        showMsg(err.message || "Update failed");
         card.querySelectorAll("button").forEach(b => b.disabled = false);
     }
 }
 
 async function loadRequests() {
     try {
-        const requests = await Requests.getRequests();
-        renderRequests(requests);
-    } catch (err) {
-        listEl.innerHTML = `<p class="empty">Failed to load requests.</p>`;
+        allRequests = await Requests.getRequests();
+        renderRequests(allRequests);
+    } catch {
+        listEl.innerHTML = `<p style="color:var(--clr-text-muted);text-align:center;padding:40px 0;">Failed to load requests.</p>`;
     }
 }
+
+filterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        filterBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeStatus = btn.dataset.status;
+        renderRequests(allRequests);
+    });
+});
 
 async function init() {
     try {
         categories = await Category.getAll();
-    } catch (_) {
+    } catch {
         categories = [];
     }
     await loadRequests();
