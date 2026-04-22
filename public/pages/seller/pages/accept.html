@@ -1,0 +1,27 @@
+<div id="accept">
+
+  <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
+    <div>
+      <h1 class="page-header__title">Manage Requests</h1>
+      <p class="page-header__sub">Customer requests waiting for your response</p>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-bar">
+    <div class="filter-bar__tabs">
+      <button class="filter-tab active" data-status="all">All</button>
+      <button class="filter-tab" data-status="pending">Pending</button>
+      <button class="filter-tab" data-status="accepted">Accepted</button>
+      <button class="filter-tab" data-status="rejected">Rejected</button>
+    </div>
+  </div>
+
+  <!-- List -->
+  <div style="padding: 32px 64px;">
+    <div class="request-list" id="requestList">
+      <p style="color: var(--clr-text-muted); text-align:center; padding: 40px 0;">Loading...</p>
+    </div>
+  </div>
+
+</div>

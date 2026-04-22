@@ -110,7 +110,7 @@ export const Requests = {
 
     getByIdCustomer: (customer_id) => apiFetch(`/api/request/customerReq?customer_id=${customer_id}`),
 
-    updateRequestStatus: (id, body) => apiFetch(`/api/updateStatus/${id}`, {
+    updateRequestStatus: (id, body) => apiFetch(`/api/request/updateStatus/${id}`, {
         method: "PUT",
         body: JSON.stringify(body),
     }),
