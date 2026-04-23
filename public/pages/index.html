@@ -172,7 +172,7 @@
             <div class="corner corner-tr"></div>
             <div class="corner corner-bl"></div>
             <div class="corner corner-br"></div>
-        
+
             <div class="logo-area">
                 <div class="logo-loading"></div>
                 <div class="logo-sub">LOADING PAGE</div>
@@ -203,7 +203,13 @@
     <div class="overlay"></div>
     <div class="glow"></div>
 
-    <script>
+    <script type="module">
+        import { pageRole } from "../function/pageRole";
+
+        function goDashboard() {
+            window.location.replace("/Auth");
+        }
+        pageRole();
         for (let i = 0; i < 50; i++) {
             let p = document.createElement("div");
             p.className = "particle";
@@ -222,7 +228,7 @@
         <p>Where Sacred Power Connects</p>
 
         <div class="buttons">
-            <a href="/Auth" class="btn">GET START</a>
+            <a href="#" onclick="goDashboard()" class="btn">GET START</a>
 
         </div>
 
