@@ -3,18 +3,13 @@ import { Market, Shop } from "./market.js";
 import { checkRole } from "./pageRole.js";
 
 
-checkRole("customer");
+checkRole("seller");
 
 const Router = (() => {
 
     const PAGE_MAP = {
-        //customer
-        market: '../../pages/customer/pages/market.html',
-        shop: '../../pages/customer/pages/shop.html',
-        booking: '../../pages/customer/pages/booking.html',
-        wallet: '../../pages/customer/pages/wallet.html',
-        user: '../../pages/customer/pages/user.html',
-        nft: '../../pages/customer/pages/nft.html',
+        stock: '../../pages/seller/pages/stock.html',
+        accept: '../../pages/seller/pages/accept.html'
     };
 
     const _canvas = () => document.getElementById('canvasContent');
@@ -107,7 +102,7 @@ const Router = (() => {
 
     function init() {
         bindLinks(document.getElementById('mainNav'));
-        navigate('market'); // default page
+        navigate('stock'); // default page
     }
 
     return { init, navigate, bindLinks };
