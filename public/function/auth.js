@@ -171,3 +171,7 @@ suForm.addEventListener('submit', async (e) => {
   }
 });
 
+export function logout(){
+  localStorage.clear();
+  window.location.replace("/")
+}
