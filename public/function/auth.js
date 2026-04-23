@@ -1,4 +1,5 @@
 import { Users } from "./api.js";
+import { pageRole } from "./pageRole.js";
 
 const imgs = document.querySelectorAll('.bg img');
 let cur = 0;
@@ -92,16 +93,13 @@ siForm.addEventListener('submit', async (e) => {
   try {
     const user = await Users.login(email, password);
 
-    localStorage.setItem('user', JSON.stringify({
-      id: user.id,
-      name: user.name,
-      email: user.email
-    }));
+    localStorage.setItem('id', user.id);
+    localStorage.setItem('role', user.role);
 
     showMsg(siMsg, 'Login successful! Redirecting…', 'success');
 
     setTimeout(() => {
-      location.href = '../index.html';
+      pageRole();
     }, 1000);
 
   } catch (err) {
