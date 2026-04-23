@@ -13,4 +13,6 @@ router.get("/Auth",    servePage("auth.html"));
 router.get("/test",     servePage("testAPI.html"));
 router.get("/customer",    servePage("customer/index.html"));
 router.get("/seller",    servePage("seller/index.html"));
+router.get("/upload",    servePage("testUpload.html"));
+
 export default router;

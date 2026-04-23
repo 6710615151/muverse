@@ -12,6 +12,7 @@ import categories from "./routes/categoriesRoutes.js";
 import serviceTypes from "./routes/serviceTypesRoutes.js"
 import sellerRoutes from "./routes/sellerRoutes.js"
 import customerRoutes from "./routes/customerRoutes.js"
+import upload from "./routes/uploadRoutes.js"
 
 
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
@@ -37,6 +38,7 @@ app.use("/api/category", categories);
 app.use("/api/serviceTypes", serviceTypes);
 app.use("/api/seller", sellerRoutes);
 app.use("/api/customer", customerRoutes);
+app.use("/api", upload);
 
 //Page Routes
 app.use("/", pageRoutes);
