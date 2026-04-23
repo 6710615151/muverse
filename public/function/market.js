@@ -13,7 +13,7 @@ function productCardHTML(stock) {
   const isOut = stock.stock_quantity <= 0 || stock.stock_status === 'out_of_stock';
   const price = Number(stock.price).toLocaleString('th-TH', { minimumFractionDigits: 0 });
   const shopName = stock.shop_name ?? `ร้าน #${stock.seller_id}`;
-  const rating = stock.rating ? `⭐ ${stock.rating}` : '';
+  const rating = stock.rating ? `⭐${stock.rating}` : '';
   const isNew = stock.stock_status === 'new';
 
   return `

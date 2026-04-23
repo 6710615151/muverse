@@ -5,27 +5,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MUVERSE</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="../../css/customer/styles.css" />
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
+  <link rel="stylesheet" href="../../css/customer.css" />
 </head>
 
 <body>
 
-
   <nav class="nav" id="mainNav">
     <div class="nav__logo">
-      <span class="nav__logo-mark">เดี๋ยวใส่โลโก้</span>
-      <span class="nav__logo-text">ใส่ใจได้แต่มอง</span>
+      <div class="nav__logo-mark"><img id="logo-icon" src="../../assets/full-logo.png" alt="logo"></div>
+      <span class="nav__logo-text">CUSTOMER DASHBOARD</span>
     </div>
     <ul class="nav__links">
-      <li><a href="" class="nav__link active" data-page="market">MARKET PLACE</a></li>
-      <li><a href="" class="nav__link" data-page="booking">BOOKING</a></li>
-      <li><a href="" class="nav__link" data-page="wallet">WALLET</a></li>
-      <li><a href="" class="nav__link" data-page="user">CHANGE TO SELLER</a></li>
+      <li><a href="" class="nav__link active" data-page="market"><span class="fi fi-ts-shopping-cart"></span> MARKET
+          PLACE</a></li>
+      <li><a href="" class="nav__link" data-page="booking"><span class="fi fi-ts-reservation-table"></span> BOOKING</a></li>
+      <li><a href="" class="nav__link" data-page="nft"><span class="fi fi-ts-nft-square"></span> NFT</a></li>
+      <li><a href="" class="nav__link" data-page="wallet"><span class="fi fi-ts-wallet"></span> WALLET</a></li>
+      <li><a href="" class="nav__link" data-page="user"><span class="fi fi-ts-convert-shapes"></span> CHANGE TO
+          SELLER</a></li>
     </ul>
     <button class="nav__burger" id="navBurger">
       <span></span><span></span><span></span>
@@ -41,7 +39,6 @@
       </div>
     </div>
 
-    <!-- Page content injected here -->
     <div class="canvas__content" id="canvasContent"></div>
 
   </main>

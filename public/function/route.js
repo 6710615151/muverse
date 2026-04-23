@@ -3,18 +3,17 @@ import { Market, Shop } from "./market.js";
 
 const Router = (() => {
 
-    const State = {
-        currentPage: null,
-        user: null,
-        token: null
-    };//หลอกยังไม่ได้ทำ
-
     const PAGE_MAP = {
+        //customer
         market: '../../pages/customer/pages/market.html',
-        shop:   '../../pages/customer/pages/shop.html',
+        shop: '../../pages/customer/pages/shop.html',
         booking: '../../pages/customer/pages/booking.html',
         wallet: '../../pages/customer/pages/wallet.html',
         user: '../../pages/customer/pages/user.html',
+        nft: '../../pages/customer/pages/nft.html',
+        //seller
+        stock: '../../pages/seller/pages/stock.html',
+        accept: '../../pages/seller/pages/accept.html'
     };
 
     const _canvas = () => document.getElementById('canvasContent');
@@ -22,24 +21,19 @@ const Router = (() => {
 
     const _cache = {};
 
-    //แก้ตรงนี้
     const PAGE_INIT = {
         market: () => Market.init(),
-        shop:   () => Shop.init(),
-        booking: () => {
-            Booking.init();
-        },
-        wallet: () => {
-            console.log('init wallet');
-        },
-        user: () => {
-            console.log('init user');
-        }
+        shop: () => Shop.init(),
+        booking: () => Booking.init(),
+        nft: () => Shop.init(),
+        wallet: () => console.log('init wallet'),
+        user: () => console.log('init user')
     };
 
     async function navigate(pageName) {
         if (!PAGE_MAP[pageName]) return;
 
+        // active nav (ใช้ DOM เป็น source of truth)
         document.querySelectorAll('.nav__link').forEach(l => {
             l.classList.toggle('active', l.dataset.page === pageName);
         });
@@ -48,6 +42,7 @@ const Router = (() => {
         const content = _canvas();
 
         if (loader) loader.style.display = 'flex';
+
         if (content) {
             content.style.opacity = '0';
             content.style.transform = 'translateY(12px)';
@@ -71,23 +66,23 @@ const Router = (() => {
 
             PAGE_INIT[pageName]?.();
 
-            State.currentPage = pageName;
-            console.log('Current Page:', State.currentPage);
+            console.log('Navigated to:', pageName);
 
         } catch (err) {
             console.error('[Router]', err);
 
             if (content) {
                 content.innerHTML = `
-        <div style="padding:80px;text-align:center;color:gray">
-          <p style="font-size:20px">โหลดหน้าไม่สำเร็จ</p>
-          <p>ไอ้หนุ่มอย่าหลอน</p>
-        </div>`;
+                <div style="padding:80px;text-align:center;color:gray">
+                    <p style="font-size:20px">โหลดหน้าไม่สำเร็จ</p>
+                    <p>ไอ้หนุ่มอย่าหลอน</p>
+                </div>`;
             }
         }
 
         setTimeout(() => {
             if (loader) loader.style.display = 'none';
+
             if (content) {
                 content.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
                 content.style.opacity = '1';
@@ -111,13 +106,12 @@ const Router = (() => {
 
     function init() {
         bindLinks(document.getElementById('mainNav'));
-        navigate('market');
+        navigate('market'); // default page
     }
 
-    return { init, navigate, bindLinks, State };
+    return { init, navigate, bindLinks };
 
 })();
-
 
 document.addEventListener('DOMContentLoaded', () => {
     Router.init();

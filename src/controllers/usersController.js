@@ -158,3 +158,51 @@ export async function login(req, res) {
         });
     }
 }
+
+export async function toggleRole(req, res) {
+    try {
+        const user = await userModel.changeRole(req.params.id);
+        if (!user || user.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: "User not found"
+            });
+        }
+
+        res.json({
+            success: true,
+            data: user[0],
+            message: "Role updated successfully"
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+}
+export async function getRole(req, res) {
+    try {
+        const user = await userModel.getRoleById(req.params.id);
+
+        if (!user || user.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: "User not found"
+            });
+        }
+
+        res.json({
+            success: true,
+            data: user[0], 
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+}
+

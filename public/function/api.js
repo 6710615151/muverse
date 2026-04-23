@@ -43,42 +43,48 @@ export const Category = {
 }
 
 export const Stock = {
+
     getAll: () => apiFetch("/api/stock"),
+
     getByCategory: (Category_id) => apiFetch(`/api/stock/category/${Category_id}`),
+
     getBySeller: (seller_id) => apiFetch(`/api/stock/seller/${seller_id}`),
+
     getById: (id) => apiFetch(`/api/stock/${id}`),
 
-    create: (body) => apiFetch("/api/stock",{
+    create: (body) => apiFetch("/api/stock", {
         method: "POST",
         body: JSON.stringify(body),
     }),
 
-    update: (id, body) => apiFetch(`/api/stock/${id}`,{
+    update: (id, body) => apiFetch(`/api/stock/${id}`, {
         method: "PUT",
         body: JSON.stringify(body),
     }),
 
-    delete: (id) => apiFetch(`/api/stock/${id}`,{
+    delete: (id) => apiFetch(`/api/stock/${id}`, {
         method: "DELETE",
     })
 }
 
 export const Order = {
-    create: (body) => apiFetch("/api/order/buy",{
+    create: (body) => apiFetch("/api/order/buy", {
         method: "POST",
         body: JSON.stringify(body),
     }),
 
     getByCustomer: (customer_id) => apiFetch(`/api/order/customer/${customer_id}`),
+
     getBySeller: (seller_id) => apiFetch(`/api/order/seller/${seller_id}`),
+
     getById: (id) => apiFetch(`/api/order/${id}`),
 
-    updateOrderStatus: (id, body) => apiFetch(`/api/order/${id}/status`,{
+    updateOrderStatus: (id, body) => apiFetch(`/api/order/${id}/status`, {
         method: "PATCH",
         body: JSON.stringify(body),
     }),
 
-    updateOrderPayment: (id, body) => apiFetch(`/api/order/${id}/payment`,{
+    updateOrderPayment: (id, body) => apiFetch(`/api/order/${id}/payment`, {
         method: "PATCH",
         body: JSON.stringify(body),
     })
@@ -97,7 +103,7 @@ export const Wallet = {
         body: JSON.stringify(body),
     }),
 
-    transfer: (body) => apiFetch("/api/wallet/transfer",{
+    transfer: (body) => apiFetch("/api/wallet/transfer", {
         method: "POST",
         body: JSON.stringify(body),
     }),
@@ -114,7 +120,7 @@ export const Requests = {
         method: "PUT",
         body: JSON.stringify(body),
     }),
-    
+
     getByIdRequest: (id) => apiFetch(`/api/request/${id}`),
 
     createRequest: (body) => apiFetch("/api/request", {

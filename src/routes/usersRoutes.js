@@ -9,5 +9,7 @@ router.post("/",      ctrl.create);
 router.put("/:id",    ctrl.update);
 router.delete("/:id", ctrl.remove);
 router.post("/auth", ctrl.login);
+router.put("/toggleRole/:id" , ctrl.toggleRole);
+router.get("/me/:id" , ctrl.getRole);
 
 export default router;

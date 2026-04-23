@@ -53,3 +53,24 @@ export async function getUserByEmail(email) {
 
     return users[0];
 }
+
+export async function getRoleById(userId) {
+  return await sql`
+    SELECT role
+    FROM users
+    WHERE user_id = ${userId}
+  `;
+}
+
+export async function changeRole(userId) {
+  return await sql`
+    UPDATE users
+    SET role = CASE
+      WHEN role = 'customer' THEN 'seller'
+      WHEN role = 'seller' THEN 'customer'
+      ELSE role
+    END
+    WHERE user_id = ${userId}
+    RETURNING user_id, role
+  `;
+}
