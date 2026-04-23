@@ -99,21 +99,17 @@
             color: #f5d28c;
             text-decoration: none;
             border-radius: 50px;
-
             backdrop-filter: blur(7px);
-            -webkit-backdrop-filter: blur(12px);
-
             background: rgba(255, 255, 255, 0.08);
             border: 3px solid rgba(255, 215, 120, 0.25);
-
             box-shadow:
                 inset 0 0 10px rgba(255, 215, 120, 0.15),
                 0 0 15px rgba(255, 215, 120, 0.15);
-
             transition: 0.4s;
             position: relative;
             overflow: hidden;
             font-size: 25px;
+            cursor: pointer;
         }
 
         .btn::before {
@@ -144,7 +140,7 @@
             height: 2px;
             background: gold;
             border-radius: 50%;
-            animation: float 10s linear infinite;
+            animation: float linear infinite;
         }
 
         @keyframes float {
@@ -162,77 +158,49 @@
 </head>
 
 <body>
+
+    <!-- Loading Panel -->
     <div id="loading-panel">
-        <div class="bg-orb orb1"></div>
-        <div class="bg-orb orb2"></div>
-        <div class="bg-orb orb3"></div>
-
-        <div class="lux-box">
-            <div class="corner corner-tl"></div>
-            <div class="corner corner-tr"></div>
-            <div class="corner corner-bl"></div>
-            <div class="corner corner-br"></div>
-
-            <div class="logo-area">
-                <div class="logo-loading"></div>
-                <div class="logo-sub">LOADING PAGE</div>
-            </div>
-            <div class="divider-line">
-                <div class="divider-dot"></div>
-            </div>
-
-            <div class="progress-track">
-                <div class="progress-bar"></div>
-            </div>
-
-            <div class="status-row">
-                <div class="dot-pulse">
-                    <span></span><span></span><span></span>
-                </div>
-                <p class="status-text">Loading</p>
-            </div>
-        </div>
-
         <link rel="stylesheet" href="../css/loading.css">
         <script src="../function/loading.js" defer></script>
     </div>
 
-
-
+    <!-- Background -->
     <div class="bg"></div>
     <div class="overlay"></div>
     <div class="glow"></div>
 
-    <script type="module">
-        import { pageRole } from "../function/pageRole";
-
-        function goDashboard() {
-            window.location.replace("/Auth");
-        }
-        pageRole();
-        for (let i = 0; i < 50; i++) {
-            let p = document.createElement("div");
-            p.className = "particle";
-            p.style.left = Math.random() * 100 + "%";
-            p.style.animationDuration = (6 + Math.random() * 6) + "s";
-            document.body.appendChild(p);
-        }
-    </script>
-
+    <!-- Content -->
     <div class="content">
-
-
         <img src="../assets/logo.png" class="logo">
-
         <h1>MUVERSE</h1>
         <p>Where Sacred Power Connects</p>
 
         <div class="buttons">
-            <a href="#" onclick="goDashboard()" class="btn">GET START</a>
-
+            <button class="btn" id="startBtn">GET START</button>
         </div>
-
     </div>
+
 </body>
+
+<script type="module">
+    import { checkRole } from "./pageRole.js";
+
+
+    checkRole();
+
+    const btn = document.getElementById("startBtn");
+    btn.addEventListener("click", () => {
+        window.location.replace("/Auth");
+    });
+
+    for (let i = 0; i < 50; i++) {
+        let p = document.createElement("div");
+        p.className = "particle";
+        p.style.left = Math.random() * 100 + "%";
+        p.style.animationDuration = (6 + Math.random() * 6) + "s";
+        document.body.appendChild(p);
+    }
+</script>
 
 </html>
