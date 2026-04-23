@@ -3,7 +3,8 @@ import { Market, Shop } from "./market.js";
 import { checkRole } from "./pageRole.js";
 
 
-checkRole();
+checkRole("customer");
+
 const Router = (() => {
 
     const PAGE_MAP = {
