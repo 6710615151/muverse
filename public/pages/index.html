@@ -184,10 +184,9 @@
 </body>
 
 <script type="module">
-    import { checkRole } from "./pageRole.js";
+    import { pageRole }  from "../function/pageRole.js";
 
-
-    checkRole();
+    pageRole()
 
     const btn = document.getElementById("startBtn");
     btn.addEventListener("click", () => {
