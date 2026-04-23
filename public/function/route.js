@@ -1,6 +1,9 @@
 import { Booking } from "./booking.js";
 import { Market, Shop } from "./market.js";
+import { checkRole } from "./pageRole.js";
 
+
+checkRole();
 const Router = (() => {
 
     const PAGE_MAP = {

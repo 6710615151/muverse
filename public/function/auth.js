@@ -1,6 +1,7 @@
 import { Users } from "./api.js";
 import { pageRole } from "./pageRole.js";
 
+pageRole()
 const imgs = document.querySelectorAll('.bg img');
 let cur = 0;
 
