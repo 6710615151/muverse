@@ -5,6 +5,8 @@ import { Booking } from "./booking.js";
 import { Market, Shop } from "./market.js";
 import { logout } from "./logout.js";
 import { Role } from "./changeRole.js";
+import { checkRole } from "./pageRole.js";
+import { WalletFlow } from "./wallet.js";
 
 
 // ===============================
@@ -65,8 +67,15 @@ const Router = (() => {
         shop: () => Shop.init(),
         booking: () => Booking.init(),
         nft: () => console.log("init nft"),
-        wallet: () => console.log("init wallet"),
-        user: () => Role.init(),
+
+        // ✅ รวม logic ให้ใช้ของใหม่
+        wallet: () => WalletFlow.init(),
+
+        // ✅ รวม role + checkRole
+        user: () => {
+            checkRole?.();
+            Role?.init();
+        }
     };
 
     // ---------- STATE ----------
@@ -154,8 +163,6 @@ const Router = (() => {
         const loader = getLoader();
         if (loader) loader.style.display = "none";
     }
-
-
 
 
     // ===============================

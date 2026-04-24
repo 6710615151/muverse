@@ -5,56 +5,96 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MUVERSE</title>
+
+  <!-- ICON -->
   <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
+
+  <!-- CSS -->
   <link rel="stylesheet" href="../../css/customer.css" />
 </head>
 
 <body>
 
+  <!-- ================= NAV ================= -->
   <nav class="nav" id="mainNav">
     <div class="nav__logo">
-      <div class="nav__logo-mark"><img id="logo-icon" src="../../assets/full-logo.png" alt="logo"></div>
+      <div class="nav__logo-mark">
+        <img id="logo-icon" src="../../assets/full-logo.png" alt="logo">
+      </div>
       <span class="nav__logo-text">CUSTOMER DASHBOARD</span>
     </div>
+
     <ul class="nav__links">
-      <li><a href="" class="nav__link active" data-page="market"><span class="fi fi-ts-shopping-cart"></span> MARKET
-          PLACE</a></li>
-      <li><a href="" class="nav__link" data-page="booking"><span class="fi fi-ts-reservation-table"></span> BOOKING</a>
+      <li>
+        <a href="#" class="nav__link active" data-page="market">
+          <span class="fi fi-ts-shopping-cart"></span> MARKET PLACE
+        </a>
       </li>
-      <li><a href="" class="nav__link" data-page="nft"><span class="fi fi-ts-nft-square"></span> NFT</a></li>
-      <li><a href="" class="nav__link" data-page="wallet"><span class="fi fi-ts-wallet"></span> WALLET</a></li>
-      <li><a href="" class="nav__link" data-page="user"><span class="fi fi-ts-convert-shapes"></span> CHANGE TO
-          SELLER</a></li>
-      <button id="logoutBtn" class="btn-logout" style="margin-top: 10% ;">
+
+      <li>
+        <a href="#" class="nav__link" data-page="booking">
+          <span class="fi fi-ts-reservation-table"></span> BOOKING
+        </a>
+      </li>
+
+      <li>
+        <a href="#" class="nav__link" data-page="nft">
+          <span class="fi fi-ts-nft-square"></span> NFT
+        </a>
+      </li>
+
+      <li>
+        <a href="#" class="nav__link" data-page="wallet">
+          <span class="fi fi-ts-wallet"></span> WALLET
+        </a>
+      </li>
+
+      <li>
+        <a href="#" class="nav__link" data-page="user">
+          <span class="fi fi-ts-convert-shapes"></span> CHANGE TO SELLER
+        </a>
+      </li>
+
+      <button id="logoutBtn" class="btn-logout">
         <span class="fi fi-ts-leave"></span> LOGOUT
       </button>
     </ul>
   </nav>
 
+
+  <!-- ================= MAIN ================= -->
   <main class="canvas" id="canvas">
-    <div class="canvas__loader" id="canvasLoader" >
+
+    <!-- LOADER -->
+    <div class="canvas__loader" id="canvasLoader">
       <div class="canvas__loader-inner">
         <span class="canvas__loader-mark">ใส่โลโก้</span>
         <p class="canvas__loader-text">Loading…</p>
       </div>
     </div>
 
+    <!-- CONTENT -->
     <div class="canvas__content" id="canvasContent"></div>
 
   </main>
 
-  <div class="toast" id="toast">
-</div>
-   <div id="logoutModal" class="modal" style="display: none;">
-      <div class="modal-box">
-        <p>ต้องการออกจากระบบหรือไม่</p>
-        <button id="confirmLogout">ใช่</button>
-        <button id="cancelLogout">ยกเลิก</button>
-      </div>
+
+  <!-- ================= TOAST ================= -->
+  <div class="toast" id="toast"></div>
+
+
+  <!-- ================= LOGOUT MODAL ================= -->
+  <div id="logoutModal" class="modal">
+    <div class="modal-box">
+      <p>ต้องการออกจากระบบหรือไม่</p>
+      <button id="confirmLogout">ใช่</button>
+      <button id="cancelLogout">ยกเลิก</button>
     </div>
-  <script type="module" src="../../function/route.js">
-  </script>
+  </div>
+
+
+  <!-- ================= SCRIPT ================= -->
+  <script type="module" src="../../function/route.js"></script>
 
 </body>
-
 </html>
