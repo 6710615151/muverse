@@ -1,120 +1,237 @@
+// ===============================
+// IMPORTS
+// ===============================
 import { Booking } from "./booking.js";
 import { Market, Shop } from "./market.js";
-import { checkRole } from "./pageRole.js";
+import { logout } from "./logout.js";
+import { Role } from "./changeRole.js";
 
 
-checkRole("customer");
+// ===============================
+// APP INIT
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+    initLogoutModal();
+    Router.init();
 
+    console.log(
+        "%cRouter working",
+        "color:#c9a84c;font-size:13px;font-weight:bold"
+    );
+});
+
+
+// ===============================
+// LOGOUT MODAL
+// ===============================
+function initLogoutModal() {
+    const modal = document.getElementById("logoutModal");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const cancelBtn = document.getElementById("cancelLogout");
+    const confirmBtn = document.getElementById("confirmLogout");
+
+    logoutBtn?.addEventListener("click", () => {
+        modal?.classList.add("flex");
+    });
+
+    cancelBtn?.addEventListener("click", () => {
+        modal?.classList.remove("flex");
+    });
+
+    confirmBtn?.addEventListener("click", () => {
+        logout();
+    });
+}
+
+
+// ===============================
+// ROUTER (SPA CORE)
+// ===============================
 const Router = (() => {
 
+    // ---------- CONFIG ----------
     const PAGE_MAP = {
-        //customer
-        market: '../../pages/customer/pages/market.html',
-        shop: '../../pages/customer/pages/shop.html',
-        booking: '../../pages/customer/pages/booking.html',
-        wallet: '../../pages/customer/pages/wallet.html',
-        user: '../../pages/customer/pages/user.html',
-        nft: '../../pages/customer/pages/nft.html',
+        market: "../../pages/customer/pages/market.html",
+        shop: "../../pages/customer/pages/shop.html",
+        booking: "../../pages/customer/pages/booking.html",
+        wallet: "../../pages/customer/pages/wallet.html",
+        user: "../../pages/customer/pages/user.html",
+        nft: "../../pages/customer/pages/nft.html",
+        logout: "../../pages/customer/pages/logout.html",
     };
-
-    const _canvas = () => document.getElementById('canvasContent');
-    const _loader = () => document.getElementById('canvasLoader');
-
-    const _cache = {};
 
     const PAGE_INIT = {
         market: () => Market.init(),
         shop: () => Shop.init(),
         booking: () => Booking.init(),
-        nft: () => Shop.init(),
-        wallet: () => console.log('init wallet'),
-        user: () => console.log('init user')
+        nft: () => console.log("init nft"),
+        wallet: () => console.log("init wallet"),
+        user: () => Role.init(),
     };
 
+    // ---------- STATE ----------
+    const cache = {};
+
+    // ---------- DOM ----------
+    const getCanvas = () => document.getElementById("canvasContent");
+    const getLoader = () => document.getElementById("canvasLoader");
+
+
+    // ===============================
+    // NAVIGATE
+    // ===============================
     async function navigate(pageName) {
         if (!PAGE_MAP[pageName]) return;
 
-        // active nav (ใช้ DOM เป็น source of truth)
-        document.querySelectorAll('.nav__link').forEach(l => {
-            l.classList.toggle('active', l.dataset.page === pageName);
-        });
-
-        const loader = _loader();
-        const content = _canvas();
-
-        if (loader) loader.style.display = 'flex';
-
-        if (content) {
-            content.style.opacity = '0';
-            content.style.transform = 'translateY(12px)';
-        }
+        setActiveNav(pageName);
+        showLoader();
+        animateOut();
 
         try {
-            let html = _cache[pageName];
+            const html = await loadPage(pageName);
 
-            if (!html) {
-                const res = await fetch(PAGE_MAP[pageName]);
-                if (!res.ok) throw new Error(`Failed to load ${pageName}`);
-                html = await res.text();
-                _cache[pageName] = html;
-            }
-
-            if (content) content.innerHTML = html;
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            bindLinks(content);
-
+            render(html);
+            bindLinks();
             PAGE_INIT[pageName]?.();
 
-            console.log('Navigated to:', pageName);
+            window.scrollTo(0, 0);
+
+            console.log("Navigated to:", pageName);
 
         } catch (err) {
-            console.error('[Router]', err);
-
-            if (content) {
-                content.innerHTML = `
-                <div style="padding:80px;text-align:center;color:gray">
-                    <p style="font-size:20px">โหลดหน้าไม่สำเร็จ</p>
-                    <p>ไอ้หนุ่มอย่าหลอน</p>
-                </div>`;
-            }
+            handleError(err);
         }
 
-        setTimeout(() => {
-            if (loader) loader.style.display = 'none';
-
-            if (content) {
-                content.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-                content.style.opacity = '1';
-                content.style.transform = 'translateY(0)';
-            }
-        }, 80);
+        hideLoader();
+        animateIn();
     }
 
+
+    // ===============================
+    // LOAD PAGE (with cache)
+    // ===============================
+    async function loadPage(pageName) {
+        if (cache[pageName]) return cache[pageName];
+
+        const res = await fetch(PAGE_MAP[pageName]);
+        if (!res.ok) throw new Error(`Failed to load ${pageName}`);
+
+        const html = await res.text();
+        cache[pageName] = html;
+
+        return html;
+    }
+
+
+    // ===============================
+    // RENDER
+    // ===============================
+    function render(html) {
+        const canvas = getCanvas();
+        if (canvas) canvas.innerHTML = html;
+    }
+
+
+    // ===============================
+    // NAV ACTIVE
+    // ===============================
+    function setActiveNav(pageName) {
+        document.querySelectorAll(".nav__link").forEach(link => {
+            link.classList.toggle("active", link.dataset.page === pageName);
+        });
+    }
+
+
+    // ===============================
+    // LOADER
+    // ===============================
+    function showLoader() {
+        const loader = getLoader();
+        if (loader) loader.style.display = "flex";
+    }
+
+    function hideLoader() {
+        const loader = getLoader();
+        if (loader) loader.style.display = "none";
+    }
+
+
+
+
+    // ===============================
+    // ANIMATION
+    // ===============================
+    function animateOut() {
+        const canvas = getCanvas();
+        if (!canvas) return;
+
+        canvas.style.opacity = "0";
+        canvas.style.transform = "translateY(12px)";
+    }
+
+    function animateIn() {
+        const canvas = getCanvas();
+        if (!canvas) return;
+
+        requestAnimationFrame(() => {
+            canvas.style.opacity = "1";
+            canvas.style.transform = "translateY(0)";
+        });
+    }
+
+
+    // ===============================
+    // BIND LINKS
+    // ===============================
     function bindLinks(root = document) {
-        root?.querySelectorAll('[data-page]').forEach(el => {
-            if (el.dataset.routerBound) return;
+        root.querySelectorAll("[data-page]").forEach(el => {
+            if (el.dataset.bound) return;
 
-            el.dataset.routerBound = 'true';
+            el.dataset.bound = "true";
 
-            el.addEventListener('click', (e) => {
+            el.addEventListener("click", e => {
                 e.preventDefault();
                 navigate(el.dataset.page);
             });
         });
     }
 
-    function init() {
-        bindLinks(document.getElementById('mainNav'));
-        navigate('market'); // default page
+
+    // ===============================
+    // ERROR UI
+    // ===============================
+    function handleError(err) {
+        console.error("[Router]", err);
+
+        const canvas = getCanvas();
+        if (!canvas) return;
+
+        canvas.innerHTML = `
+            <div style="padding:80px;text-align:center;color:gray">
+                <p style="font-size:20px">โหลดหน้าไม่สำเร็จ</p>
+                <p>ไอ้หนุ่มอย่าหลอน</p>
+            </div>
+        `;
     }
 
-    return { init, navigate, bindLinks };
+
+    // ===============================
+    // PUBLIC API
+    // ===============================
+    function init() {
+        bindLinks(document.getElementById("mainNav"));
+        navigate("market");
+    }
+
+    function clearCache(page) {
+        if (page) delete cache[page];
+        else Object.keys(cache).forEach(k => delete cache[k]);
+    }
+
+    return {
+        init,
+        navigate,
+        clearCache
+    };
 
 })();
-
-document.addEventListener('DOMContentLoaded', () => {
-    Router.init();
-    console.log('%cRouter working', 'color:#c9a84c;font-size:13px;font-weight:bold');
-});

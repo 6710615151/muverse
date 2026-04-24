@@ -19,20 +19,20 @@
     <ul class="nav__links">
       <li><a href="" class="nav__link active" data-page="market"><span class="fi fi-ts-shopping-cart"></span> MARKET
           PLACE</a></li>
-      <li><a href="" class="nav__link" data-page="booking"><span class="fi fi-ts-reservation-table"></span> BOOKING</a></li>
+      <li><a href="" class="nav__link" data-page="booking"><span class="fi fi-ts-reservation-table"></span> BOOKING</a>
+      </li>
       <li><a href="" class="nav__link" data-page="nft"><span class="fi fi-ts-nft-square"></span> NFT</a></li>
       <li><a href="" class="nav__link" data-page="wallet"><span class="fi fi-ts-wallet"></span> WALLET</a></li>
       <li><a href="" class="nav__link" data-page="user"><span class="fi fi-ts-convert-shapes"></span> CHANGE TO
           SELLER</a></li>
+      <button id="logoutBtn" class="btn-logout" style="margin-top: 10% ;">
+        <span class="fi fi-ts-leave"></span> LOGOUT
+      </button>
     </ul>
-    <button class="nav__burger" id="navBurger">
-      <span></span><span></span><span></span>
-    </button>
   </nav>
 
   <main class="canvas" id="canvas">
-
-    <div class="canvas__loader" id="canvasLoader">
+    <div class="canvas__loader" id="canvasLoader" >
       <div class="canvas__loader-inner">
         <span class="canvas__loader-mark">ใส่โลโก้</span>
         <p class="canvas__loader-text">Loading…</p>
@@ -43,8 +43,15 @@
 
   </main>
 
-  <div class="toast" id="toast"></div>
-
+  <div class="toast" id="toast">
+</div>
+   <div id="logoutModal" class="modal" style="display: none;">
+      <div class="modal-box">
+        <p>ต้องการออกจากระบบหรือไม่</p>
+        <button id="confirmLogout">ใช่</button>
+        <button id="cancelLogout">ยกเลิก</button>
+      </div>
+    </div>
   <script type="module" src="../../function/route.js">
   </script>
 

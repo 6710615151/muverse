@@ -170,8 +170,3 @@ suForm.addEventListener('submit', async (e) => {
     suBtn.textContent = 'Create Account';
   }
 });
-
-export function logout(){
-  localStorage.clear();
-  window.location.replace("/")
-}
