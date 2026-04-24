@@ -10,10 +10,10 @@ export function pageRole() {
     }
 }
 
-// export function checkRole(page) {
-//     const role = localStorage.getItem('role');
+export function checkRole(page) {
+    const role = localStorage.getItem('role');
 
-//     if (page !== role) {
-//         window.location.replace("/wrong");
-//     }
-// }
+    if (page !== role) {
+        window.location.replace("/wrong");
+    }
+}
