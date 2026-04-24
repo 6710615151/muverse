@@ -12,7 +12,7 @@ export async function getBalance(req, res) {
       return res.status(404).json({ success: false, message: 'ไม่พบกระเป๋าเงินในระบบ' });
     }
 
-    res.status(200).json({ success: true, balance: wallet.wallet });
+    res.status(200).json({ success: true, data: { balance: wallet.wallet } });
   } catch (error) {
     console.error("Error in getBalance:", error);
     res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดจากเซิร์ฟเวอร์' });
@@ -138,9 +138,9 @@ export async function getRecords(req, res) {
     
     const records = await WalletModel.getWalletRecords(user_id);
     
-    res.status(200).json({ 
-        success: true, 
-        transactions: records 
+    res.status(200).json({
+        success: true,
+        data: records
     });
   } catch (error) {
     console.error("Error in getRecords:", error);

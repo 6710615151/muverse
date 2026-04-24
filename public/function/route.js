@@ -1,6 +1,7 @@
 import { Booking } from "./booking.js";
 import { Market, Shop } from "./market.js";
 import { checkRole } from "./pageRole.js";
+import { WalletFlow } from "./wallet.js";
 
 
 checkRole("customer");
@@ -27,7 +28,7 @@ const Router = (() => {
         shop: () => Shop.init(),
         booking: () => Booking.init(),
         nft: () => Shop.init(),
-        wallet: () => console.log('init wallet'),
+        wallet: () => WalletFlow.init(),
         user: () => console.log('init user')
     };
 
