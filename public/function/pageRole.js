@@ -14,6 +14,6 @@ export function checkRole(page) {
     const role = localStorage.getItem('role');
 
     if (page !== role) {
-        window.location.replace("/wrong");
+      //  window.location.replace("/wrong");
     }
 }

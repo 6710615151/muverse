@@ -3,11 +3,11 @@
 // ===============================
 import { Booking } from "./booking.js";
 import { Market, Shop } from "./market.js";
-import { logout } from "./logout.js";
 import { Role } from "./changeRole.js";
 import { checkRole } from "./pageRole.js";
 import { WalletFlow } from "./wallet.js";
 
+checkRole?.();
 
 // ===============================
 // APP INIT
@@ -22,6 +22,13 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 });
 
+// ===============================
+// LOGOUT
+// ===============================
+function logout() {
+    localStorage.clear();
+    window.location.href = "/Auth/index.html";
+}
 
 // ===============================
 // LOGOUT MODAL
@@ -40,11 +47,8 @@ function initLogoutModal() {
         modal?.classList.remove("flex");
     });
 
-    confirmBtn?.addEventListener("click", () => {
-        logout();
-    });
+    confirmBtn?.addEventListener("click", logout);
 }
-
 
 // ===============================
 // ROUTER (SPA CORE)
@@ -59,32 +63,22 @@ const Router = (() => {
         wallet: "../../pages/customer/pages/wallet.html",
         user: "../../pages/customer/pages/user.html",
         nft: "../../pages/customer/pages/nft.html",
-        logout: "../../pages/customer/pages/logout.html",
     };
 
     const PAGE_INIT = {
         market: () => Market.init(),
         shop: () => Shop.init(),
         booking: () => Booking.init(),
-        nft: () => console.log("init nft"),
-
-        // ✅ รวม logic ให้ใช้ของใหม่
         wallet: () => WalletFlow.init(),
-
-        // ✅ รวม role + checkRole
-        user: () => {
-            checkRole?.();
-            Role?.init();
-        }
+        nft: () => console.log("init nft"),
+        user: () => requestAnimationFrame(() => Role?.init())
     };
 
-    // ---------- STATE ----------
     const cache = {};
+    const MAX_CACHE = 5;
 
-    // ---------- DOM ----------
     const getCanvas = () => document.getElementById("canvasContent");
     const getLoader = () => document.getElementById("canvasLoader");
-
 
     // ===============================
     // NAVIGATE
@@ -100,60 +94,64 @@ const Router = (() => {
             const html = await loadPage(pageName);
 
             render(html);
-            bindLinks();
             PAGE_INIT[pageName]?.();
 
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: "smooth" });
 
-            console.log("Navigated to:", pageName);
+            console.log(`%c→ ${pageName}`, "color:#00ffcc");
 
         } catch (err) {
             handleError(err);
         }
 
-        hideLoader();
         animateIn();
+
+        setTimeout(() => {
+            hideLoader();
+        }, 200);
     }
 
-
     // ===============================
-    // LOAD PAGE (with cache)
+    // LOAD PAGE
     // ===============================
     async function loadPage(pageName) {
         if (cache[pageName]) return cache[pageName];
 
-        const res = await fetch(PAGE_MAP[pageName]);
-        if (!res.ok) throw new Error(`Failed to load ${pageName}`);
+        const url = PAGE_MAP[pageName];
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            console.error("Failed URL:", url);
+            throw new Error(`Failed to load ${pageName}`);
+        }
 
         const html = await res.text();
-        cache[pageName] = html;
+        setCache(pageName, html);
 
         return html;
     }
 
+    function setCache(key, value) {
+        if (Object.keys(cache).length >= MAX_CACHE) {
+            delete cache[Object.keys(cache)[0]];
+        }
+        cache[key] = value;
+    }
 
     // ===============================
-    // RENDER
+    // UI HELPERS
     // ===============================
     function render(html) {
         const canvas = getCanvas();
         if (canvas) canvas.innerHTML = html;
     }
 
-
-    // ===============================
-    // NAV ACTIVE
-    // ===============================
     function setActiveNav(pageName) {
         document.querySelectorAll(".nav__link").forEach(link => {
             link.classList.toggle("active", link.dataset.page === pageName);
         });
     }
 
-
-    // ===============================
-    // LOADER
-    // ===============================
     function showLoader() {
         const loader = getLoader();
         if (loader) loader.style.display = "flex";
@@ -164,10 +162,6 @@ const Router = (() => {
         if (loader) loader.style.display = "none";
     }
 
-
-    // ===============================
-    // ANIMATION
-    // ===============================
     function animateOut() {
         const canvas = getCanvas();
         if (!canvas) return;
@@ -186,27 +180,19 @@ const Router = (() => {
         });
     }
 
-
     // ===============================
-    // BIND LINKS
+    // EVENT DELEGATION (สำคัญ)
     // ===============================
-    function bindLinks(root = document) {
-        root.querySelectorAll("[data-page]").forEach(el => {
-            if (el.dataset.bound) return;
+    function bindLinks() {
+        document.addEventListener("click", e => {
+            const el = e.target.closest("[data-page]");
+            if (!el) return;
 
-            el.dataset.bound = "true";
-
-            el.addEventListener("click", e => {
-                e.preventDefault();
-                navigate(el.dataset.page);
-            });
+            e.preventDefault();
+            navigate(el.dataset.page);
         });
     }
 
-
-    // ===============================
-    // ERROR UI
-    // ===============================
     function handleError(err) {
         console.error("[Router]", err);
 
@@ -221,12 +207,8 @@ const Router = (() => {
         `;
     }
 
-
-    // ===============================
-    // PUBLIC API
-    // ===============================
     function init() {
-        bindLinks(document.getElementById("mainNav"));
+        bindLinks();
         navigate("market");
     }
 
