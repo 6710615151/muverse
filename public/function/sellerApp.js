@@ -1,115 +1,182 @@
-import { Booking } from "./booking.js";
-import { Market, Shop } from "./market.js";
+// ===============================
+// IMPORTS
+// ===============================
 import { checkRole } from "./pageRole.js";
+import { WalletFlow } from "./wallet.js";
+import { Logout } from "./logout.js";
 
+// ===============================
+// START CHECK ROLE
+// ===============================
+checkRole?.();
 
-checkRole("seller");
-
+// ===============================
+// ROUTER OBJECT
+// ===============================
 const Router = (() => {
 
     const PAGE_MAP = {
-        stock: '../../pages/seller/pages/stock.html',
-        accept: '../../pages/seller/pages/accept.html'
+        stock: "../../pages/seller/pages/stock.html",
+        accept: "../../pages/seller/pages/accept.html",
+        wallet: "../../pages/seller/pages/wallet.html",
+        user: "../../pages/seller/pages/user.html",
+        logout: "../../pages/seller/pages/logout.html",
     };
-
-    const _canvas = () => document.getElementById('canvasContent');
-    const _loader = () => document.getElementById('canvasLoader');
-
-    const _cache = {};
 
     const PAGE_INIT = {
-        market: () => Market.init(),
-        shop: () => Shop.init(),
-        booking: () => Booking.init(),
-        nft: () => Shop.init(),
-        wallet: () => console.log('init wallet'),
-        user: () => console.log('init user')
+        wallet: () => WalletFlow.init(),
+        user: () => requestAnimationFrame(() => Role?.init()),
+        logout: () => requestAnimationFrame(() => Logout.init()),
     };
 
+    const cache = {};
+    const MAX_CACHE = 5;
+
+    const getCanvas = () => document.getElementById("canvasContent");
+    const getLoader = () => document.getElementById("canvasLoader");
+
+    // ===============================
+    // NAVIGATE
+    // ===============================
     async function navigate(pageName) {
-        if (!PAGE_MAP[pageName]) return;
 
-        // active nav (ใช้ DOM เป็น source of truth)
-        document.querySelectorAll('.nav__link').forEach(l => {
-            l.classList.toggle('active', l.dataset.page === pageName);
-        });
-
-        const loader = _loader();
-        const content = _canvas();
-
-        if (loader) loader.style.display = 'flex';
-
-        if (content) {
-            content.style.opacity = '0';
-            content.style.transform = 'translateY(12px)';
+        if (!PAGE_MAP[pageName]) {
+            console.warn("Page not found → fallback to market");
+            pageName = "market";
         }
 
+        setActiveNav(pageName);
+        showLoader();
+        animateOut();
+
         try {
-            let html = _cache[pageName];
+            const html = await loadPage(pageName);
 
-            if (!html) {
-                const res = await fetch(PAGE_MAP[pageName]);
-                if (!res.ok) throw new Error(`Failed to load ${pageName}`);
-                html = await res.text();
-                _cache[pageName] = html;
-            }
-
-            if (content) content.innerHTML = html;
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            bindLinks(content);
+            render(html);
 
             PAGE_INIT[pageName]?.();
 
-            console.log('Navigated to:', pageName);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+
+            console.log(`→ ${pageName}`);
 
         } catch (err) {
-            console.error('[Router]', err);
-
-            if (content) {
-                content.innerHTML = `
-                <div style="padding:80px;text-align:center;color:gray">
-                    <p style="font-size:20px">โหลดหน้าไม่สำเร็จ</p>
-                    <p>ไอ้หนุ่มอย่าหลอน</p>
-                </div>`;
-            }
+            handleError(err);
+        } finally {
+            animateIn();
+            hideLoader();
         }
-
-        setTimeout(() => {
-            if (loader) loader.style.display = 'none';
-
-            if (content) {
-                content.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-                content.style.opacity = '1';
-                content.style.transform = 'translateY(0)';
-            }
-        }, 80);
     }
 
-    function bindLinks(root = document) {
-        root?.querySelectorAll('[data-page]').forEach(el => {
-            if (el.dataset.routerBound) return;
+    // ===============================
+    // LOAD PAGE
+    // ===============================
+    async function loadPage(pageName) {
+        if (cache[pageName]) return cache[pageName];
 
-            el.dataset.routerBound = 'true';
+        const url = PAGE_MAP[pageName];
+        console.log("LOADING:", url);
 
-            el.addEventListener('click', (e) => {
-                e.preventDefault();
-                navigate(el.dataset.page);
-            });
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            console.error("Failed URL:", url);
+            throw new Error(`Failed to load ${pageName}`);
+        }
+
+        const html = await res.text();
+        setCache(pageName, html);
+
+        return html;
+    }
+
+    function setCache(key, value) {
+        if (Object.keys(cache).length >= MAX_CACHE) {
+            delete cache[Object.keys(cache)[0]];
+        }
+        cache[key] = value;
+    }
+
+    function render(html) {
+        const canvas = getCanvas();
+        if (canvas) canvas.innerHTML = html;
+    }
+
+    function setActiveNav(pageName) {
+        document.querySelectorAll(".nav__link").forEach(link => {
+            link.classList.toggle("active", link.dataset.page === pageName);
         });
     }
 
-    function init() {
-        bindLinks(document.getElementById('mainNav'));
-        navigate('stock'); // default page
+    function showLoader() {
+        const loader = getLoader();
+        if (loader) loader.style.display = "flex";
     }
 
-    return { init, navigate, bindLinks };
+    function hideLoader() {
+        const loader = getLoader();
+        if (loader) loader.style.display = "none";
+    }
+
+    function animateOut() {
+        const canvas = getCanvas();
+        if (!canvas) return;
+
+        canvas.style.opacity = "0";
+        canvas.style.transform = "translateY(12px)";
+    }
+
+    function animateIn() {
+        const canvas = getCanvas();
+        if (!canvas) return;
+
+        requestAnimationFrame(() => {
+            canvas.style.opacity = "1";
+            canvas.style.transform = "translateY(0)";
+        });
+    }
+
+    // ===============================
+    // CLICK BIND
+    // ===============================
+    function bindLinks() {
+        document.addEventListener("click", e => {
+            const el = e.target.closest("[data-page]");
+
+            if (!el) return;
+
+            e.preventDefault();
+            navigate(el.dataset.page);
+        });
+    }
+
+    function handleError(err) {
+        console.error("[Router]", err);
+
+        const canvas = getCanvas();
+        if (!canvas) return;
+
+        canvas.innerHTML = `
+            <div style="padding:80px;text-align:center;color:gray">
+                <p style="font-size:20px">โหลดหน้าไม่สำเร็จ</p>
+                <p>path ผิด หรือไฟล์ไม่มี</p>
+            </div>
+        `;
+    }
+
+    function init() {
+        bindLinks();
+        navigate("stock");
+    }
+
+    return {
+        init,
+        navigate
+    };
 
 })();
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     Router.init();
-    console.log('%cRouter working', 'color:#c9a84c;font-size:13px;font-weight:bold');
 });
+
+window.Router = Router;
