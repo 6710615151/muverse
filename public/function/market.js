@@ -12,37 +12,42 @@ function productCardHTML(stock) {
   const num = imgNum(stock.stock_id);
   const isOut = stock.stock_quantity <= 0 || stock.stock_status === 'out_of_stock';
   const price = Number(stock.price).toLocaleString('th-TH', { minimumFractionDigits: 0 });
-  const shopName = stock.shop_name ?? `ร้าน #${stock.seller_id}`;
+  const shopName = stock.shop_name ?? ` #${stock.seller_id}`;
   const rating = stock.rating ? `⭐${stock.rating}` : '';
   const isNew = stock.stock_status === 'new';
 
   return `
-    <div class="product-card" data-stock-id="${stock.stock_id}">
+    <div class="product-card" data-stock-id="${stock.stock_id}" style="display: flex;
+  flex-direction: column;
+  height: 400px;">
       <div class="product-card__img">
         ${stock.url
-          ? `<img src="${stock.url}" alt="${stock.item_name}" loading="lazy" onerror="this.style.display='none'">`
+          ? `<img src="${stock.url}" alt="${stock.item_name}" loading="lazy" style="border-radius: 7px;" onerror="this.style.display='none'">`
           : `<div class="product-card__img-placeholder product-card__img--${num}"></div>`}
         ${isOut  ? `<span class="product-card__tag">หมด</span>` : ''}
         ${isNew  ? `<span class="product-card__tag product-card__tag--new">ใหม่</span>` : ''}
 
       </div>
       <div class="product-card__body">
-        <p class="product-card__brand">
+        
+        <h3 class="product-card__name" style="font-size: 1.1rem; font-weight: 400;margin-bottom: 3px;">${stock.item_name}</h3>
+        <p class="product-card__brand" style="font-size:0.8rem;">
           <a href="#" class="shop-link"
             data-seller-id="${stock.seller_id}"
-            data-seller-name="${shopName}">${shopName}</a>
+            data-seller-name="${shopName}" style="color: #ffffff94; text-decoration: none;">
+            ${shopName}
+          </a>
         </p>
-        <h3 class="product-card__name">${stock.item_name}</h3>
-        <p class="product-card__stars">${rating}</p>
-        <div class="product-card__price-row">
-          <span class="product-card__price">฿${price}</span>
+        <!-- <p class="product-card__stars">${rating}</p> -->
+        <div class="product-card__price-row" style="margin-top:4px;margin-bottom: 4px;">
+          <span class="product-card__price" style="font-size: 1.2rem; font-weight: 600;">฿${price}</span>
         </div>
-        <div class="service-card__footer">
-          <span class="status-badge ${isOut ? 'status-badge--pending' : 'status-badge--confirmed'}">
-            ${isOut ? 'หมดชั่วคราว' : `มี ${stock.stock_quantity} ชิ้น`}
+        <div class="service-card__footer" style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <span class="status-badge ${isOut ? 'status-badge--pending' : 'status-badge--confirmed'}" style="font-size: 0.85rem; font-color: #ffffffa4;margin-right: 100px;">
+            ${isOut ? 'sold out' : `have ${stock.stock_quantity} piece${stock.stock_quantity > 1 ? 's' : ''}`}
           </span>
           ${!isOut
-            ? `<button class="btn btn--primary btn--sm" data-order-stock="${stock.stock_id}">สั่งซื้อ</button>`
+            ? `<button class="btn btn--primary btn--sm" data-order-stock="${stock.stock_id}">Buy</button>`
             : ''}
         </div>
       </div>
