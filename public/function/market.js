@@ -51,7 +51,8 @@ function productCardHTML(stock) {
 
 function renderEmpty(msg = 'ไม่พบสินค้า') {
   return `<div style="grid-column:1/-1;padding:80px;text-align:center;color:var(--clr-text-muted)">
-    <p style="font-size:1.8rem;margin-bottom:10px">🔍</p>
+    <div style="padding:10px"><span style="font-size: 2rem;color:#ffffff;margin-right: 2px;font-size:0.82rem;font-weight:500;letter-spacing:0.05em;
+      text-transform:uppercase;margin-bottom:10px" class="fi fi-ts-search"></span></div>
     <p>${msg}</p>
   </div>`;
 }
@@ -210,7 +211,7 @@ export const Market = {
         const extra = cats
           .map(c => `<button class="filter-tab" data-cat-id="${c.category_id}">${c.name}</button>`)
           .join('');
-        tabs.innerHTML = `<button class="filter-tab active" data-cat-id="all">✦ ทั้งหมด</button>${extra}`;
+        tabs.innerHTML = `<button class="filter-tab active" data-cat-id="all">✦ All</button>${extra}`;
 
         tabs.querySelectorAll('.filter-tab').forEach(btn => {
           btn.addEventListener('click', () => {
@@ -311,6 +312,11 @@ export const Market = {
 let _shopAll = [];
 let _shopSearch = '';
 let _shopSort = '';
+let _shopMaxPrice = 10000;
+let _shopShowAvail = true;
+let _shopShowOut = false;
+let _shopDetailStock = null;
+let _shopPendingOrderStock = null;
 
 function shopFilter() {
   let items = [..._shopAll];
@@ -319,6 +325,15 @@ function shopFilter() {
     const q = _shopSearch.toLowerCase();
     items = items.filter(s => s.item_name?.toLowerCase().includes(q));
   }
+
+  items = items.filter(s => Number(s.price) <= _shopMaxPrice);
+
+  items = items.filter(s => {
+    const avail = s.stock_quantity > 0 && s.stock_status !== 'out_of_stock';
+    if (_shopShowAvail && avail) return true;
+    if (_shopShowOut && !avail) return true;
+    return false;
+  });
 
   if (_shopSort === 'price-asc') items.sort((a, b) => a.price - b.price);
   if (_shopSort === 'price-desc') items.sort((a, b) => b.price - a.price);
@@ -329,30 +344,80 @@ function shopFilter() {
 
 function shopRender() {
   const grid = document.getElementById('shop-grid');
+  const count = document.getElementById('shop-count');
   if (!grid) return;
   const items = shopFilter();
+  if (count) count.textContent = items.length;
   grid.innerHTML = items.length
     ? items.map(productCardHTML).join('')
     : renderEmpty('ไม่มีสินค้าในร้านนี้');
+}
+
+function openShopDetailPopup(stock) {
+  _shopDetailStock = stock;
+  const isOut = stock.stock_quantity <= 0 || stock.stock_status === 'out_of_stock';
+  const num = imgNum(stock.stock_id);
+  const price = Number(stock.price).toLocaleString('th-TH', { minimumFractionDigits: 0 });
+
+  const imgEl = document.getElementById('shop-detail-popup-img');
+  if (imgEl) {
+    imgEl.innerHTML = stock.url
+      ? `<img src="${stock.url}" alt="${stock.item_name}" onerror="this.style.display='none'">`
+      : `<div class="product-card__img-placeholder product-card__img--${num}" style="width:100%;height:100%"></div>`;
+  }
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('shop-detail-popup-brand', stock.shop_name ?? '');
+  set('shop-detail-popup-title', stock.item_name);
+  set('shop-detail-popup-stars', stock.rating ? `⭐ ${stock.rating}` : '');
+  set('shop-detail-popup-price', `฿${price}`);
+
+  const badge = document.getElementById('shop-detail-popup-badge');
+  if (badge) {
+    badge.textContent = isOut ? 'หมดชั่วคราว' : `มี ${stock.stock_quantity} ชิ้น`;
+    badge.className = `detail-popup__badge status-badge ${isOut ? 'status-badge--pending' : 'status-badge--confirmed'}`;
+  }
+
+  const orderBtn = document.getElementById('shop-detail-popup-order-btn');
+  if (orderBtn) orderBtn.disabled = isOut;
+
+  document.getElementById('shop-detail-overlay')?.classList.add('open');
+  document.getElementById('shop-detail-popup')?.classList.add('open');
+}
+
+function closeShopDetailPopup() {
+  _shopDetailStock = null;
+  document.getElementById('shop-detail-overlay')?.classList.remove('open');
+  document.getElementById('shop-detail-popup')?.classList.remove('open');
+}
+
+function openShopOrderPopup(stock) {
+  _shopPendingOrderStock = stock;
+  const itemEl = document.getElementById('shop-order-popup-item');
+  const priceEl = document.getElementById('shop-order-popup-price');
+  if (itemEl) itemEl.textContent = stock.item_name;
+  if (priceEl) priceEl.textContent = `฿${Number(stock.price).toLocaleString('th-TH')}`;
+  document.getElementById('shop-order-overlay')?.classList.add('open');
+  document.getElementById('shop-order-popup')?.classList.add('open');
+}
+
+function closeShopOrderPopup() {
+  _shopPendingOrderStock = null;
+  document.getElementById('shop-order-overlay')?.classList.remove('open');
+  document.getElementById('shop-order-popup')?.classList.remove('open');
 }
 
 export const Shop = {
   async init() {
     _shopSearch = '';
     _shopSort = '';
+    _shopMaxPrice = 10000;
+    _shopShowAvail = true;
+    _shopShowOut = false;
 
     const sellerId = window._shopSellerId;
-    const sellerName = window._shopSellerName ?? `ร้าน #${sellerId}`;
 
-    const nameEl = document.getElementById('shop-name');
-    const avatarEl = document.getElementById('shop-avatar');
-    const countEl = document.getElementById('shop-item-count');
-    const backBtn = document.getElementById('shop-back-btn');
-
-    if (nameEl) nameEl.textContent = sellerName;
-    if (avatarEl) avatarEl.textContent = sellerName?.[0]?.toUpperCase() ?? '?';
-
-    backBtn?.addEventListener('click', () => window.Router?.navigate('market'));
+    document.getElementById('shop-back-btn')?.addEventListener('click', () => window.Router?.navigate('market'));
 
     if (!sellerId) {
       const grid = document.getElementById('shop-grid');
@@ -364,12 +429,16 @@ export const Shop = {
       const stocks = await Stock.getBySeller(sellerId);
       _shopAll = stocks ?? [];
 
-      if (countEl) countEl.textContent = `${_shopAll.length} รายการสินค้า`;
+      const shopName = _shopAll[0]?.shop_name && !_shopAll[0].shop_name.startsWith('http')
+        ? _shopAll[0].shop_name
+        : (window._shopSellerName && !window._shopSellerName.startsWith('http')
+            ? window._shopSellerName
+            : `ร้านค้า`);
 
-      const ratingEl = document.getElementById('shop-rating');
-      if (ratingEl && _shopAll[0]?.rating) {
-        ratingEl.textContent = `⭐ ${_shopAll[0].rating}`;
-      }
+      const nameEl = document.getElementById('shop-name');
+      const countEl = document.getElementById('shop-item-count');
+      if (nameEl) nameEl.textContent = shopName;
+      if (countEl) countEl.textContent = `${_shopAll.length} รายการสินค้า`;
 
       shopRender();
     } catch (err) {
@@ -378,6 +447,7 @@ export const Shop = {
       if (grid) grid.innerHTML = renderError();
     }
 
+    // Search & sort
     document.getElementById('shop-search')?.addEventListener('input', e => {
       _shopSearch = e.target.value;
       shopRender();
@@ -386,6 +456,65 @@ export const Shop = {
     document.getElementById('shop-sort')?.addEventListener('change', e => {
       _shopSort = e.target.value;
       shopRender();
+    });
+
+    // Price range
+    const priceRange = document.getElementById('shop-price-range');
+    const priceDisplay = document.getElementById('shop-price-display');
+    priceRange?.addEventListener('input', e => {
+      _shopMaxPrice = Number(e.target.value);
+      if (priceDisplay) priceDisplay.textContent = `฿${_shopMaxPrice.toLocaleString()}`;
+      shopRender();
+    });
+
+    // Stock filter
+    document.getElementById('shop-filter-available')?.addEventListener('change', e => {
+      _shopShowAvail = e.target.checked;
+      shopRender();
+    });
+    document.getElementById('shop-filter-outofstock')?.addEventListener('change', e => {
+      _shopShowOut = e.target.checked;
+      shopRender();
+    });
+
+    // Filter sidebar
+    const filterSidebar = document.getElementById('shop-filter-sidebar');
+    const filterBackdrop = document.getElementById('shop-filter-backdrop');
+    const openFilter = () => { filterSidebar?.classList.add('open'); filterBackdrop?.classList.add('open'); };
+    const closeFilter = () => { filterSidebar?.classList.remove('open'); filterBackdrop?.classList.remove('open'); };
+    document.getElementById('shop-filter-toggle-btn')?.addEventListener('click', () =>
+      filterSidebar?.classList.contains('open') ? closeFilter() : openFilter()
+    );
+    document.getElementById('shop-filter-close-btn')?.addEventListener('click', closeFilter);
+    filterBackdrop?.addEventListener('click', closeFilter);
+
+    // Detail popup
+    document.getElementById('shop-detail-overlay')?.addEventListener('click', closeShopDetailPopup);
+    document.getElementById('shop-detail-close-btn')?.addEventListener('click', closeShopDetailPopup);
+    document.getElementById('shop-detail-popup-order-btn')?.addEventListener('click', () => {
+      if (_shopDetailStock) openShopOrderPopup(_shopDetailStock);
+    });
+
+    // Order popup
+    document.getElementById('shop-order-overlay')?.addEventListener('click', closeShopOrderPopup);
+    document.getElementById('shop-order-popup-cancel')?.addEventListener('click', closeShopOrderPopup);
+    document.getElementById('shop-order-popup-confirm')?.addEventListener('click', async () => {
+      if (_shopPendingOrderStock) await handleConfirmOrder(_shopPendingOrderStock);
+      closeShopOrderPopup();
+    });
+
+    // Grid clicks
+    document.getElementById('shop-grid')?.addEventListener('click', e => {
+      if (e.target.closest('[data-order-stock]')) {
+        const stockId = e.target.closest('[data-order-stock]').dataset.orderStock;
+        const stock = _shopAll.find(s => String(s.stock_id) === String(stockId));
+        if (stock) openShopOrderPopup(stock);
+        return;
+      }
+      const card = e.target.closest('[data-stock-id]');
+      if (!card) return;
+      const stock = _shopAll.find(s => String(s.stock_id) === String(card.dataset.stockId));
+      if (stock) openShopDetailPopup(stock);
     });
   }
 };
