@@ -1128,7 +1128,7 @@ img {
   font-family: "Segoe UI", sans-serif;
 
   overflow: hidden;
-  /* 🔥 ตัด glow ที่ล้น */
+  
 }
 
 #user::before {
