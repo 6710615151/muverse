@@ -1,10 +1,4 @@
 import { Wallet } from './api.js';
-if (!document.querySelector('link[href*="wallet.css"]')) {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = '../../css/wallet.css';
-    document.head.appendChild(link);
-}
 
 
 export const WalletFlow = {
@@ -16,62 +10,14 @@ export const WalletFlow = {
     init: async () => {
         console.log("Wallet Flow Starting...");
 
-        const oldModal = document.body.querySelector('#walletModal');
-        if (oldModal) oldModal.remove();
-
-        const modal = document.getElementById('walletModal');
-        if (modal) document.body.appendChild(modal);
-        await WalletFlow.loadBalance();
-        await WalletFlow.loadHistory();
         WalletFlow.loadPaymentMethods();
         document.getElementById('btn-add-payment').addEventListener('click', WalletFlow.addPaymentMethod);
         WalletFlow.setupEvents();
+
+        await WalletFlow.loadBalance();
+        await WalletFlow.loadHistory();
     },
 
-    //ฟังก์ชันสร้างหน้าต่างป๊อปอัป พวกกดตกลงยกเลิก 
-    showModal: (title, label, placeholder, inputType = 'text') => {
-        return new Promise((resolve) => {
-            const overlay = document.getElementById('walletModal');
-
-            document.getElementById('walletModalTitle').textContent = title;
-            document.getElementById('walletModalLabel').textContent = label;
-
-            const input = document.getElementById('walletModalInput');
-            input.type = inputType;
-            input.placeholder = placeholder;
-            input.value = '';
-
-            overlay.classList.add('active');
-            input.focus(); //พร้อมกอก 
-
-            const close = (value) => {
-                overlay.classList.remove('active');
-
-
-                btnConfirm.removeEventListener('click', onConfirm);
-                btnCancel.removeEventListener('click', onCancel);
-                overlay.removeEventListener('click', onOverlay);
-                input.removeEventListener('keydown', onKey);
-
-                resolve(value);
-            };
-
-            const onConfirm = () => close(input.value);
-            const onCancel = () => close(null);
-            const onOverlay = (e) => { if (e.target === overlay) close(null); };
-            const onKey = (e) => {
-                if (e.key === 'Enter') close(input.value);
-                if (e.key === 'Escape') close(null);
-            };
-
-            const btnConfirm = document.getElementById('walletModalConfirm');
-            const btnCancel = document.getElementById('walletModalCancel');
-            btnConfirm.addEventListener('click', onConfirm);
-            btnCancel.addEventListener('click', onCancel);
-            overlay.addEventListener('click', onOverlay);
-            input.addEventListener('keydown', onKey);
-        });
-    },
 
     //แสดงยอดเงิน
     loadBalance: async () => {
@@ -155,7 +101,7 @@ export const WalletFlow = {
     //ฟังก์ชันสำหรับการเพิ่มธนาคาร/ช่องทางใหม่ (หลอก)
     addPaymentMethod: async () => {
 
-        const provider = await WalletFlow.showModal('Add Payment Method', 'Provider name', 'e.g. KBank, TrueMoney');
+        const provider = prompt('Provider name (e.g. KBank, TrueMoney)');
         if (!provider || !provider.trim()) return;
 
         const stored = localStorage.getItem('muverse_payments');
@@ -197,7 +143,7 @@ export const WalletFlow = {
         //ฝากเงิน
         const btnDeposit = document.getElementById('btn-deposit');
         btnDeposit.addEventListener('click', async () => {
-            const amountStr = await WalletFlow.showModal('Deposit', 'Amount (฿)', '0.00', 'number');
+            const amountStr = prompt('Deposit - Amount (฿)');
             if (!amountStr) return;
 
             const amount = parseFloat(amountStr);
@@ -224,7 +170,7 @@ export const WalletFlow = {
         //ถอนเงิน
         const btnWithdraw = document.getElementById('btn-withdraw');
         btnWithdraw.addEventListener('click', async () => {
-            const amountStr = await WalletFlow.showModal('Withdraw', 'Amount (฿)', '0.00', 'number');
+            const amountStr = prompt('Withdraw - Amount (฿)');
             if (!amountStr) return;
 
             const amount = parseFloat(amountStr);
