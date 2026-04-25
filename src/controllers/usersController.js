@@ -42,7 +42,6 @@ export async function create(req, res) {
             phone
         );
 
-        await walletModel.createWallet(user.id);
 
         res.status(201).json({ success: true, data: user });
 
