@@ -1,18 +1,10 @@
-// ===============================
-// IMPORTS
-// ===============================
 import { checkRole } from "./pageRole.js";
 import { WalletFlow } from "./wallet.js";
 import { Logout } from "./logout.js";
+import { SellerStock } from "./stockManager.js";
 
-// ===============================
-// START CHECK ROLE
-// ===============================
 checkRole?.();
 
-// ===============================
-// ROUTER OBJECT
-// ===============================
 const Router = (() => {
 
     const PAGE_MAP = {
@@ -24,9 +16,17 @@ const Router = (() => {
     };
 
     const PAGE_INIT = {
+        stock: () => SellerStock.init(),
+
         wallet: () => WalletFlow.init(),
-        user: () => requestAnimationFrame(() => Role?.init()),
-        logout: () => requestAnimationFrame(() => Logout.init()),
+
+        user: () => requestAnimationFrame(() => {
+            if (typeof Role !== "undefined") Role.init();
+        }),
+
+        logout: () => requestAnimationFrame(() => {
+            Logout.init();
+        }),
     };
 
     const cache = {};
@@ -35,14 +35,12 @@ const Router = (() => {
     const getCanvas = () => document.getElementById("canvasContent");
     const getLoader = () => document.getElementById("canvasLoader");
 
-    // ===============================
-    // NAVIGATE
-    // ===============================
+
     async function navigate(pageName) {
 
         if (!PAGE_MAP[pageName]) {
-            console.warn("Page not found → fallback to market");
-            pageName = "market";
+            console.warn("Page not found → fallback to stock");
+            pageName = "stock";
         }
 
         setActiveNav(pageName);
@@ -68,9 +66,6 @@ const Router = (() => {
         }
     }
 
-    // ===============================
-    // LOAD PAGE
-    // ===============================
     async function loadPage(pageName) {
         if (cache[pageName]) return cache[pageName];
 
@@ -136,9 +131,6 @@ const Router = (() => {
         });
     }
 
-    // ===============================
-    // CLICK BIND
-    // ===============================
     function bindLinks() {
         document.addEventListener("click", e => {
             const el = e.target.closest("[data-page]");
@@ -175,6 +167,7 @@ const Router = (() => {
     };
 
 })();
+
 document.addEventListener("DOMContentLoaded", () => {
     Router.init();
 });

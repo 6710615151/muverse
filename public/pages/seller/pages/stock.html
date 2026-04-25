@@ -41,6 +41,15 @@
               <option value="out_of_stock">หมด</option>
             </select>
           </div>
+          <div class="form-field form-field--full">
+            <label class="form-label">รูปภาพสินค้า</label>
+            <input type="file" id="f-image" accept="image/*" class="form-input" style="padding:6px">
+            <div style="display:flex;align-items:center;gap:14px;margin-top:10px">
+              <img id="img-preview" src="" alt="preview"
+                style="display:none;width:100px;height:100px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.1)">
+              <p id="upload-result" style="font-size:0.82rem;opacity:0.65"></p>
+            </div>
+          </div>
         </div>
         <div class="btn-row" style="margin-top:16px">
           <button type="button" class="btn btn--ghost" id="modal-cancel-btn">ยกเลิก</button>
