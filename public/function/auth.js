@@ -96,7 +96,7 @@ siForm.addEventListener('submit', async (e) => {
 
     console.log("LOGIN RAW:", user);
 
-    localStorage.setItem('id', user.id);
+    localStorage.setItem('user_id', user.id);
     localStorage.setItem('role', user.role);
 
     showMsg(siMsg, 'Login successful! Redirecting…', 'success');

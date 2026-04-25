@@ -9,7 +9,7 @@ function init() {
 
     btn.addEventListener("click", async () => {
         try {
-            const id = localStorage.getItem("id");
+            const id = localStorage.getItem('user_id');
             console.log(id);
             const res = await Users.toggleRole(id);
             const data = await res.json();
