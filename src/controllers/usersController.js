@@ -42,6 +42,7 @@ export async function create(req, res) {
             phone
         );
 
+
         res.status(201).json({ success: true, data: user });
 
     } catch (err) {
