@@ -11,11 +11,11 @@ function init() {
         try {
             const id = localStorage.getItem('user_id');
             console.log(id);
-            
-            const data = await Users.toggleRole(id);
 
-            const role = data[0].role; 
-            
+            const data = await Users.toggleRole(id);
+            console.log(data);
+            const role = data[0].role;
+
             localStorage.setItem("role", role);
             console.log("Current role:", role);
 
