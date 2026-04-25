@@ -24,7 +24,7 @@ function productCardHTML(stock) {
           : `<div class="product-card__img-placeholder product-card__img--${num}"></div>`}
         ${isOut  ? `<span class="product-card__tag">หมด</span>` : ''}
         ${isNew  ? `<span class="product-card__tag product-card__tag--new">ใหม่</span>` : ''}
-        <button class="product-card__wish" title="ถูกใจ">♡</button>
+
       </div>
       <div class="product-card__body">
         <p class="product-card__brand">
@@ -72,6 +72,73 @@ function bindShopLinks(root) {
       window.Router?.navigate('shop');
     });
   });
+}
+
+// ─── Product detail popup ─────────────────────────────────────────────────────
+
+let _detailStock = null;
+
+function openDetailPopup(stock) {
+  _detailStock = stock;
+  const isOut = stock.stock_quantity <= 0 || stock.stock_status === 'out_of_stock';
+  const num = imgNum(stock.stock_id);
+  const price = Number(stock.price).toLocaleString('th-TH', { minimumFractionDigits: 0 });
+  const shopName = stock.shop_name ?? `ร้าน #${stock.seller_id}`;
+
+  const imgEl = document.getElementById('detail-popup-img');
+  if (imgEl) {
+    imgEl.innerHTML = stock.url
+      ? `<img src="${stock.url}" alt="${stock.item_name}" onerror="this.style.display='none'">`
+      : `<div class="product-card__img-placeholder product-card__img--${num}" style="width:100%;height:100%"></div>`;
+  }
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('detail-popup-brand', shopName);
+  set('detail-popup-title', stock.item_name);
+  set('detail-popup-stars', stock.rating ? `⭐ ${stock.rating}` : '');
+  set('detail-popup-price', `฿${price}`);
+
+  const badge = document.getElementById('detail-popup-badge');
+  if (badge) {
+    badge.textContent = isOut ? 'หมดชั่วคราว' : `มี ${stock.stock_quantity} ชิ้น`;
+    badge.className = `detail-popup__badge status-badge ${isOut ? 'status-badge--pending' : 'status-badge--confirmed'}`;
+  }
+
+  const orderBtn = document.getElementById('detail-popup-order-btn');
+  if (orderBtn) orderBtn.disabled = isOut;
+
+  document.getElementById('detail-overlay')?.classList.add('open');
+  document.getElementById('detail-popup')?.classList.add('open');
+}
+
+function closeDetailPopup() {
+  _detailStock = null;
+  document.getElementById('detail-overlay')?.classList.remove('open');
+  document.getElementById('detail-popup')?.classList.remove('open');
+}
+
+// ─── Order confirmation popup ─────────────────────────────────────────────────
+
+let _pendingOrderStock = null;
+
+function openOrderPopup(stock) {
+  _pendingOrderStock = stock;
+  const itemEl = document.getElementById('order-popup-item');
+  const priceEl = document.getElementById('order-popup-price');
+  if (itemEl) itemEl.textContent = stock.item_name;
+  if (priceEl) priceEl.textContent = `฿${Number(stock.price).toLocaleString('th-TH')}`;
+  document.getElementById('order-overlay')?.classList.add('open');
+  document.getElementById('order-popup')?.classList.add('open');
+}
+
+function closeOrderPopup() {
+  _pendingOrderStock = null;
+  document.getElementById('order-overlay')?.classList.remove('open');
+  document.getElementById('order-popup')?.classList.remove('open');
+}
+
+async function handleConfirmOrder(stock) {
+  // TODO: implement order logic here
 }
 
 // ─── Market page ──────────────────────────────────────────────────────────────
@@ -187,6 +254,36 @@ export const Market = {
     document.getElementById('mkt-filter-outofstock')?.addEventListener('change', e => {
       _mktShowOut = e.target.checked;
       mktRender();
+    });
+
+    // Detail popup bindings
+    document.getElementById('detail-overlay')?.addEventListener('click', closeDetailPopup);
+    document.getElementById('detail-close-btn')?.addEventListener('click', closeDetailPopup);
+    document.getElementById('detail-popup-order-btn')?.addEventListener('click', () => {
+      if (_detailStock) openOrderPopup(_detailStock);
+    });
+
+    // Order popup bindings
+    document.getElementById('order-overlay')?.addEventListener('click', closeOrderPopup);
+    document.getElementById('order-popup-cancel')?.addEventListener('click', closeOrderPopup);
+    document.getElementById('order-popup-confirm')?.addEventListener('click', async () => {
+      if (_pendingOrderStock) await handleConfirmOrder(_pendingOrderStock);
+      closeOrderPopup();
+    });
+
+    // Grid click: order button → order popup | card click → detail popup
+    document.getElementById('mkt-grid')?.addEventListener('click', e => {
+      if (e.target.closest('.shop-link') || e.target.closest('.product-card__wish')) return;
+      if (e.target.closest('[data-order-stock]')) {
+        const stockId = e.target.closest('[data-order-stock]').dataset.orderStock;
+        const stock = _mktAll.find(s => String(s.stock_id) === String(stockId));
+        if (stock) openOrderPopup(stock);
+        return;
+      }
+      const card = e.target.closest('[data-stock-id]');
+      if (!card) return;
+      const stock = _mktAll.find(s => String(s.stock_id) === String(card.dataset.stockId));
+      if (stock) openDetailPopup(stock);
     });
 
     const filterSidebar = document.getElementById('filter-sidebar');

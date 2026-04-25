@@ -27,11 +27,11 @@ router.post("/upload", upload.single("image"), async (req, res) => {
             });
 
         if (error) {
-            return res.status(500).json({ error: error.message });
+            return res.status(error.statusCode || 500).json({ error: error.message });
         }
 
         const { data: publicUrlData } = supabase.storage
-            .from("images")
+            .from("stock")
             .getPublicUrl(fileName);
 
         return res.json({
