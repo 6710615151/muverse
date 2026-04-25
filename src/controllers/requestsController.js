@@ -23,9 +23,9 @@ export async function getById(req, res) {
 
 export async function create(req, res) {
     try {
-        const { request_title,request_detail,budget,request_status,customer_id,category_id} = req.body;
+        const { request_title,request_detail,budget,request_status,customer_id,service_type_id} = req.body;
 
-        if (!request_title || !customer_id || !category_id) {
+        if (!request_title || !customer_id) {
             return res.status(400).json({
                 success: false,
                 error: "All fields required"
@@ -33,7 +33,7 @@ export async function create(req, res) {
         }
 
 
-        const requestsData = await RequestModel.createRequest(request_title,request_detail,budget,request_status,customer_id,category_id);
+        const requestsData = await RequestModel.createRequest(request_title,request_detail,budget,request_status,customer_id,service_type_id);
 
         res.status(201).json({ success: true, data: requestsData });
 
@@ -51,16 +51,16 @@ export async function create(req, res) {
 
 export async function update(req, res) {
     try {
-        const { request_title, request_detail, budget,request_status,customer_id,category_id} = req.body;
+        const { request_title, request_detail, budget,request_status,customer_id,service_type_id} = req.body;
 
-        if (!request_title || !customer_id || !category_id) {
+        if (!request_title || !customer_id) {
             return res.status(400).json({
                 success: false,
                 error: "All fields required"
             });
         }
 
-        const requestData = await RequestModel.updateRequest(req.params.id,request_title,request_detail,budget,request_status,customer_id,category_id);
+        const requestData = await RequestModel.updateRequest(req.params.id,request_title,request_detail,budget,request_status,customer_id,service_type_id);
 
         if (!requestData) {
             return res.status(404).json({

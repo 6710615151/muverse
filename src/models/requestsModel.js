@@ -85,12 +85,12 @@
 
 import sql from "../config/db.js"
 
-export async function createRequest(request_title,request_detail,budget,request_status,customer_id,category_id) {
+export async function createRequest(request_title,request_detail,budget,request_status,customer_id,service_type_id) {
     return await sql`
         INSERT INTO requests
-        (request_title, request_detail, budget, request_status, customer_id, category_id)
-        VALUES 
-        (${request_title},${request_detail},${budget},${request_status},${customer_id},${category_id})
+        (request_title, request_detail, budget, request_status, customer_id, service_type_id)
+        VALUES
+        (${request_title},${request_detail},${budget},${request_status},${customer_id},${service_type_id})
         RETURNING *`;
 }
 
@@ -109,7 +109,7 @@ export async function getRequestById(request_id) {
     return result[0] || null;
 }
 
-export async function updateRequest(request_id, request_title, request_detail, budget,request_status,customer_id,category_id) {
+export async function updateRequest(request_id, request_title, request_detail, budget,request_status,customer_id,service_type_id) {
     const result = await sql`
         UPDATE requests
         SET request_title = ${request_title},
@@ -117,7 +117,7 @@ export async function updateRequest(request_id, request_title, request_detail, b
         budget = ${budget},
         request_status = ${request_status},
         customer_id = ${customer_id},
-        category_id = ${category_id}
+        service_type_id = ${service_type_id}
         WHERE request_id = ${request_id}
         RETURNING *`;
     return result[0] || null;

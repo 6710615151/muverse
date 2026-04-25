@@ -26,7 +26,7 @@ export async function buyItem(req, res) {
     }
 
     // คำนวณ total
-    const total_price = items.reduce((sum, item) => sum + item._stock.price * item.item_quantity, 0);
+    const total_price = items.reduce((sum, item) => sum + parseFloat(item._stock.price) * item.item_quantity, 0);
 
     // สร้าง order
     const order_id = await orderModel.createOrder(customer_id, seller_id, total_price);
