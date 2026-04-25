@@ -316,6 +316,7 @@ img {
 /*หน้าmarket*/
 
 #market-page {
+  height: 100vh;
   display: flex;
   flex-direction: column;
   background: rgba(137, 76, 150, 0.41);
@@ -404,6 +405,8 @@ img {
 
 .marketplace-layout {
   display: grid;
+  flex: 1;
+  min-height: 0; 
   grid-template-columns: 260px 1fr;
   gap: 25px;
 }
@@ -455,6 +458,8 @@ img {
 .marketplace-main {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
   gap: 15px;
 }
 
@@ -546,8 +551,8 @@ img {
   flex: 1;
   overflow-y: auto;
   padding-right: 10px;
+  min-height: 0;
 }
-
 .market-content::-webkit-scrollbar {
   width: 6px;
 }
