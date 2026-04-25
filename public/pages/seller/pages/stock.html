@@ -1,140 +1,142 @@
 <div id="seller-stock-page">
-<div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="orb orb-4"></div>
-    <div class="main-content">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+  <div class="main-content">
 
-  <!-- ─── Modal: Create / Edit Stock ─── -->
-  <div class="modal-overlay" id="stock-modal">
-    <div class="modal" style="max-width:580px;width:90%;text-align:left;padding:36px 40px">
-      <h2 class="modal__title" id="modal-title" style="text-align:left;font-size:1.8rem;margin-bottom:24px">
-        เพิ่มสินค้าใหม่
-      </h2>
-      <form id="stock-form">
-        <div class="form-grid">
-          <div class="form-field form-field--full">
-            <label class="form-label">ชื่อสินค้า *</label>
-            <input type="text" class="form-input" id="f-item-name" required placeholder="ระบุชื่อสินค้า">
-          </div>
-          <div class="form-field">
-            <label class="form-label">หมวดหมู่ *</label>
-            <select class="form-input" id="f-category" required>
-              <option value="">เลือกหมวดหมู่</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label class="form-label">ประเภทสินค้า</label>
-            <input type="text" class="form-input" id="f-item-type" placeholder="เช่น physical, digital">
-          </div>
-          <div class="form-field">
-            <label class="form-label">ราคา (บาท) *</label>
-            <input type="number" class="form-input" id="f-price" min="0" step="1" required placeholder="0">
-          </div>
-          <div class="form-field">
-            <label class="form-label">จำนวนสินค้า *</label>
-            <input type="number" class="form-input" id="f-quantity" min="0" required placeholder="0">
-          </div>
-          <div class="form-field form-field--full">
-            <label class="form-label">รายละเอียด</label>
-            <textarea class="form-input form-textarea" id="f-description" placeholder="อธิบายสินค้าของคุณ..."></textarea>
-          </div>
-          <div class="form-field">
-            <label class="form-label">สถานะสินค้า</label>
-            <select class="form-input" id="f-status">
-              <option value="available">พร้อมขาย</option>
-              <option value="out_of_stock">หมด</option>
-            </select>
-          </div>
-          <div class="form-field form-field--full">
-            <label class="form-label">รูปภาพสินค้า</label>
-            <input type="file" id="f-image" accept="image/*" class="form-input" style="padding:6px">
-            <div style="display:flex;align-items:center;gap:14px;margin-top:10px">
-              <img id="img-preview" src="" alt="preview"
-                style="display:none;width:100px;height:100px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.1)">
-              <p id="upload-result" style="font-size:0.82rem;opacity:0.65"></p>
+    <!-- ─── Modal: Create / Edit Stock ─── -->
+    <div class="modal-overlay" id="stock-modal">
+      <div class="modal" style="max-width:580px;width:90%;text-align:left;padding:36px 40px">
+        <h2 class="modal__title" id="modal-title" style="text-align:left;font-size:1.8rem;margin-bottom:24px">
+          เพิ่มสินค้าใหม่
+        </h2>
+        <form id="stock-form">
+          <div class="form-grid">
+            <div class="form-field form-field--full">
+              <label class="form-label">ชื่อสินค้า *</label>
+              <input type="text" class="form-input" id="f-item-name" required placeholder="ระบุชื่อสินค้า">
+            </div>
+            <div class="form-field">
+              <label class="form-label">หมวดหมู่ *</label>
+              <select class="form-input" id="f-category" required>
+                <option value="">เลือกหมวดหมู่</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">ประเภทสินค้า</label>
+              <input type="text" class="form-input" id="f-item-type" placeholder="เช่น physical, digital">
+            </div>
+            <div class="form-field">
+              <label class="form-label">ราคา (บาท) *</label>
+              <input type="number" class="form-input" id="f-price" min="0" step="1" required placeholder="0">
+            </div>
+            <div class="form-field">
+              <label class="form-label">จำนวนสินค้า *</label>
+              <input type="number" class="form-input" id="f-quantity" min="0" required placeholder="0">
+            </div>
+            <div class="form-field form-field--full">
+              <label class="form-label">รายละเอียด</label>
+              <textarea class="form-input form-textarea" id="f-description"
+                placeholder="อธิบายสินค้าของคุณ..."></textarea>
+            </div>
+            <div class="form-field">
+              <label class="form-label">สถานะสินค้า</label>
+              <select class="form-input" id="f-status">
+                <option value="available">พร้อมขาย</option>
+                <option value="out_of_stock">หมด</option>
+              </select>
+            </div>
+            <div class="form-field form-field--full">
+              <label class="form-label">รูปภาพสินค้า</label>
+              <input type="file" id="f-image" accept="image/*" class="form-input" style="padding:6px">
+              <div style="display:flex;align-items:center;gap:14px;margin-top:10px">
+                <img id="img-preview" src="" alt="preview"
+                  style="display:none;width:100px;height:100px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.1)">
+                <p id="upload-result" style="font-size:0.82rem;opacity:0.65"></p>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="btn-row" style="margin-top:16px">
-          <button type="button" class="btn btn--ghost" id="modal-cancel-btn">ยกเลิก</button>
-          <button type="submit" class="btn btn--primary" id="modal-save-btn">เพิ่มสินค้า</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ─── Modal: Delete Confirm ─── -->
-  <div class="modal-overlay" id="delete-modal">
-    <div class="modal">
-      <span class="modal__icon">🗑</span>
-      <h2 class="modal__title">ยืนยันการลบ?</h2>
-      <p class="modal__sub" id="delete-modal-name">สินค้านี้จะถูกลบออกจากระบบถาวร</p>
-      <p class="modal__note">ไม่สามารถกู้คืนได้</p>
-      <div class="btn-row" style="justify-content:center;gap:12px">
-        <button class="btn btn--ghost" id="delete-cancel-btn">ยกเลิก</button>
-        <button class="btn btn--primary" id="delete-confirm-btn"
-          style="background:linear-gradient(135deg,#e53e3e,#c53030);box-shadow:0 4px 18px rgba(229,62,62,0.3)">
-          ลบสินค้า
-        </button>
+          <div class="btn-row" style="margin-top:16px">
+            <button type="button" class="btn btn--ghost" id="modal-cancel-btn">ยกเลิก</button>
+            <button type="submit" class="btn btn--primary" id="modal-save-btn">เพิ่มสินค้า</button>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
 
-  <!-- ─── Page Header ─── -->
-  <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px">
-    <div>
-      <p style="color:var(--clr-gold);font-size:0.82rem;font-weight:500;letter-spacing:0.15em;
+    <!-- ─── Modal: Delete Confirm ─── -->
+    <div class="modal-overlay" id="delete-modal">
+      <div class="modal">
+        <span class="modal__icon">🗑</span>
+        <h2 class="modal__title">ยืนยันการลบ?</h2>
+        <p class="modal__sub" id="delete-modal-name">สินค้านี้จะถูกลบออกจากระบบถาวร</p>
+        <p class="modal__note">ไม่สามารถกู้คืนได้</p>
+        <div class="btn-row" style="justify-content:center;gap:12px">
+          <button class="btn btn--ghost" id="delete-cancel-btn">ยกเลิก</button>
+          <button class="btn btn--primary" id="delete-confirm-btn"
+            style="background:linear-gradient(135deg,#e53e3e,#c53030);box-shadow:0 4px 18px rgba(229,62,62,0.3)">
+            ลบสินค้า
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Page Header ─── -->
+    <div class="page-header"
+      style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px">
+      <div>
+        <p style="color:var(--clr-gold);font-size:0.82rem;font-weight:500;letter-spacing:0.15em;
         text-transform:uppercase;margin-bottom:10px">✦ จัดการร้านค้า</p>
-      <h1 class="page-header__title">สินค้า<em>ของฉัน</em></h1>
-      <p class="page-header__sub">เพิ่ม แก้ไข และจัดการสินค้าทั้งหมดในร้านค้าของคุณ</p>
+        <h1 class="page-header__title">สินค้า<em>ของฉัน</em></h1>
+        <p class="page-header__sub">เพิ่ม แก้ไข และจัดการสินค้าทั้งหมดในร้านค้าของคุณ</p>
+      </div>
+      <button class="btn btn--primary btn--large" id="add-stock-btn">+ เพิ่มสินค้าใหม่</button>
     </div>
-    <button class="btn btn--primary btn--large" id="add-stock-btn">+ เพิ่มสินค้าใหม่</button>
-  </div>
 
-  <!-- ─── Stats ─── -->
-  <div class="dash-stats" style="padding:0 64px 32px;grid-template-columns:repeat(3,1fr)">
-    <div class="dash-stat-card">
-      <span class="dash-stat-card__num" id="stat-total">—</span>
-      <span class="dash-stat-card__label">สินค้าทั้งหมด</span>
+    <!-- ─── Stats ─── -->
+    <div class="dash-stats" style="padding:0 64px 32px;grid-template-columns:repeat(3,1fr)">
+      <div class="dash-stat-card">
+        <span class="dash-stat-card__num" id="stat-total">—</span>
+        <span class="dash-stat-card__label">สินค้าทั้งหมด</span>
+      </div>
+      <div class="dash-stat-card">
+        <span class="dash-stat-card__num" id="stat-available" style="color:var(--clr-green-pale)">—</span>
+        <span class="dash-stat-card__label">พร้อมขาย</span>
+      </div>
+      <div class="dash-stat-card">
+        <span class="dash-stat-card__num" id="stat-out" style="color:var(--clr-gold-light)">—</span>
+        <span class="dash-stat-card__label">สินค้าหมด</span>
+      </div>
     </div>
-    <div class="dash-stat-card">
-      <span class="dash-stat-card__num" id="stat-available" style="color:var(--clr-green-pale)">—</span>
-      <span class="dash-stat-card__label">พร้อมขาย</span>
-    </div>
-    <div class="dash-stat-card">
-      <span class="dash-stat-card__num" id="stat-out" style="color:var(--clr-gold-light)">—</span>
-      <span class="dash-stat-card__label">สินค้าหมด</span>
-    </div>
-  </div>
 
-  <!-- ─── Filter Bar ─── -->
-  <div class="filter-bar">
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <input type="text" id="stock-search" class="form-input"
-        placeholder="ค้นหาสินค้า..." style="width:200px;padding:8px 14px">
-      <select id="stock-cat-filter" class="filter-select">
-        <option value="">ทุกหมวดหมู่</option>
-      </select>
-      <select id="stock-sort" class="filter-select">
-        <option value="">เรียงลำดับ</option>
-        <option value="name">ชื่อ A–Z</option>
-        <option value="price-asc">ราคา ↑</option>
-        <option value="price-desc">ราคา ↓</option>
-        <option value="qty-asc">จำนวน ↑ (น้อยก่อน)</option>
-      </select>
+    <!-- ─── Filter Bar ─── -->
+    <div class="filter-bar">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <input type="text" id="stock-search" class="form-input" placeholder="ค้นหาสินค้า..."
+          style="width:200px;padding:8px 14px">
+        <select id="stock-cat-filter" class="filter-select">
+          <option value="">ทุกหมวดหมู่</option>
+        </select>
+        <select id="stock-sort" class="filter-select">
+          <option value="">เรียงลำดับ</option>
+          <option value="name">ชื่อ A–Z</option>
+          <option value="price-asc">ราคา ↑</option>
+          <option value="price-desc">ราคา ↓</option>
+          <option value="qty-asc">จำนวน ↑ (น้อยก่อน)</option>
+        </select>
+      </div>
+      <p class="marketplace-count">ทั้งหมด <strong id="stock-count">0</strong> รายการ</p>
     </div>
-    <p class="marketplace-count">ทั้งหมด <strong id="stock-count">0</strong> รายการ</p>
-  </div>
 
-  <!-- ─── Stock List ─── -->
-  <div style="padding:32px 64px">
-    <div class="booking-list" id="stock-list">
-      <div style="padding:80px;text-align:center;color:var(--clr-text-muted)">
-        <p style="font-size:2rem;margin-bottom:12px">⏳</p>
-        <p>กำลังโหลดสินค้า...</p>
+    <!-- ─── Stock List ─── -->
+    <div style="padding:32px 64px">
+      <div class="booking-list" id="stock-list">
+        <div style="padding:80px;text-align:center;color:var(--clr-text-muted)">
+          <p style="font-size:2rem;margin-bottom:12px">⏳</p>
+          <p>กำลังโหลดสินค้า...</p>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </div>

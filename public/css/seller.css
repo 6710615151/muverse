@@ -704,7 +704,6 @@ img{
   background: linear-gradient(90deg, #702970, #660d89, #e650e8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-
   animation: fadeUp 1s ease;
 }
 
@@ -774,37 +773,35 @@ img{
   }
 }
 
-/* ===============================
-   ACCEPT PAGE (REQUEST MANAGEMENT)
-================================= */
+/*accept*/
 #accept {
-  padding: 40px;
-  color: #e5e7eb;
+  padding: 0px;
+  color: #0b0b0b;
 }
 
-/* ===============================
-   MAIN CONTAINER
-================================= */
-#accept .main-content {
-  background: rgba(17, 24, 39, 0.6);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 18px;
-  padding: 24px;
-  backdrop-filter: blur(10px);
-
-  overflow: hidden; /* 🔥 กันล้น */
+#accept  {
+  background: rgba(255, 255, 255, 0.41);
+  border: 1px solid rgba(223, 172, 133, 0.79);
+  display: flex;
+  flex-direction: column;
+  border-radius: 30px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  height: 98%;
+  width: 98%;
+  color: #000;
+  font-family: "Segoe UI", sans-serif;
+  padding: 20px;
+  overflow: hidden;
 }
-
-/* ===============================
-   HEADER
-================================= */
 .page-header__title {
   font-size: 2rem;
   font-weight: 700;
 }
 
 .page-header__sub {
-  color: #9ca3af;
+  color: #303031;
   margin-top: 6px;
 }
 
@@ -822,19 +819,19 @@ img{
 .filter-tab {
   padding: 6px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 3px solid rgba(68, 5, 75, 0.08);
   background: transparent;
-  color: #9ca3af;
+  color: #141414;
   cursor: pointer;
   transition: 0.2s;
 }
 
 .filter-tab:hover {
-  color: #e5e7eb;
+  color: #560959;
 }
 
 .filter-tab.active {
-  background: #6366f1;
+  background: hsl(289, 95%, 15%);
   color: #fff;
   border-color: transparent;
 }
@@ -900,3 +897,234 @@ img{
 .request-list p {
   color: #9ca3af;
 }
+
+/*stock*/
+
+#seller-stock-page {
+  padding: 40px;
+  color: #e5e7eb;
+}
+
+
+#seller-stock-page {
+  background: rgba(255, 255, 255, 0.41);
+  border: 1px solid rgba(223, 172, 133, 0.79);
+  display: flex;
+  flex-direction: column;
+  border-radius: 30px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  height: 98%;
+  width: 98%;
+  color: #000;
+  font-family: "Segoe UI", sans-serif;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.page-header__title {
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.page-header__title em {
+  color: #fbbf24;
+  font-style: normal;
+}
+
+.page-header__sub {
+  color: #9ca3af;
+  margin-top: 6px;
+}
+
+.btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 0.9rem;
+}
+
+.btn--primary {
+  background: #600675;
+  color: #fff;
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.btn--ghost {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #e5e7eb;
+}
+
+.btn--ghost:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.dash-stats {
+  display: grid;
+  gap: 16px;
+}
+
+.dash-stat-card {
+  background: #111827;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  transition: 0.25s;
+}
+
+.dash-stat-card:hover {
+  border-color: #6366f1;
+  transform: translateY(-3px);
+}
+
+.dash-stat-card__num {
+  font-size: 1.6rem;
+  font-weight: 700;
+  display: block;
+}
+
+.dash-stat-card__label {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.filter-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.filter-select,
+
+.form-input {
+  background: #111827;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+}
+
+.booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stock-card {
+  background: #111827;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 16px;
+  transition: 0.25s;
+}
+
+.stock-card:hover {
+  transform: translateY(-3px);
+  border-color: #6366f1;
+}
+
+.stock-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stock-card__title {
+  font-weight: 600;
+}
+
+.stock-card__meta {
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.stock-card__price {
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.status-available {
+  color: #22c55e;
+}
+
+.status-out {
+  color: #ef4444;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  background: #111827;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 600px;
+  animation: pop 0.2s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-field--full {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: #1f2937;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e5e7eb;
+}
+
+.btn-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+#img-preview {
+  transition: 0.2s;
+}
+
