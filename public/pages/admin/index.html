@@ -7,7 +7,7 @@
     <title>MUVERSE</title>
     <link rel='stylesheet'
         href='https://cdn-uicons.flaticon.com/4.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
-    <link rel="stylesheet" href="../../css/seller.css" />
+    <link rel="stylesheet" href="../../css/admin.css" />
 </head>
 
 <body>
@@ -16,19 +16,20 @@
     <nav class="nav" id="mainNav">
         <div class="nav__logo">
             <div class="nav__logo-mark"><img id="logo-icon" src="../../assets/full-logo.png" alt="logo"></div>
-            <span class="nav__logo-text">SELLER DASHBOARD</span>
+            <span class="nav__logo-text">ADMIN DASHBOARD</span>
         </div>
         <ul class="nav__links">
-            <li><a href="" class="nav__link active" data-page="stock"> <span class="fi fi-ts-boxes"></span> MANAGE
-                    STOCK</a></li>
-            <li><a href="" class="nav__link" data-page="accept"> <span class="fi fi-ts-reservation-table"> MANAGE
+            <li><a href="" class="nav__link active" data-page="user"> <span class="fi fi-ts-circle-user"></span> MANAGE
+                USER</a></li>
+                <li><a href="" class="nav__link" data-page="stock"> <span class="fi fi-ts-boxes"> MANAGE
+                        STOCK</a>
+            </li>
+            <li><a href="" class="nav__link" data-page="request"> <span class="fi fi-ts-reservation-table"> MANAGE
                         REQUEST</a>
             </li>
-            <li><a href="" class="nav__link active" data-page="stock"> <span class="fi fi-ts-boxes"></span> MANAGE
-                    STOCK</a></li>
-            <li><a href="" class="nav__link" data-page="accept"> <span class="fi fi-ts-reservation-table"> MANAGE
-                        REQUEST</a>
-            </li>
+            <li><a href="" class="nav__link active" data-page="nft"> <span class="fi fi-ts-nft-square"></span> MANAGE
+                    NFT</a></li>
+            
             <li><a href="#" class="nav__link" data-page="logout">
                     <span class="fi fi-ts-leave"></span> LOGOUT
                 </a>
@@ -52,7 +53,7 @@
 
     <div class="toast" id="toast"></div>
 
-    <script type="module" src="../../function/sellerApp.js">
+    <script type="module" src="../../function/adminApp.js">
     </script>
 
 </body>
