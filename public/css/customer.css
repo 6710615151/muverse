@@ -1081,7 +1081,7 @@ img {
 }
 
 .history {
-  max-height: 400px;
+  max-height: 600px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
