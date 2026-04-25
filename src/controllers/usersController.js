@@ -144,7 +144,7 @@ export async function login(req, res) {
         res.json({
             success: true,
             data: {
-                id: user.id,
+                id: user.user_id,
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
