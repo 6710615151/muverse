@@ -1,32 +1,41 @@
+// ===============================
+// IMPORTS
+// ===============================
+import { Booking } from "./booking.js";
+import { Market, Shop } from "./market.js";
+import { Role } from "./changeRole.js";
 import { checkRole } from "./pageRole.js";
 import { WalletFlow } from "./wallet.js";
 import { Logout } from "./logout.js";
-import { SellerStock } from "./stockManager.js";
 
+// ===============================
+// START CHECK ROLE
+// ===============================
 checkRole?.();
 
+// ===============================
+// ROUTER OBJECT
+// ===============================
 const Router = (() => {
 
     const PAGE_MAP = {
-        stock: "../../pages/seller/pages/stock.html",
-        accept: "../../pages/seller/pages/accept.html",
-        wallet: "../../pages/seller/pages/wallet.html",
-        user: "../../pages/seller/pages/user.html",
-        logout: "../../pages/seller/pages/logout.html",
+        market: "../../pages/customer/pages/market.html",
+        shop: "../../pages/customer/pages/shop.html",
+        booking: "../../pages/customer/pages/booking.html",
+        wallet: "../../pages/customer/pages/wallet.html",
+        user: "../../pages/customer/pages/user.html",
+        nft: "../../pages/customer/pages/nft.html",
+        logout: "../../pages/customer/pages/logout.html",
     };
 
     const PAGE_INIT = {
-        stock: () => SellerStock.init(),
-
+        market: () => Market.init(),
+        shop: () => Shop.init(),
+        booking: () => Booking.init(),
         wallet: () => WalletFlow.init(),
-
-        user: () => requestAnimationFrame(() => {
-            if (typeof Role !== "undefined") Role.init();
-        }),
-
-        logout: () => requestAnimationFrame(() => {
-            Logout.init();
-        }),
+        nft: () => console.log("init nft"),
+        user: () => requestAnimationFrame(() => Role?.init()),
+        logout: () => requestAnimationFrame(() => Logout.init()),
     };
 
     const cache = {};
@@ -35,12 +44,14 @@ const Router = (() => {
     const getCanvas = () => document.getElementById("canvasContent");
     const getLoader = () => document.getElementById("canvasLoader");
 
-
+    // ===============================
+    // NAVIGATE
+    // ===============================
     async function navigate(pageName) {
 
         if (!PAGE_MAP[pageName]) {
-            console.warn("Page not found → fallback to stock");
-            pageName = "stock";
+            console.warn("Page not found → fallback to market");
+            pageName = "market";
         }
 
         setActiveNav(pageName);
@@ -66,6 +77,9 @@ const Router = (() => {
         }
     }
 
+    // ===============================
+    // LOAD PAGE
+    // ===============================
     async function loadPage(pageName) {
         if (cache[pageName]) return cache[pageName];
 
@@ -131,6 +145,9 @@ const Router = (() => {
         });
     }
 
+    // ===============================
+    // CLICK BIND
+    // ===============================
     function bindLinks() {
         document.addEventListener("click", e => {
             const el = e.target.closest("[data-page]");
@@ -158,7 +175,7 @@ const Router = (() => {
 
     function init() {
         bindLinks();
-        navigate("stock");
+        navigate("booking");
     }
 
     return {
@@ -167,7 +184,6 @@ const Router = (() => {
     };
 
 })();
-
 document.addEventListener("DOMContentLoaded", () => {
     Router.init();
 });
