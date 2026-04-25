@@ -1,5 +1,24 @@
 import * as sellerModel from "../models/sellerModel.js";
 
+export async function getAllSellers(req, res) {
+    try {
+        const data = await sellerModel.getAllSellers();
+        res.json({ success: true, data });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+}
+
+export async function getSellerById(req, res) {
+    try {
+        const seller = await sellerModel.getSellerById(req.params.id);
+        if (!seller) return res.status(404).json({ success: false, error: "Seller not found" });
+        res.json({ success: true, data: seller });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+}
+
 export async function getAllUserSeller(req, res) {
     try {
         const data = await sellerModel.getUserSeller();

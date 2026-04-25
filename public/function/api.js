@@ -161,3 +161,10 @@ export const serviceType = {
     }),
 
 };
+export const seller = {
+    getAllSeller: () => apiFetch("/api/seller"),
+    getByIdSeller: (id) => apiFetch(`/api/seller/${id}`),
+    // getBySellerRole: (role) => apiFetch(`/api/sellers/role/${role}`),
+
+
+};

@@ -1,4 +1,4 @@
-import { Stock, Category } from "./api.js";
+import { Stock, Category, seller as SellerAPI } from "./api.js";
 
 // ─── Shared helpers ───────────────────────────────────────────────────────────
 
@@ -18,7 +18,10 @@ function productCardHTML(stock) {
 
   return `
     <div class="product-card" data-stock-id="${stock.stock_id}">
-      <div class="product-card__img product-card__img--${num}">
+      <div class="product-card__img">
+        ${stock.url
+          ? `<img src="${stock.url}" alt="${stock.item_name}" loading="lazy" onerror="this.style.display='none'">`
+          : `<div class="product-card__img-placeholder product-card__img--${num}"></div>`}
         ${isOut  ? `<span class="product-card__tag">หมด</span>` : ''}
         ${isNew  ? `<span class="product-card__tag product-card__tag--new">ใหม่</span>` : ''}
         <button class="product-card__wish" title="ถูกใจ">♡</button>
@@ -132,8 +135,9 @@ export const Market = {
     const tabs = document.getElementById('mkt-cat-tabs');
 
     try {
-      const [stocks, cats] = await Promise.all([Stock.getAll(), Category.getAll()]);
-      _mktAll = stocks ?? [];
+      const [stocks, cats, sellers] = await Promise.all([Stock.getAll(), Category.getAll(), SellerAPI.getAllSeller()]);
+      const sellerMap = Object.fromEntries((sellers ?? []).map(s => [String(s.seller_id), s.shop_name]));
+      _mktAll = (stocks ?? []).map(s => ({ ...s, shop_name: sellerMap[String(s.seller_id)] ?? s.shop_name }));
 
       if (tabs && cats?.length) {
         const extra = cats

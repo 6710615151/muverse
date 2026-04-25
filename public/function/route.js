@@ -19,14 +19,14 @@ checkRole?.();
 const Router = (() => {
 
     const PAGE_MAP = {
-    market: "../../pages/customer/pages/market.html",
-    shop: "../../pages/customer/pages/shop.html",
-    booking: "../../pages/customer/pages/booking.html",
-    wallet: "../../pages/customer/pages/wallet.html",
-    user: "../../pages/customer/pages/user.html",
-    nft: "../../pages/customer/pages/nft.html",
-    logout: "../../pages/customer/pages/logout.html",
-};
+        market: "../../pages/customer/pages/market.html",
+        shop: "../../pages/customer/pages/shop.html",
+        booking: "../../pages/customer/pages/booking.html",
+        wallet: "../../pages/customer/pages/wallet.html",
+        user: "../../pages/customer/pages/user.html",
+        nft: "../../pages/customer/pages/nft.html",
+        logout: "../../pages/customer/pages/logout.html",
+    };
 
     const PAGE_INIT = {
         market: () => Market.init(),
@@ -184,10 +184,8 @@ const Router = (() => {
     };
 
 })();
-
-// ===============================
-// START ROUTER
-// ===============================
 document.addEventListener("DOMContentLoaded", () => {
     Router.init();
 });
+
+window.Router = Router;
