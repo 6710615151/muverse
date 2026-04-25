@@ -1168,3 +1168,31 @@ opacity: 1;
 transform: translateY(0);
 }
 }
+
+/*slider*/
+.slider {
+  width: 100%;
+  overflow-x: auto;      
+  scroll-snap-type: x mandatory;
+}
+
+.slider-track {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+}
+
+.item {
+  min-width: 250px;       
+  height: 150px;
+  background: #6366f1;
+  border-radius: 20px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+}
