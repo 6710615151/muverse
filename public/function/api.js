@@ -35,12 +35,10 @@ export const Users = {
         method: "POST",
         body: JSON.stringify({ email, password }),
     }),
-    
-    toggleRole:(id) =>(`/api/user/toggleRole${id}` , 
-        {
-            method: "PUT"
-        }
-    )
+
+    toggleRole: (id) => apiFetch(`/api/user/toggleRole/${id}`, {
+        method: "PUT"
+    })
 };
 
 export const Category = {
