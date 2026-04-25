@@ -104,7 +104,7 @@ siForm.addEventListener('submit', async (e) => {
     showMsg(siMsg, 'Login successful! Redirecting…', 'success');
 
     setTimeout(() => {
-     // pageRole();
+     pageRole();
     }, 1000);
 
   } catch (err) {
