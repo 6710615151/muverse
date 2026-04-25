@@ -458,6 +458,7 @@ img {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  flex: 1;
 }
 
 .marketplace-toolbar {
@@ -490,6 +491,20 @@ img {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 20px;
+
+  flex: 1;        
+  overflow-y: auto;    
+  padding-right: 8px;
+}
+
+.product-grid {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 40px,
+    black calc(100% - 40px),
+    transparent
+  );
 }
 
 .product-grid::-webkit-scrollbar {
