@@ -90,10 +90,10 @@ function render() {
   list.innerHTML = items.map(stockRowHTML).join('');
 
   list.querySelectorAll('[data-edit-id]').forEach(btn => {
-    btn.addEventListener('click', () => openEditModal(Number(btn.dataset.editId)));
+    btn.addEventListener('click', () => openEditModal(btn.dataset.editId));
   });
   list.querySelectorAll('[data-delete-id]').forEach(btn => {
-    btn.addEventListener('click', () => openDeleteModal(Number(btn.dataset.deleteId), btn.dataset.deleteName));
+    btn.addEventListener('click', () => openDeleteModal(btn.dataset.deleteId, btn.dataset.deleteName));
   });
 }
 
@@ -117,7 +117,7 @@ function openModal() {
 }
 
 function openEditModal(stockId) {
-  const stock = _all.find(s => s.stock_id === stockId);
+  const stock = _all.find(s => String(s.stock_id) === String(stockId));
   if (!stock) return;
 
   _editId = stockId;
@@ -228,7 +228,7 @@ async function handleDelete() {
   btn.disabled = true;
   try {
     await Stock.delete(_deleteId);
-    _all = _all.filter(s => s.stock_id !== _deleteId);
+    _all = _all.filter(s => String(s.stock_id) !== String(_deleteId));
     closeDeleteModal();
     render();
   } catch (err) {

@@ -1,4 +1,4 @@
-import { Requests, Category } from "./api.js";
+import { Requests, serviceType } from "./api.js";
 
 const CUSTOMER_ID = "temp-customer-id"; // TODO: เปลี่ยนเป็น id จาก auth
 
@@ -68,15 +68,15 @@ async function loadRequests() {
   }
 }
 
-async function loadCategories() {
+async function loadServiceTypes() {
   try {
-    const cats = await Category.getAll();
-    const select = document.getElementById("inputCategory");
+    const types = await serviceType.getAllServiceType();
+    const select = document.getElementById("inputServiceType");
     if (!select) return;
-    cats.forEach(c => {
+    types.forEach(t => {
       const opt = document.createElement("option");
-      opt.value = c.category_id;
-      opt.textContent = c.name;
+      opt.value = t.service_type_id;
+      opt.textContent = t.name;
       select.appendChild(opt);
     });
   } catch { /* ไม่ critical */ }
@@ -113,17 +113,17 @@ function closeModal() {
   document.getElementById("inputTitle").value = "";
   document.getElementById("inputDetail").value = "";
   document.getElementById("inputBudget").value = "";
-  document.getElementById("inputCategory").value = "";
+  document.getElementById("inputServiceType").value = "";
 }
 
 async function submitRequest() {
-  const title    = document.getElementById("inputTitle")?.value.trim();
-  const detail   = document.getElementById("inputDetail")?.value.trim();
-  const budget   = document.getElementById("inputBudget")?.value;
-  const category = document.getElementById("inputCategory")?.value;
+  const title           = document.getElementById("inputTitle")?.value.trim();
+  const detail          = document.getElementById("inputDetail")?.value.trim();
+  const budget          = document.getElementById("inputBudget")?.value;
+  const service_type_id = document.getElementById("inputServiceType")?.value;
 
-  if (!title || !category) {
-    alert("Please fill in the title and select a category");
+  if (!title || !service_type_id) {
+    alert("Please fill in the title and select a service type");
     return;
   }
 
@@ -134,7 +134,7 @@ async function submitRequest() {
       budget:         budget || 0,
       request_status: "pending",
       customer_id:    CUSTOMER_ID,
-      category_id:    category,
+      service_type_id,
     });
     closeModal();
     await loadRequests();
@@ -146,7 +146,7 @@ async function submitRequest() {
 export const Booking = {
   init() {
     loadRequests();
-    loadCategories();
+    loadServiceTypes();
     bindEvents();
   }
 };
