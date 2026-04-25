@@ -1,70 +1,3 @@
-<style>
-  .marketplace-layout {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 25px;
-  }
-
-  .filter-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-  }
-
-  .filter-backdrop.open {
-    display: block;
-  }
-
-  .marketplace-sidebar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    height: 100vh;
-    width: 300px;
-    background: #111827;
-    border-left: 1px solid rgba(255,255,255,0.08);
-    padding: 24px 20px;
-    border-radius: 14px 0 0 14px;
-    z-index: 1000;
-    overflow-y: auto;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-  }
-
-  .marketplace-sidebar.open {
-    transform: translateX(0);
-  }
-
-  .sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  .sidebar-title {
-    margin-bottom: 0;
-    font-weight: 600;
-  }
-
-  .sidebar-close-btn {
-    background: none;
-    border: none;
-    color: #9ca3af;
-    cursor: pointer;
-    font-size: 1.1rem;
-    padding: 4px 8px;
-    border-radius: 6px;
-    line-height: 1;
-  }
-
-  .sidebar-close-btn:hover {
-    color: #e5e7eb;
-    background: rgba(255,255,255,0.1);
-  }
-</style>
 
 <div id="market-page">
     <div class="orb orb-1"></div>
@@ -72,7 +5,7 @@
     <div class="orb orb-3"></div>
     <div class="orb orb-4"></div>
     <div class="main-content">
-        <!-- ─── Page Header ─── -->
+
         <div class="page-header">
             <p style="color:var(--clr-gold);font-size:0.82rem;font-weight:500;letter-spacing:0.05em;
       text-transform:uppercase;margin-bottom:10px">ค้นหาสินค้า จาก seller</p>
@@ -91,7 +24,6 @@
             </div>
         </div>
 
-        <!-- ─── Marketplace Layout ─── -->
         <div class="marketplace-layout">
             <!-- Main content -->
             <div class="marketplace-main">
@@ -112,7 +44,6 @@
             </div>
         </div>
 
-        <!-- Filter Popup (right side) -->
         <div class="filter-backdrop" id="filter-backdrop"></div>
         <aside class="marketplace-sidebar" id="filter-sidebar">
             <div class="sidebar-header">

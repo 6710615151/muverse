@@ -175,7 +175,7 @@ const Router = (() => {
 
     function init() {
         bindLinks();
-        navigate("booking");
+        navigate("market");
     }
 
     return {
