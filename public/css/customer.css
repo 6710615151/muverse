@@ -490,6 +490,20 @@ img {
   gap: 20px;
 }
 
+.product-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.product-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.product-grid::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #000000, #9b5cff);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(155, 92, 255, 0.6);
+}
+
 
 .product-card {
   background: #111827;
