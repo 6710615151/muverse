@@ -1327,3 +1327,120 @@ img {
     transform: translateY(0);
   }
 }
+
+
+/*digital items*/
+#nft-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(137, 76, 150, 0.41);
+  border-radius: 30px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  border: 1px solid rgba(226, 162, 241, 0.79);
+  height: 98%;
+  width: 98%;
+  color: #fff;
+  font-family: "Segoe UI", sans-serif;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.menu {
+    display: flex;
+    gap: 40px;
+    width: 100%;
+    max-width: 1100px;
+}
+
+.btn {
+    position: relative;
+    flex: 1;
+    height: 400px;
+    border-radius: 30px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.35s ease;
+    margin-left: 1.5%;
+    margin-right: 1.5%;
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: 0.6s ease;
+}
+
+.btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.2));
+}
+
+.content {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    color: #fff;
+    z-index: 2;
+}
+
+.content h1 {
+    font-size: 36px;
+    letter-spacing: 2px;
+}
+
+.content p {
+    opacity: 0.7;
+    margin-top: 8px;
+}
+
+
+.btn .shine {
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.25), transparent);
+    transform: skewX(-25deg);
+}
+
+.btn:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 60px rgba(120, 60, 255, 0.5);
+}
+
+.btn:hover::before {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+}
+
+.btn:hover .shine {
+    animation: sweep 1s forwards;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+@keyframes sweep {
+    100% {
+        left: 130%;
+    }
+}
+
+.btn.wallpaper::before {
+    background-image: url("../assets/wallpaper.png");
+}
+
+.btn.donate::before {
+    background-image: url("../assets/yantra.png");
+}

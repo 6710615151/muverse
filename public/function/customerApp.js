@@ -191,3 +191,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.Router = Router;
+
+document.addEventListener("click", e => {
+    const el = e.target.closest("[data-link]");
+    if (!el) return;
+
+    window.open(el.dataset.link, "_blank", "noopener,noreferrer");
+});
