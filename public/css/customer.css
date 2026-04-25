@@ -1356,7 +1356,7 @@ img {
     max-width: 1100px;
 }
 
-.btn {
+.btnlink {
     position: relative;
     flex: 1;
     height: 400px;
@@ -1368,7 +1368,7 @@ img {
     margin-right: 1.5%;
 }
 
-.btn::before {
+.btnlink::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -1377,7 +1377,7 @@ img {
     transition: 0.6s ease;
 }
 
-.btn::after {
+.btnlink::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -1403,7 +1403,7 @@ img {
 }
 
 
-.btn .shine {
+.btnlink .shine {
     position: absolute;
     top: 0;
     left: -75%;
@@ -1413,21 +1413,21 @@ img {
     transform: skewX(-25deg);
 }
 
-.btn:hover {
+.btnlink:hover {
     transform: translateY(-6px) scale(1.02);
     box-shadow: 0 20px 60px rgba(120, 60, 255, 0.5);
 }
 
-.btn:hover::before {
+.btnlink:hover::before {
     transform: scale(1.05);
     filter: brightness(1.2);
 }
 
-.btn:hover .shine {
+.btnlink:hover .shine {
     animation: sweep 1s forwards;
 }
 
-.btn:active {
+.btnlink:active {
     transform: scale(0.98);
 }
 
@@ -1437,10 +1437,10 @@ img {
     }
 }
 
-.btn.wallpaper::before {
+.btnlink.wallpaper::before {
     background-image: url("../assets/wallpaper.png");
 }
 
-.btn.donate::before {
+.btnlink.donate::before {
     background-image: url("../assets/yantra.png");
 }
