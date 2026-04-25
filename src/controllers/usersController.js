@@ -1,4 +1,5 @@
 import * as userModel from "../models/userModel.js";
+import * as walletModel from "../models/walletModel.js";
 import bcrypt from "bcrypt";
 
 export async function getAll(req, res) {
@@ -41,6 +42,8 @@ export async function create(req, res) {
             password_hash,
             phone
         );
+
+        await walletModel.createWallet(user.id);
 
         res.status(201).json({ success: true, data: user });
 
