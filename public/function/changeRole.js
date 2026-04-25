@@ -14,7 +14,7 @@ function init() {
 
             const data = await Users.toggleRole(id);
             console.log(data);
-            const role = data[0].role;
+            const role = data.role;
 
             localStorage.setItem("role", role);
             console.log("Current role:", role);
