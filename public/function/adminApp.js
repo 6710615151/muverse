@@ -1,4 +1,3 @@
-import { Role } from "./changeRole.js";
 import { checkRole } from "./pageRole.js";
 import { Logout } from "./logout.js";
 
