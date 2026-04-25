@@ -50,6 +50,7 @@
         </section>
     </section>
 </div>
+
 <div id="wallet">
     <section class="history history-bottom">
         <div class="history-header">
@@ -62,12 +63,12 @@
                 <span class="transaction-empty__title">No Transaction History</span>
             </div>
         </div>
-
     </section>
 
     <div class="modal-overlay" id="walletModal">
-        <div class="modal">
-            <h2 id="walletModalTitle"></h2>
+        <div class="modal" style="max-width:420px; text-align:left; padding:36px;">
+            <h2 id="walletModalTitle"
+                style="font-family:var(--font-display); font-size:1.8rem; color:var(--clr-cream); margin-bottom:24px;"></h2>
             <div class="form-grid">
                 <div class="form-field form-field--full">
                     <label class="form-label" id="walletModalLabel"></label>
@@ -75,14 +76,9 @@
                 </div>
             </div>
             <div class="btn-row">
-                <button type="button" class="btn btn--ghost" id="walletModalCancel">
-                    Cancel
-                </button>
-                <button type="button" class="btn btn--primary" id="walletModalConfirm">
-                    Confirm
-                </button>
+                <button class="btn btn--ghost" id="walletModalCancel">Cancel</button>
+                <button class="btn btn--primary" id="walletModalConfirm">Submit</button>
             </div>
         </div>
     </div>
-
 </div>

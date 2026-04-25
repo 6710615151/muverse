@@ -3,12 +3,18 @@ import { Wallet } from './api.js';
 
 export const WalletFlow = {
 
-    userId: "05f21317-d934-44c4-96a3-56fe6796968f",
+    userId: localStorage.getItem('user_id'),
     selectedMethod: 'WALLET',
 
 
     init: async () => {
         console.log("Wallet Flow Starting...");
+
+        Array.from(document.body.children)
+            .find(el => el.id === 'walletModal')?.remove();
+
+        const modal = document.getElementById('walletModal');
+        if (modal) document.body.appendChild(modal);
 
         WalletFlow.loadPaymentMethods();
         document.getElementById('btn-add-payment').addEventListener('click', WalletFlow.addPaymentMethod);
@@ -98,31 +104,115 @@ export const WalletFlow = {
         });
     },
 
-    //ฟังก์ชันสำหรับการเพิ่มธนาคาร/ช่องทางใหม่ (หลอก)
-    addPaymentMethod: async () => {
+    showModal: (title, label, inputType = 'text', titleColor = null) => {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById('walletModal');
+            const titleEl = overlay.querySelector('#walletModalTitle');
+            titleEl.textContent = title;
+            if (titleColor) titleEl.style.color = titleColor;
+            overlay.querySelector('#walletModalLabel').textContent = label;
 
-        const provider = prompt('Provider name (e.g. KBank, TrueMoney)');
+            const input = overlay.querySelector('#walletModalInput');
+            input.type = inputType;
+            input.value = '';
+
+            overlay.classList.add('active');
+            input.focus();
+
+            const btnConfirm = overlay.querySelector('#walletModalConfirm');
+            const btnCancel  = overlay.querySelector('#walletModalCancel');
+
+            const close = (value) => {
+                overlay.classList.remove('active');
+                btnConfirm.removeEventListener('click', onConfirm);
+                btnCancel.removeEventListener('click', onCancel);
+                overlay.removeEventListener('click', onOverlay);
+                input.removeEventListener('keydown', onKey);
+                resolve(value);
+            };
+
+            const onConfirm = () => close(input.value);
+            const onCancel  = () => close(null);
+            const onOverlay = (e) => { if (e.target === overlay) close(null); };
+            const onKey     = (e) => {
+                if (e.key === 'Enter') close(input.value);
+                if (e.key === 'Escape') close(null);
+            };
+
+            btnConfirm.addEventListener('click', onConfirm);
+            btnCancel.addEventListener('click', onCancel);
+            overlay.addEventListener('click', onOverlay);
+            input.addEventListener('keydown', onKey);
+        });
+    },
+
+    deposit: async () => {
+        const amountStr = await WalletFlow.showModal('Deposit', 'Amount (฿)', 'number', '#eeb55f');
+        if (!amountStr) return;
+
+        const amount = parseFloat(amountStr);
+        if (isNaN(amount) || amount <= 0) {
+            alert("Wrong number, please try again.");
+            return;
+        }
+
+        try {
+            await Wallet.topup({
+                user_id: WalletFlow.userId,
+                amount,
+                payment_method: WalletFlow.selectedMethod
+            });
+            alert("Deposit successful!");
+            await WalletFlow.loadBalance();
+            await WalletFlow.loadHistory();
+        } catch (err) {
+            alert("Deposit failed: " + err.message);
+        }
+    },
+
+    withdraw: async () => {
+        const amountStr = await WalletFlow.showModal('Withdraw', 'Amount (฿)', 'number', '#eeb55f');
+        if (!amountStr) return;
+
+        const amount = parseFloat(amountStr);
+        if (isNaN(amount) || amount <= 0) {
+            alert("Wrong number, please try again.");
+            return;
+        }
+
+        try {
+            await Wallet.withdraw({
+                user_id: WalletFlow.userId,
+                amount,
+                payment_method: WalletFlow.selectedMethod
+            });
+            alert("Withdraw successful!");
+            await WalletFlow.loadBalance();
+            await WalletFlow.loadHistory();
+        } catch (err) {
+            alert("Withdraw failed: " + err.message);
+        }
+    },
+
+    addPaymentMethod: async () => {
+        const provider = await WalletFlow.showModal('Add Payment Method', 'Provider name (e.g. KBank, TrueMoney)', 'text', '#eeb55f');
         if (!provider || !provider.trim()) return;
 
         const stored = localStorage.getItem('muverse_payments');
         const methods = stored ? JSON.parse(stored) : [{ id: 'WALLET', name: 'MU-Verse Wallet' }];
 
-
         const id = provider.trim().toUpperCase().replace(/\s+/g, '_');
-
 
         if (methods.find(m => m.id === id)) {
             alert("ช่องทางนี้มีอยู่แล้วครับ");
             return;
         }
 
-
         methods.push({ id, name: provider.trim() });
         localStorage.setItem('muverse_payments', JSON.stringify(methods));
         WalletFlow.loadPaymentMethods();
     },
 
-    //ฟังก์ชันสำหรับการลบธนาคาร/ช่องทาง (หลอก)
     removePaymentMethod: (id) => {
         const stored = localStorage.getItem('muverse_payments');
         const methods = stored ? JSON.parse(stored) : [];
@@ -136,62 +226,9 @@ export const WalletFlow = {
 
         WalletFlow.loadPaymentMethods();
     },
-    
-    //fuction สำหรับฝากเงิน ถอน
+
     setupEvents: () => {
-
-        //ฝากเงิน
-        const btnDeposit = document.getElementById('btn-deposit');
-        btnDeposit.addEventListener('click', async () => {
-            const amountStr = prompt('Deposit - Amount (฿)');
-            if (!amountStr) return;
-
-            const amount = parseFloat(amountStr);
-
-            if (isNaN(amount) || amount <= 0) {
-                alert("Wrong number, please try again.");
-                return;
-            }
-
-            try {
-                await Wallet.topup({
-                    user_id: WalletFlow.userId,
-                    amount: amount,
-                    payment_method: WalletFlow.selectedMethod
-                });
-                alert("Deposit successful!");
-                await WalletFlow.loadBalance();
-                await WalletFlow.loadHistory();
-            } catch (error) {
-                alert("Deposit failed: " + error.message);
-            }
-        });
-
-        //ถอนเงิน
-        const btnWithdraw = document.getElementById('btn-withdraw');
-        btnWithdraw.addEventListener('click', async () => {
-            const amountStr = prompt('Withdraw - Amount (฿)');
-            if (!amountStr) return;
-
-            const amount = parseFloat(amountStr);
-            if (isNaN(amount) || amount <= 0) {
-                alert("Wrong number, please try again.");
-                return;
-            }
-
-            try {
-                await Wallet.withdraw({
-                    user_id: WalletFlow.userId,
-                    amount: amount,
-                    payment_method: WalletFlow.selectedMethod
-                });
-                alert("Withdraw successful!");
-
-                await WalletFlow.loadBalance();
-                await WalletFlow.loadHistory();
-            } catch (error) {
-                alert("Withdraw failed: " + error.message);
-            }
-        });
+        document.getElementById('btn-deposit').addEventListener('click', WalletFlow.deposit);
+        document.getElementById('btn-withdraw').addEventListener('click', WalletFlow.withdraw);
     }
 }
