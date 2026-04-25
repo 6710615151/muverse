@@ -169,7 +169,7 @@ const Router = (() => {
 
     function init() {
         bindLinks();
-        navigate("user");
+        navigate("stock");
     }
 
     return {
