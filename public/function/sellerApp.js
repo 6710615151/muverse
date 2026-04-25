@@ -1,6 +1,7 @@
 import { Booking } from "./booking.js";
 import { Market, Shop } from "./market.js";
 import { checkRole } from "./pageRole.js";
+import { SellerStock } from "./stockManager.js";
 
 
 checkRole("seller");
@@ -18,6 +19,7 @@ const Router = (() => {
     const _cache = {};
 
     const PAGE_INIT = {
+        stock: () => SellerStock.init(),
         market: () => Market.init(),
         shop: () => Shop.init(),
         booking: () => Booking.init(),
