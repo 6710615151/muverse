@@ -224,3 +224,5 @@ const Router = (() => {
     };
 
 })();
+
+window.Router = Router;
