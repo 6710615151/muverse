@@ -330,6 +330,8 @@ img {
   font-family: "Segoe UI", sans-serif;
   padding: 20px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .page-header {
