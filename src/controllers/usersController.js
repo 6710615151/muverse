@@ -173,7 +173,7 @@ export async function toggleRole(req, res) {
 
         res.json({
             success: true,
-            data: user[1],
+            data: user[0],
             message: "Role updated successfully"
         });
 
