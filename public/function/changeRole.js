@@ -1,6 +1,4 @@
-
 import { Users } from "./api.js";
-import { pageRole } from "./pageRole.js";
 
 function init() {
     const btn = document.getElementById("btnChangeRole");
@@ -14,8 +12,11 @@ function init() {
 
         localStorage.setItem("role", role);
         console.log("Current role:", role);
-
-        pageRole();
+        if (role === "seller") {
+            window.location.href = "/seller";
+        } else if (role === "customer") {
+            window.location.href = "/customer";
+        }
     });
 }
 
