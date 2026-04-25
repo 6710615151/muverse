@@ -94,6 +94,8 @@ siForm.addEventListener('submit', async (e) => {
   try {
     const user = await Users.login(email, password);
 
+    console.log("LOGIN RAW:", user);
+
     localStorage.setItem('id', user.id);
     localStorage.setItem('role', user.role);
 
