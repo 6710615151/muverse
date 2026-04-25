@@ -11,8 +11,8 @@ function init() {
         try {
             const id = localStorage.getItem('user_id');
             console.log(id);
-            const res = await Users.toggleRole(id);
-            const data = await res.json();
+            
+            const data = await Users.toggleRole(id);
 
             const role = data[0].role; 
             
