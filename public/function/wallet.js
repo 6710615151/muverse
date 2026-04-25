@@ -1,10 +1,4 @@
 import { Wallet } from './api.js';
-if (!document.querySelector('link[href*="wallet.css"]')) {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = '../../css/wallet.css';
-    document.head.appendChild(link);
-}
 
 
 export const WalletFlow = {
