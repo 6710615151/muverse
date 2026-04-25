@@ -7,19 +7,26 @@ function init() {
 
     btn.dataset.bound = "true";
 
-    btn.addEventListener("click", () => {
-        const role = Users.toggleRole();
+    btn.addEventListener("click", async () => {
+        try {
+            const res = await Users.toggleRole();
+            const data = await res.json();
 
-        localStorage.setItem("role", role);
-        console.log("Current role:", role);
-        if (role === "seller") {
-            window.location.href = "/seller";
-        } else if (role === "customer") {
-            window.location.href = "/customer";
+            const role = data[0].role; 
+            
+            localStorage.setItem("role", role);
+            console.log("Current role:", role);
+
+            if (role === "seller") {
+                window.location.href = "/seller";
+            } else if (role === "customer") {
+                window.location.href = "/customer";
+            }
+
+        } catch (err) {
+            console.error("Toggle role error:", err);
         }
     });
 }
 
-export const Role = {
-    init
-};
+export const Role = { init };
