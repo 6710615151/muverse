@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MUVERSE</title>
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/4.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
+    <link rel="stylesheet" href="../../css/seller.css" />
+</head>
+
+<body>
+
+
+    <nav class="nav" id="mainNav">
+        <div class="nav__logo">
+            <div class="nav__logo-mark"><img id="logo-icon" src="../../assets/full-logo.png" alt="logo"></div>
+            <span class="nav__logo-text">SELLER DASHBOARD</span>
+        </div>
+        <ul class="nav__links">
+            <li><a href="" class="nav__link active" data-page="stock"> <span class="fi fi-ts-boxes"></span> MANAGE
+                    STOCK</a></li>
+            <li><a href="" class="nav__link" data-page="accept"> <span class="fi fi-ts-reservation-table"> MANAGE
+                        REQUEST</a>
+            </li>
+            <li><a href="" class="nav__link active" data-page="stock"> <span class="fi fi-ts-boxes"></span> MANAGE
+                    STOCK</a></li>
+            <li><a href="" class="nav__link" data-page="accept"> <span class="fi fi-ts-reservation-table"> MANAGE
+                        REQUEST</a>
+            </li>
+            <li><a href="#" class="nav__link" data-page="logout">
+                    <span class="fi fi-ts-leave"></span> LOGOUT
+                </a>
+        </ul>
+        </li>
+    </nav>
+
+    <main class="canvas" id="canvas">
+
+        <div class="canvas__loader" id="canvasLoader">
+            <div class="canvas__loader-inner">
+                <span class="canvas__loader-mark">ใส่โลโก้</span>
+                <p class="canvas__loader-text">Loading…</p>
+            </div>
+        </div>
+
+        <!-- Page content injected here -->
+        <div class="canvas__content" id="canvasContent"></div>
+
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script type="module" src="../../function/sellerApp.js">
+    </script>
+
+</body>
+
+</html>

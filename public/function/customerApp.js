@@ -1,6 +1,4 @@
-// ===============================
-// IMPORTS
-// ===============================
+
 import { Booking } from "./booking.js";
 import { Market, Shop } from "./market.js";
 import { Role } from "./changeRole.js";
@@ -8,14 +6,8 @@ import { checkRole } from "./pageRole.js";
 import { WalletFlow } from "./wallet.js";
 import { Logout } from "./logout.js";
 
-// ===============================
-// START CHECK ROLE
-// ===============================
 checkRole?.();
 
-// ===============================
-// ROUTER OBJECT
-// ===============================
 const Router = (() => {
 
     const PAGE_MAP = {
@@ -44,9 +36,37 @@ const Router = (() => {
     const getCanvas = () => document.getElementById("canvasContent");
     const getLoader = () => document.getElementById("canvasLoader");
 
-    // ===============================
-    // NAVIGATE
-    // ===============================
+    function transitionOut() {
+        const canvas = getCanvas();
+        if (!canvas) return Promise.resolve();
+
+        return new Promise(resolve => {
+            canvas.style.transition = "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)";
+            canvas.style.opacity = "0";
+            canvas.style.transform = "translateY(20px) scale(0.98)";
+            canvas.style.filter = "blur(6px)";
+
+            setTimeout(resolve, 300);
+        });
+    }
+
+    function transitionIn() {
+        const canvas = getCanvas();
+        if (!canvas) return;
+
+        canvas.style.transition = "none";
+        canvas.style.opacity = "0";
+        canvas.style.transform = "translateY(20px) scale(0.98)";
+        canvas.style.filter = "blur(6px)";
+
+        requestAnimationFrame(() => {
+            canvas.style.transition = "all 0.45s cubic-bezier(0.22, 1, 0.36, 1)";
+            canvas.style.opacity = "1";
+            canvas.style.transform = "translateY(0) scale(1)";
+            canvas.style.filter = "blur(0)";
+        });
+    }
+
     async function navigate(pageName) {
 
         if (!PAGE_MAP[pageName]) {
@@ -56,12 +76,17 @@ const Router = (() => {
 
         setActiveNav(pageName);
         showLoader();
-        animateOut();
 
         try {
+          
+            await transitionOut();
+
             const html = await loadPage(pageName);
 
             render(html);
+
+          
+            transitionIn();
 
             PAGE_INIT[pageName]?.();
 
@@ -72,14 +97,11 @@ const Router = (() => {
         } catch (err) {
             handleError(err);
         } finally {
-            animateIn();
             hideLoader();
         }
     }
 
-    // ===============================
-    // LOAD PAGE
-    // ===============================
+
     async function loadPage(pageName) {
         if (cache[pageName]) return cache[pageName];
 
@@ -127,27 +149,6 @@ const Router = (() => {
         if (loader) loader.style.display = "none";
     }
 
-    function animateOut() {
-        const canvas = getCanvas();
-        if (!canvas) return;
-
-        canvas.style.opacity = "0";
-        canvas.style.transform = "translateY(12px)";
-    }
-
-    function animateIn() {
-        const canvas = getCanvas();
-        if (!canvas) return;
-
-        requestAnimationFrame(() => {
-            canvas.style.opacity = "1";
-            canvas.style.transform = "translateY(0)";
-        });
-    }
-
-    // ===============================
-    // CLICK BIND
-    // ===============================
     function bindLinks() {
         document.addEventListener("click", e => {
             const el = e.target.closest("[data-page]");
@@ -184,6 +185,7 @@ const Router = (() => {
     };
 
 })();
+
 document.addEventListener("DOMContentLoaded", () => {
     Router.init();
 });

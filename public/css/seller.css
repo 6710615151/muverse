@@ -1128,3 +1128,7 @@ img{
   transition: 0.2s;
 }
 
+#canvasContent {
+    will-change: transform, opacity, filter;
+    backface-visibility: hidden;
+}

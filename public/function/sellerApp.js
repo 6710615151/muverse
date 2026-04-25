@@ -1,185 +1,183 @@
-// ===============================
-// IMPORTS
-// ===============================
-
 import { Role } from "./changeRole.js";
 import { checkRole } from "./pageRole.js";
-import { WalletFlow } from "./wallet.js";
 import { Logout } from "./logout.js";
 
-// ===============================
-// START CHECK ROLE
-// ===============================
 checkRole?.();
 
-// ===============================
-// ROUTER OBJECT
-// ===============================
-const Router = (() => {
+    const Router = (() => {
 
-    const PAGE_MAP = {
-        accept: "../../pages/seller/pages/accept.html",
-        stock: "../../pages/seller/pages/stock.html",
-        user: "../../pages/seller/pages/user.html",
-        logout: "../../pages/seller/pages/logout.html",
-        wallet: "../../pages/seller/pages/wallet.html",
+        const PAGE_MAP = {
+            accept: "../../pages/seller/pages/accept.html",
+            stock: "../../pages/seller/pages/stock.html",
+            user: "../../pages/seller/pages/user.html",
+            logout: "../../pages/seller/pages/logout.html",
+            wallet: "../../pages/seller/pages/wallet.html",
 
-    };
+        };
 
-    const PAGE_INIT = {
-        //accept: () => Market.init(),
-        user: () => requestAnimationFrame(() => Role?.init()),
-        logout: () => requestAnimationFrame(() => Logout.init()),
-    };
+        const PAGE_INIT = {
+            //accept: () => Market.init(),
+            user: () => requestAnimationFrame(() => Role?.init()),
+            logout: () => requestAnimationFrame(() => Logout.init()),
+        };
 
-    const cache = {};
-    const MAX_CACHE = 5;
+        const cache = {};
+        const MAX_CACHE = 5;
 
-    const getCanvas = () => document.getElementById("canvasContent");
-    const getLoader = () => document.getElementById("canvasLoader");
+        const getCanvas = () => document.getElementById("canvasContent");
+        const getLoader = () => document.getElementById("canvasLoader");
 
-    // ===============================
-    // NAVIGATE
-    // ===============================
-    async function navigate(pageName) {
+        function transitionOut() {
+            const canvas = getCanvas();
+            if (!canvas) return Promise.resolve();
 
-        if (!PAGE_MAP[pageName]) {
-            console.warn("Page not found → fallback to stock");
-            pageName = "stock";
+            return new Promise(resolve => {
+                canvas.style.transition = "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)";
+                canvas.style.opacity = "0";
+                canvas.style.transform = "translateY(20px) scale(0.98)";
+                canvas.style.filter = "blur(6px)";
+
+                setTimeout(resolve, 300);
+            });
         }
 
-        setActiveNav(pageName);
-        showLoader();
-        animateOut();
+        function transitionIn() {
+            const canvas = getCanvas();
+            if (!canvas) return;
 
-        try {
-            const html = await loadPage(pageName);
+            canvas.style.transition = "none";
+            canvas.style.opacity = "0";
+            canvas.style.transform = "translateY(20px) scale(0.98)";
+            canvas.style.filter = "blur(6px)";
 
-            render(html);
-
-            PAGE_INIT[pageName]?.();
-
-            window.scrollTo({ top: 0, behavior: "smooth" });
-
-            console.log(`→ ${pageName}`);
-
-        } catch (err) {
-            handleError(err);
-        } finally {
-            animateIn();
-            hideLoader();
-        }
-    }
-
-    // ===============================
-    // LOAD PAGE
-    // ===============================
-    async function loadPage(pageName) {
-        if (cache[pageName]) return cache[pageName];
-
-        const url = PAGE_MAP[pageName];
-        console.log("LOADING:", url);
-
-        const res = await fetch(url);
-
-        if (!res.ok) {
-            console.error("Failed URL:", url);
-            throw new Error(`Failed to load ${pageName}`);
+            requestAnimationFrame(() => {
+                canvas.style.transition = "all 0.45s cubic-bezier(0.22, 1, 0.36, 1)";
+                canvas.style.opacity = "1";
+                canvas.style.transform = "translateY(0) scale(1)";
+                canvas.style.filter = "blur(0)";
+            });
         }
 
-        const html = await res.text();
-        setCache(pageName, html);
+        async function navigate(pageName) {
 
-        return html;
-    }
+            if (!PAGE_MAP[pageName]) {
+                console.warn("Page not found → fallback to market");
+                pageName = "market";
+            }
 
-    function setCache(key, value) {
-        if (Object.keys(cache).length >= MAX_CACHE) {
-            delete cache[Object.keys(cache)[0]];
+            setActiveNav(pageName);
+            showLoader();
+
+            try {
+
+                await transitionOut();
+
+                const html = await loadPage(pageName);
+
+                render(html);
+
+                transitionIn();
+
+                PAGE_INIT[pageName]?.();
+
+                window.scrollTo({ top: 0, behavior: "smooth" });
+
+                console.log(`→ ${pageName}`);
+
+            } catch (err) {
+                handleError(err);
+            } finally {
+                hideLoader();
+            }
         }
-        cache[key] = value;
-    }
 
-    function render(html) {
-        const canvas = getCanvas();
-        if (canvas) canvas.innerHTML = html;
-    }
 
-    function setActiveNav(pageName) {
-        document.querySelectorAll(".nav__link").forEach(link => {
-            link.classList.toggle("active", link.dataset.page === pageName);
-        });
-    }
+        async function loadPage(pageName) {
+            if (cache[pageName]) return cache[pageName];
 
-    function showLoader() {
-        const loader = getLoader();
-        if (loader) loader.style.display = "flex";
-    }
+            const url = PAGE_MAP[pageName];
+            console.log("LOADING:", url);
 
-    function hideLoader() {
-        const loader = getLoader();
-        if (loader) loader.style.display = "none";
-    }
+            const res = await fetch(url);
 
-    function animateOut() {
-        const canvas = getCanvas();
-        if (!canvas) return;
+            if (!res.ok) {
+                console.error("Failed URL:", url);
+                throw new Error(`Failed to load ${pageName}`);
+            }
 
-        canvas.style.opacity = "0";
-        canvas.style.transform = "translateY(12px)";
-    }
+            const html = await res.text();
+            setCache(pageName, html);
 
-    function animateIn() {
-        const canvas = getCanvas();
-        if (!canvas) return;
+            return html;
+        }
 
-        requestAnimationFrame(() => {
-            canvas.style.opacity = "1";
-            canvas.style.transform = "translateY(0)";
-        });
-    }
+        function setCache(key, value) {
+            if (Object.keys(cache).length >= MAX_CACHE) {
+                delete cache[Object.keys(cache)[0]];
+            }
+            cache[key] = value;
+        }
 
-    // ===============================
-    // CLICK BIND
-    // ===============================
-    function bindLinks() {
-        document.addEventListener("click", e => {
-            const el = e.target.closest("[data-page]");
+        function render(html) {
+            const canvas = getCanvas();
+            if (canvas) canvas.innerHTML = html;
+        }
 
-            if (!el) return;
+        function setActiveNav(pageName) {
+            document.querySelectorAll(".nav__link").forEach(link => {
+                link.classList.toggle("active", link.dataset.page === pageName);
+            });
+        }
 
-            e.preventDefault();
-            navigate(el.dataset.page);
-        });
-    }
+        function showLoader() {
+            const loader = getLoader();
+            if (loader) loader.style.display = "flex";
+        }
 
-    function handleError(err) {
-        console.error("[Router]", err);
+        function hideLoader() {
+            const loader = getLoader();
+            if (loader) loader.style.display = "none";
+        }
 
-        const canvas = getCanvas();
-        if (!canvas) return;
+        function bindLinks() {
+            document.addEventListener("click", e => {
+                const el = e.target.closest("[data-page]");
 
-        canvas.innerHTML = `
+                if (!el) return;
+
+                e.preventDefault();
+                navigate(el.dataset.page);
+            });
+        }
+
+        function handleError(err) {
+            console.error("[Router]", err);
+
+            const canvas = getCanvas();
+            if (!canvas) return;
+
+            canvas.innerHTML = `
             <div style="padding:80px;text-align:center;color:gray">
                 <p style="font-size:20px">โหลดหน้าไม่สำเร็จ</p>
                 <p>path ผิด หรือไฟล์ไม่มี</p>
             </div>
         `;
-    }
+        }
 
-    function init() {
-        bindLinks();
-        navigate("stock");
-    }
+        function init() {
+            bindLinks();
+            navigate("stock");
+        }
 
-    return {
-        init,
-        navigate
-    };
+        return {
+            init,
+            navigate
+        };
 
-})();
-document.addEventListener("DOMContentLoaded", () => {
-    Router.init();
-});
+    })();
 
-window.Router = Router;
+    document.addEventListener("DOMContentLoaded", () => {
+        Router.init();
+    });
+
+    window.Router = Router;
