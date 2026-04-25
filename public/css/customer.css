@@ -17,6 +17,7 @@ body {
 body {
   display: flex;
 }
+/*navbar*/
 
 .nav {
   width: 330px;
@@ -217,4 +218,20 @@ img{
   padding: 20px;
   border-radius: 12px;
   text-align: center;
+}
+
+/*หน้าlogout*/
+.logout-page {
+    text-align: center;
+    padding: 80px;
+}
+
+.logout-actions {
+    margin-top: 20px;
+}
+
+.logout-actions button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    cursor: pointer;
 }

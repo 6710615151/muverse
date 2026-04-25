@@ -1,7 +1,34 @@
- <div id="logoutModal" class="modal">
-    <div class="modal-box">
-      <p>ต้องการออกจากระบบหรือไม่</p>
-      <button id="confirmLogout">ใช่</button>
-      <button id="cancelLogout">ยกเลิก</button>
-    </div>
+<div class="logout-page" style="padding:40px; text-align:center;">
+
+  <h2 style="margin-bottom:20px;">ออกจากระบบ</h2>
+
+  <p style="margin-bottom:30px; color:gray;">
+    คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?
+  </p>
+
+  <div style="display:flex; gap:16px; justify-content:center;">
+    
+    <button id="confirmLogout" style="
+      padding:10px 20px;
+      border:none;
+      background:#ff4d4f;
+      color:white;
+      cursor:pointer;
+      border-radius:6px;
+    ">
+      ยืนยัน
+    </button>
+
+    <button data-page="market" style="
+      padding:10px 20px;
+      border:none;
+      background:#ccc;
+      cursor:pointer;
+      border-radius:6px;
+    ">
+      ยกเลิก
+    </button>
+
   </div>
+
+</div>

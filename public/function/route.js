@@ -6,64 +6,27 @@ import { Market, Shop } from "./market.js";
 import { Role } from "./changeRole.js";
 import { checkRole } from "./pageRole.js";
 import { WalletFlow } from "./wallet.js";
+import { Logout } from "./logout.js";
 
+// ===============================
+// START CHECK ROLE
+// ===============================
 checkRole?.();
 
 // ===============================
-// APP INIT
-// ===============================
-document.addEventListener("DOMContentLoaded", () => {
-    initLogoutModal();
-    Router.init();
-
-    console.log(
-        "%cRouter working",
-        "color:#c9a84c;font-size:13px;font-weight:bold"
-    );
-});
-
-// ===============================
-// LOGOUT
-// ===============================
-function logout() {
-    localStorage.clear();
-    window.location.href = "/Auth/index.html";
-}
-
-// ===============================
-// LOGOUT MODAL
-// ===============================
-function initLogoutModal() {
-    const modal = document.getElementById("logoutModal");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const cancelBtn = document.getElementById("cancelLogout");
-    const confirmBtn = document.getElementById("confirmLogout");
-
-    logoutBtn?.addEventListener("click", () => {
-        modal?.classList.add("flex");
-    });
-
-    cancelBtn?.addEventListener("click", () => {
-        modal?.classList.remove("flex");
-    });
-
-    confirmBtn?.addEventListener("click", logout);
-}
-
-// ===============================
-// ROUTER (SPA CORE)
+// ROUTER OBJECT
 // ===============================
 const Router = (() => {
 
-    // ---------- CONFIG ----------
     const PAGE_MAP = {
-        market: "../../pages/customer/pages/market.html",
-        shop: "../../pages/customer/pages/shop.html",
-        booking: "../../pages/customer/pages/booking.html",
-        wallet: "../../pages/customer/pages/wallet.html",
-        user: "../../pages/customer/pages/user.html",
-        nft: "../../pages/customer/pages/nft.html",
-    };
+    market: "../../pages/customer/pages/market.html",
+    shop: "../../pages/customer/pages/shop.html",
+    booking: "../../pages/customer/pages/booking.html",
+    wallet: "../../pages/customer/pages/wallet.html",
+    user: "../../pages/customer/pages/user.html",
+    nft: "../../pages/customer/pages/nft.html",
+    logout: "../../pages/customer/pages/logout.html",
+};
 
     const PAGE_INIT = {
         market: () => Market.init(),
@@ -71,7 +34,8 @@ const Router = (() => {
         booking: () => Booking.init(),
         wallet: () => WalletFlow.init(),
         nft: () => console.log("init nft"),
-        user: () => requestAnimationFrame(() => Role?.init())
+        user: () => requestAnimationFrame(() => Role?.init()),
+        logout: () => requestAnimationFrame(() => Logout.init()),
     };
 
     const cache = {};
@@ -84,7 +48,11 @@ const Router = (() => {
     // NAVIGATE
     // ===============================
     async function navigate(pageName) {
-        if (!PAGE_MAP[pageName]) return;
+
+        if (!PAGE_MAP[pageName]) {
+            console.warn("Page not found → fallback to market");
+            pageName = "market";
+        }
 
         setActiveNav(pageName);
         showLoader();
@@ -94,21 +62,19 @@ const Router = (() => {
             const html = await loadPage(pageName);
 
             render(html);
+
             PAGE_INIT[pageName]?.();
 
             window.scrollTo({ top: 0, behavior: "smooth" });
 
-            console.log(`%c→ ${pageName}`, "color:#00ffcc");
+            console.log(`→ ${pageName}`);
 
         } catch (err) {
             handleError(err);
-        }
-
-        animateIn();
-
-        setTimeout(() => {
+        } finally {
+            animateIn();
             hideLoader();
-        }, 200);
+        }
     }
 
     // ===============================
@@ -118,6 +84,8 @@ const Router = (() => {
         if (cache[pageName]) return cache[pageName];
 
         const url = PAGE_MAP[pageName];
+        console.log("LOADING:", url);
+
         const res = await fetch(url);
 
         if (!res.ok) {
@@ -138,9 +106,6 @@ const Router = (() => {
         cache[key] = value;
     }
 
-    // ===============================
-    // UI HELPERS
-    // ===============================
     function render(html) {
         const canvas = getCanvas();
         if (canvas) canvas.innerHTML = html;
@@ -181,11 +146,12 @@ const Router = (() => {
     }
 
     // ===============================
-    // EVENT DELEGATION (สำคัญ)
+    // CLICK BIND
     // ===============================
     function bindLinks() {
         document.addEventListener("click", e => {
             const el = e.target.closest("[data-page]");
+
             if (!el) return;
 
             e.preventDefault();
@@ -202,7 +168,7 @@ const Router = (() => {
         canvas.innerHTML = `
             <div style="padding:80px;text-align:center;color:gray">
                 <p style="font-size:20px">โหลดหน้าไม่สำเร็จ</p>
-                <p>ไอ้หนุ่มอย่าหลอน</p>
+                <p>path ผิด หรือไฟล์ไม่มี</p>
             </div>
         `;
     }
@@ -212,15 +178,16 @@ const Router = (() => {
         navigate("market");
     }
 
-    function clearCache(page) {
-        if (page) delete cache[page];
-        else Object.keys(cache).forEach(k => delete cache[k]);
-    }
-
     return {
         init,
-        navigate,
-        clearCache
+        navigate
     };
 
 })();
+
+// ===============================
+// START ROUTER
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+    Router.init();
+});
