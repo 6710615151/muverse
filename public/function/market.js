@@ -188,6 +188,24 @@ export const Market = {
       _mktShowOut = e.target.checked;
       mktRender();
     });
+
+    const filterSidebar = document.getElementById('filter-sidebar');
+    const filterBackdrop = document.getElementById('filter-backdrop');
+
+    function openFilter() {
+      filterSidebar?.classList.add('open');
+      filterBackdrop?.classList.add('open');
+    }
+    function closeFilter() {
+      filterSidebar?.classList.remove('open');
+      filterBackdrop?.classList.remove('open');
+    }
+
+    document.getElementById('filter-toggle-btn')?.addEventListener('click', () => {
+      filterSidebar?.classList.contains('open') ? closeFilter() : openFilter();
+    });
+    document.getElementById('filter-close-btn')?.addEventListener('click', closeFilter);
+    filterBackdrop?.addEventListener('click', closeFilter);
   }
 };
 

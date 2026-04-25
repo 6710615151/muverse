@@ -1,3 +1,71 @@
+<style>
+  .marketplace-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .filter-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .filter-backdrop.open {
+    display: block;
+  }
+
+  .marketplace-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 300px;
+    background: #111827;
+    border-left: 1px solid rgba(255,255,255,0.08);
+    padding: 24px 20px;
+    border-radius: 14px 0 0 14px;
+    z-index: 1000;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .marketplace-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .sidebar-title {
+    margin-bottom: 0;
+    font-weight: 600;
+  }
+
+  .sidebar-close-btn {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    line-height: 1;
+  }
+
+  .sidebar-close-btn:hover {
+    color: #e5e7eb;
+    background: rgba(255,255,255,0.1);
+  }
+</style>
+
 <div id="market-page">
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
@@ -20,47 +88,11 @@
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
                 <input type="text" id="mkt-search" class="form-input" placeholder="ค้นหาสินค้า..."
                     style="width:200px;padding:8px 14px">
-                <select id="mkt-sort" class="filter-select">
-                    <option value="">เรียงลำดับ</option>
-                    <option value="price-asc">ราคา ↑ น้อยไปมาก</option>
-                    <option value="price-desc">ราคา ↓ มากไปน้อย</option>
-                    <option value="name">ชื่อ A–Z</option>
-                </select>
             </div>
         </div>
 
         <!-- ─── Marketplace Layout ─── -->
         <div class="marketplace-layout">
-
-            <!-- Sidebar -->
-            <aside class="marketplace-sidebar">
-                <h3 class="sidebar-title">ตัวกรอง</h3>
-
-                <div class="sidebar-section">
-                    <p class="sidebar-section__title">ราคาสูงสุด</p>
-                    <div class="price-range">
-                        <input type="range" class="range-slider" id="mkt-price-range" min="0" max="10000" value="10000"
-                            step="100">
-                        <div class="price-range__labels">
-                            <span>฿0</span>
-                            <span id="mkt-price-display">฿10,000</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="sidebar-section">
-                    <p class="sidebar-section__title">สถานะสินค้า</p>
-                    <label class="sidebar-check">
-                        <input type="checkbox" id="mkt-filter-available" checked>
-                        มีสินค้าพร้อมส่ง
-                    </label>
-                    <label class="sidebar-check">
-                        <input type="checkbox" id="mkt-filter-outofstock">
-                        สินค้าหมด
-                    </label>
-                </div>
-            </aside>
-
             <!-- Main content -->
             <div class="marketplace-main">
                 <div class="marketplace-toolbar">
@@ -68,7 +100,7 @@
                         พบ <strong id="mkt-count">0</strong> รายการ
                     </p>
                     <div class="marketplace-view-toggle">
-                        <button class="view-btn active" title="Grid">⊞</button>
+                        <button class="view-btn active" id="filter-toggle-btn" title="ตัวกรอง">⊞</button>
                     </div>
                 </div>
                 <div class="product-grid" id="mkt-grid">
@@ -78,7 +110,49 @@
                     </div>
                 </div>
             </div>
-
         </div>
+
+        <!-- Filter Popup (right side) -->
+        <div class="filter-backdrop" id="filter-backdrop"></div>
+        <aside class="marketplace-sidebar" id="filter-sidebar">
+            <div class="sidebar-header">
+                <h3 class="sidebar-title">ตัวกรอง</h3>
+                <button class="sidebar-close-btn" id="filter-close-btn">✕</button>
+            </div>
+
+            <div class="sidebar-section">
+                <p class="sidebar-section__title">เรียงลำดับ</p>
+                <select id="mkt-sort" class="filter-select" style="width:100%">
+                    <option value="">เรียงลำดับ</option>
+                    <option value="price-asc">ราคา ↑ น้อยไปมาก</option>
+                    <option value="price-desc">ราคา ↓ มากไปน้อย</option>
+                    <option value="name">ชื่อ A–Z</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section">
+                <p class="sidebar-section__title">ราคาสูงสุด</p>
+                <div class="price-range">
+                    <input type="range" class="range-slider" id="mkt-price-range" min="0" max="10000" value="10000"
+                        step="100">
+                    <div class="price-range__labels">
+                        <span>฿0</span>
+                        <span id="mkt-price-display">฿10,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <p class="sidebar-section__title">สถานะสินค้า</p>
+                <label class="sidebar-check">
+                    <input type="checkbox" id="mkt-filter-available" checked>
+                    มีสินค้าพร้อมส่ง
+                </label>
+                <label class="sidebar-check">
+                    <input type="checkbox" id="mkt-filter-outofstock">
+                    สินค้าหมด
+                </label>
+            </div>
+        </aside>
     </div>
 </div>
