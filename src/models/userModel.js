@@ -3,6 +3,12 @@ import sql from "../config/db.js";
 export async function createUserWithCustomer(name, email, password_hash, phone) {
   return await sql(async (tx) => {
 
+    console.log("MODEL DATA:", { name, email, password_hash, phone });
+
+    if (!name || !email || !password_hash || !phone) {
+      throw new Error("Missing required fields in model");
+    }
+
     const users = await tx`
       INSERT INTO users (name, email, password_hash, phone)
       VALUES (${name}, ${email}, ${password_hash}, ${phone})
@@ -10,6 +16,10 @@ export async function createUserWithCustomer(name, email, password_hash, phone) 
     `;
 
     const user = users[0];
+
+    if (!user || !user.user_id) {
+      throw new Error("User insert failed");
+    }
 
     await tx`
       INSERT INTO customers (user_id)
