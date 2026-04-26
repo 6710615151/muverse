@@ -115,12 +115,20 @@ export async function updateStatus(req, res) {
             return res.status(400).json({ success: false, error: "status required" });
         }
 
+<<<<<<< Updated upstream
+=======
+        // ดึงข้อมูล request ปัจจุบัน
+>>>>>>> Stashed changes
         const current = await RequestModel.getRequestById(request_id);
         if (!current) {
             return res.status(404).json({ success: false, error: "Request not found" });
         }
 
         if (request_status === "ACCEPTED") {
+<<<<<<< Updated upstream
+=======
+            // ต้องการ seller_id จาก body
+>>>>>>> Stashed changes
             if (!seller_id) {
                 return res.status(400).json({ success: false, error: "seller_id required for ACCEPTED" });
             }
@@ -128,13 +136,23 @@ export async function updateStatus(req, res) {
             if (amount <= 0) {
                 return res.status(400).json({ success: false, error: "budget must be > 0 to lock funds" });
             }
+<<<<<<< Updated upstream
             await WalletModel.lockFunds(current.customer_id, amount);
+=======
+            // ล็อกเงินจาก wallet ลูกค้า
+            await WalletModel.lockFunds(current.customer_id, amount);
+            // อัปเดต request พร้อม seller_id และ locked_amount
+>>>>>>> Stashed changes
             const updated = await RequestModel.acceptRequest(request_id, seller_id, amount);
             return res.json({ success: true, data: updated, message: "Booking accepted, funds locked" });
         }
 
         if (request_status === "COMPLETED") {
             const locked = parseFloat(current.locked_amount) || 0;
+<<<<<<< Updated upstream
+=======
+            // โอนเงินที่ล็อกไว้ให้ผู้ขาย (seller_user_id มาจาก JOIN ใน getRequestById)
+>>>>>>> Stashed changes
             if (locked > 0) {
                 if (!current.seller_user_id) {
                     return res.status(400).json({ success: false, error: "No seller assigned to this request" });
@@ -147,14 +165,25 @@ export async function updateStatus(req, res) {
 
         if (request_status === "REJECTED") {
             const locked = parseFloat(current.locked_amount) || 0;
+<<<<<<< Updated upstream
             if (locked > 0) {
                 await WalletModel.refundFunds(current.customer_id, locked);
+=======
+            // คืนเงินให้ลูกค้าถ้ามีการล็อกไว้แล้ว
+            if (locked > 0) {
+                await WalletModel.refundFunds(current.customer_id, locked);
+                // รีเซ็ต locked_amount
+>>>>>>> Stashed changes
                 await RequestModel.acceptRequest(request_id, current.seller_id, 0);
             }
             const updated = await RequestModel.updateStatusRequest(request_id, "REJECTED");
             return res.json({ success: true, data: updated, message: locked > 0 ? "Booking rejected, funds refunded" : "Booking rejected" });
         }
 
+<<<<<<< Updated upstream
+=======
+        // status อื่นๆ (WAITING, CANCELLED ฯลฯ) — แค่อัปเดตตรงๆ
+>>>>>>> Stashed changes
         const requestData = await RequestModel.updateStatusRequest(request_id, request_status);
         res.json({ success: true, data: requestData });
 

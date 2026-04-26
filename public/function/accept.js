@@ -113,7 +113,11 @@ function bindFilters() {
 
 export const Accept = {
     async init() {
+<<<<<<< Updated upstream
         listEl     = document.getElementById("requestList");
+=======
+        listEl    = document.getElementById("requestList");
+>>>>>>> Stashed changes
         filterBtns = document.querySelectorAll(".filter-tab");
 
         if (!listEl) return;
