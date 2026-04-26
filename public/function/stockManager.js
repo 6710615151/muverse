@@ -20,7 +20,7 @@ function stockRowHTML(stock) {
   return `
     <div data-stock-id="${stock.stock_id}" style="
       display:flex;align-items:center;gap:16px;padding:14px 18px;margin-bottom:10px;
-      border-radius:14px;background:#fff;border:1px solid #ede8dc;
+      border-radius:14px;background:#fff;border:1px solid #77126179;
       box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:box-shadow 0.2s;
     " onmouseenter="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.12)'"
        onmouseleave="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">

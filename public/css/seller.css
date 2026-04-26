@@ -747,7 +747,7 @@ img{
 }
 
 #accept  {
-  background: rgba(255, 255, 255, 0.41);
+    background: rgba(255, 236, 253, 0.41);
   border: 1px solid rgba(223, 172, 133, 0.79);
   display: flex;
   flex-direction: column;
@@ -1055,7 +1055,7 @@ img{
 }
 
 #seller-orders-page {
-  background: rgba(255, 255, 255, 0.41);
+   background: rgba(255, 236, 253, 0.41);
   border: 1px solid rgba(223, 172, 133, 0.79);
   display: flex;
   flex-direction: column;
@@ -1094,12 +1094,12 @@ img{
 
 
 #seller-stock-page {
-  background: rgba(255, 255, 255, 0.41);
-  border: 1px solid rgba(223, 172, 133, 0.79);
   display: flex;
   flex-direction: column;
   border-radius: 30px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 236, 253, 0.41);
+  border: 1px solid rgba(223, 172, 133, 0.79);
   backdrop-filter: blur(10.5px);
   -webkit-backdrop-filter: blur(10.5px);
   height: 98%;
@@ -1116,7 +1116,7 @@ img{
 }
 
 .page-header__title em {
-  color: #e884ff;
+  color: rgb(129, 51, 107);
   font-style: normal;
 }
 
@@ -1163,10 +1163,12 @@ img{
 }
 
 .dash-stat-card {
-  background: #111827;
-  border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  background: rgba(59, 2, 65, 0.41);
+  border: 1px solid rgba(81, 17, 63, 0.79);
+  backdrop-filter: blur(10.5px);
   border-radius: 14px;
-  padding: 18px;
+  padding: 10px;
   text-align: center;
   transition: 0.25s;
 }

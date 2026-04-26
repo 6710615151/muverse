@@ -172,7 +172,7 @@ const Router = (() => {
 
         function init() {
             bindLinks();
-            navigate("stock");
+            navigate("user");
         }
 
         return {
