@@ -19,7 +19,7 @@ export async function create(req, res) {
       if (!req_data) {
         return res.status(404).json({ success: false, error: "Request not found" });
       }
-      if (req_data.request_status !== "COMPLETED") {
+      if (!["COMPLETE", "COMPLETED"].includes((req_data.request_status || "").toUpperCase())) {
         return res.status(400).json({ success: false, error: "Can only review a COMPLETED request" });
       }
       const existing = await ReviewModel.getReviewByRequest(request_id);
