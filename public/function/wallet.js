@@ -79,6 +79,8 @@ export const WalletFlow = {
 
         const list = document.getElementById('payment-method-list');
 
+        list.style.cssText = "max-height:180px;overflow-y:auto;padding-right:4px;";
+
         list.innerHTML = methods.map(m => {
             const isActive = m.id === WalletFlow.selectedMethod;
             return `
@@ -87,12 +89,13 @@ export const WalletFlow = {
                 padding:10px 14px; margin-bottom:8px; border-radius:10px; cursor:pointer;
                 border:2px solid ${isActive ? '#c084fc' : 'rgba(255,255,255,0.1)'};
                 background:${isActive ? 'rgba(192,132,252,0.15)' : 'rgba(255,255,255,0.05)'};
-                transition:all 0.2s;
+                transition:all 0.2s; position:relative;
             ">
                 <span style="color:#e2e8f0;font-size:0.9rem;font-weight:500">${m.name}</span>
                 <div style="display:flex;align-items:center;gap:8px">
                     ${isActive ? '<span style="color:#c084fc;font-size:1rem;font-weight:700">✓</span>' : ''}
                     ${m.id !== 'WALLET' ? `<button class="btn-remove-payment" data-id="${m.id}" title="ลบ" style="
+                        opacity:0; transition:opacity 0.2s;
                         background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);
                         color:#f87171;border-radius:6px;width:24px;height:24px;cursor:pointer;
                         font-size:0.75rem;display:flex;align-items:center;justify-content:center;
@@ -101,6 +104,14 @@ export const WalletFlow = {
                 </div>
             </div>`;
         }).join('');
+
+        list.querySelectorAll('.payment-method-item').forEach(el => {
+            const removeBtn = el.querySelector('.btn-remove-payment');
+            if (removeBtn) {
+                el.addEventListener('mouseenter', () => removeBtn.style.opacity = '1');
+                el.addEventListener('mouseleave', () => removeBtn.style.opacity = '0');
+            }
+        });
 
         list.querySelectorAll('.payment-method-item').forEach(el => {
             el.addEventListener('click', () => {
