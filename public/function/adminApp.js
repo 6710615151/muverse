@@ -1,203 +1,10 @@
 import { checkRole } from "./pageRole.js";
 import { Logout } from "./logout.js";
-import { Users, Wallet, Stock, Requests, serviceType, seller } from "./api.js";
+import { ManageUsers } from "./adminUser.js";
+import { ManageStocks } from "./adminStock.js";
+import { ManageRequests } from "./adminRequest.js";
 
 checkRole?.();
-
-/* =========================
-   MODAL
-========================= */
-const Modal = {
-    open(html) {
-        const modal = document.createElement("div");
-        modal.className = "modal-overlay";
-
-        modal.innerHTML = `
-            <div class="modal-box">
-                ${html}
-            </div>
-        `;
-
-        document.body.appendChild(modal);
-
-        modal.addEventListener("click", e => {
-            if (e.target === modal) modal.remove();
-        });
-
-        modal.querySelectorAll("[data-close]").forEach(btn =>
-            btn.addEventListener("click", () => modal.remove())
-        );
-
-        return modal;
-    }
-};
-
-/* =========================
-   MANAGE USERS
-========================= */
-const ManageUsers = {
-    _cache: [],
-
-    init: async () => {
-        await ManageUsers.loadUsers();
-        document.getElementById('user-search')
-            ?.addEventListener('input', ManageUsers.onSearch);
-    },
-
-    loadUsers: async () => {
-        const list = document.getElementById('user-list');
-        if (!list) return;
-
-        list.innerHTML = `<tr><td>Loading...</td></tr>`;
-
-        try {
-            const users = await Users.getAll();
-            ManageUsers._cache = users;
-            ManageUsers.renderUsers(users);
-        } catch (err) {
-            list.innerHTML = `<tr><td>${err.message}</td></tr>`;
-        }
-    },
-
-    renderUsers: (users) => {
-        const list = document.getElementById('user-list');
-        if (!list) return;
-
-        list.innerHTML = users.map(u => `
-            <tr>
-                <td>${u.user_id.slice(0, 8)}</td>
-                <td>${u.name}</td>
-                <td>${u.email}</td>
-                <td>${u.role}</td>
-                <td>${u.status ?? 'active'}</td>
-                <td>
-                    <button class="view" data-id="${u.user_id}"><span class="fi fi-ts-eye"></span></button>
-                    <button class="toggle" data-id="${u.user_id}" data-role="${u.role}"><span class="fi fi-ts-users"></span></button>
-                    <button class="ban" data-id="${u.user_id}" data-status="${u.status}"><span class="fi fi-ts-ban"></span></button>
-                    <button class="delete" data-id="${u.user_id}"><span class="fi fi-ts-trash"></span></button>
-                </td>
-            </tr>
-        `).join('');
-
-        list.querySelectorAll('.view').forEach(b =>
-            b.onclick = () => {
-                const u = ManageUsers._cache.find(x => x.user_id === b.dataset.id);
-                u && ManageUsers.viewDetail(u);
-            });
-
-        list.querySelectorAll('.delete').forEach(b =>
-            b.onclick = () => ManageUsers.deleteUser(b.dataset.id));
-
-        list.querySelectorAll('.toggle').forEach(b =>
-            b.onclick = () => ManageUsers.toggleRole(b.dataset.id, b.dataset.role));
-
-        list.querySelectorAll('.ban').forEach(b =>
-            b.onclick = () => ManageUsers.banUser(b.dataset.id, b.dataset.status));
-    },
-
-    viewDetail: (u) => {
-        Modal.open(`
-            <h2>${u.name}</h2>
-            <p>${u.email}</p>
-            <p>${u.role}</p>
-        `);
-    },
-
-    banUser: async (id, status) => {
-        const next = status === 'banned' ? 'active' : 'banned';
-        await Users.updateStatus(id, next);
-        ManageUsers.loadUsers();
-    },
-
-    toggleRole: async (id) => {
-        await Users.toggleRole(id);
-        ManageUsers.loadUsers();
-    },
-
-    deleteUser: async (id) => {
-        if (!confirm("Delete user?")) return;
-        await Users.delete(id);
-        ManageUsers.loadUsers();
-    },
-
-    onSearch: (e) => {
-        const q = e.target.value.toLowerCase();
-        document.querySelectorAll('#user-list tr').forEach(row => {
-            row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
-        });
-    }
-};
-
-/* =========================
-   MANAGE STOCKS
-========================= */
-const ManageStocks = (() => {
-    let _all = [];
-
-    const render = () => {
-        const list = document.getElementById('stock-list');
-        if (!list) return;
-
-        list.innerHTML = _all.map(s => `
-            <tr>
-                <td>${s.item_name}</td>
-                <td>฿${s.price}</td>
-                <td>${s.stock_status}</td>
-                <td>
-                    <button data-id="${s.stock_id}" class="del">🗑</button>
-                </td>
-            </tr>
-        `).join('');
-
-        list.querySelectorAll('.del').forEach(btn =>
-            btn.onclick = async () => {
-                await Stock.delete(btn.dataset.id);
-                _all = _all.filter(x => x.stock_id != btn.dataset.id);
-                render();
-            });
-    };
-
-    return {
-        init: async () => {
-            _all = await Stock.getAll();
-            render();
-        }
-    };
-})();
-
-const ManageRequests = (() => {
-    let _all = [];
-
-    const render = () => {
-        const list = document.getElementById('req-list');
-        if (!list) return;
-
-        list.innerHTML = _all.map(r => `
-            <tr>
-                <td>${r.request_title}</td>
-                <td>฿${r.budget}</td>
-                <td>${r.request_status}</td>
-                <td>
-                    <button data-id="${r.request_id}" class="del">🗑</button>
-                </td>
-            </tr>
-        `).join('');
-
-        list.querySelectorAll('.del').forEach(btn =>
-            btn.onclick = async () => {
-                await Requests.deleteRequest(btn.dataset.id);
-                _all = _all.filter(x => x.request_id != btn.dataset.id);
-                render();
-            });
-    };
-
-    return {
-        init: async () => {
-            _all = await Requests.getRequests();
-            render();
-        }
-    };
-})();
 
 const Router = (() => {
 
@@ -215,27 +22,163 @@ const Router = (() => {
         logout: () => Logout.init(),
     };
 
-    const canvas = () => document.getElementById("canvasContent");
+        const cache = {};
+        const MAX_CACHE = 5;
 
-    async function navigate(page) {
-        const res = await fetch(PAGE_MAP[page]);
-        const html = await res.text();
-        canvas().innerHTML = html;
-        PAGE_INIT[page]?.();
-    }
+        const getCanvas = () => document.getElementById("canvasContent");
+        const getLoader = () => document.getElementById("canvasLoader");
 
-    function init() {
-        document.addEventListener("click", e => {
-            const el = e.target.closest("[data-page]");
-            if (!el) return;
-            e.preventDefault();
-            navigate(el.dataset.page);
-        });
+        function transitionOut() {
+            const canvas = getCanvas();
+            if (!canvas) return Promise.resolve();
 
-        navigate("");
-    }
+            return new Promise(resolve => {
+                canvas.style.transition = "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)";
+                canvas.style.opacity = "0";
+                canvas.style.transform = "translateY(20px) scale(0.98)";
+                canvas.style.filter = "blur(6px)";
 
-    return { init };
-})();
+                setTimeout(resolve, 300);
+            });
+        }
 
-document.addEventListener("DOMContentLoaded", Router.init);
+        function transitionIn() {
+            const canvas = getCanvas();
+            if (!canvas) return;
+
+            canvas.style.transition = "none";
+            canvas.style.opacity = "0";
+            canvas.style.transform = "translateY(20px) scale(0.98)";
+            canvas.style.filter = "blur(6px)";
+
+            requestAnimationFrame(() => {
+                canvas.style.transition = "all 0.45s cubic-bezier(0.22, 1, 0.36, 1)";
+                canvas.style.opacity = "1";
+                canvas.style.transform = "translateY(0) scale(1)";
+                canvas.style.filter = "blur(0)";
+            });
+        }
+
+        async function navigate(pageName) {
+
+            if (!PAGE_MAP[pageName]) {
+                console.warn("Page not found → fallback to market");
+                pageName = "market";
+            }
+
+            setActiveNav(pageName);
+            showLoader();
+
+            try {
+
+                await transitionOut();
+
+                const html = await loadPage(pageName);
+
+                render(html);
+
+                transitionIn();
+
+                PAGE_INIT[pageName]?.();
+
+                window.scrollTo({ top: 0, behavior: "smooth" });
+
+                console.log(`→ ${pageName}`);
+
+            } catch (err) {
+                handleError(err);
+            } finally {
+                hideLoader();
+            }
+        }
+
+
+        async function loadPage(pageName) {
+            if (cache[pageName]) return cache[pageName];
+
+            const url = PAGE_MAP[pageName];
+            console.log("LOADING:", url);
+
+            const res = await fetch(url);
+
+            if (!res.ok) {
+                console.error("Failed URL:", url);
+                throw new Error(`Failed to load ${pageName}`);
+            }
+
+            const html = await res.text();
+            setCache(pageName, html);
+
+            return html;
+        }
+
+        function setCache(key, value) {
+            if (Object.keys(cache).length >= MAX_CACHE) {
+                delete cache[Object.keys(cache)[0]];
+            }
+            cache[key] = value;
+        }
+
+        function render(html) {
+            const canvas = getCanvas();
+            if (canvas) canvas.innerHTML = html;
+        }
+
+        function setActiveNav(pageName) {
+            document.querySelectorAll(".nav__link").forEach(link => {
+                link.classList.toggle("active", link.dataset.page === pageName);
+            });
+        }
+
+        function showLoader() {
+            const loader = getLoader();
+            if (loader) loader.style.display = "flex";
+        }
+
+        function hideLoader() {
+            const loader = getLoader();
+            if (loader) loader.style.display = "none";
+        }
+
+        function bindLinks() {
+            document.addEventListener("click", e => {
+                const el = e.target.closest("[data-page]");
+
+                if (!el) return;
+
+                e.preventDefault();
+                navigate(el.dataset.page);
+            });
+        }
+
+        function handleError(err) {
+            console.error("[Router]", err);
+
+            const canvas = getCanvas();
+            if (!canvas) return;
+
+            canvas.innerHTML = `
+            <div style="padding:80px;text-align:center;color:gray">
+                <p style="font-size:20px">โหลดหน้าไม่สำเร็จ</p>
+                <p>path ผิด หรือไฟล์ไม่มี</p>
+            </div>
+        `;
+        }
+
+        function init() {
+            bindLinks();
+            navigate("stock");
+        }
+
+        return {
+            init,
+            navigate
+        };
+
+    })();
+
+    document.addEventListener("DOMContentLoaded", () => {
+        Router.init();
+    });
+
+    window.Router = Router;
