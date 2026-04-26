@@ -35,27 +35,17 @@ export async function create(req, res) {
 
         const password_hash = await bcrypt.hash(password, 10);
 
-        const result = await sql.begin(async (tx) => {
-
-            const users = await tx`
-                INSERT INTO users (name, email, password_hash, phone)
-                VALUES (${name}, ${email}, ${password_hash}, ${phone})
-                RETURNING *
-            `;
-
-            const user = users[0];
-
-            await tx`
-                INSERT INTO customers (user_id)
-                VALUES (${user.user_id})
-            `;
-
-            return user;
-        });
+       
+        const user = await userModel.createUserWithCustomer(
+            name,
+            email,
+            password_hash,
+            phone
+        );
 
         res.status(201).json({
             success: true,
-            data: result
+            data: user
         });
 
     } catch (err) {

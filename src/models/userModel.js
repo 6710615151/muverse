@@ -1,13 +1,25 @@
 import sql from "../config/db.js";
 
-export async function createUser(name , email , password_hash,phone) {
-  return await sql`
-  INSERT INTO users (name, email, password_hash, phone)
-  VALUES (${name}, ${email}, ${password_hash}, ${phone})
-  RETURNING *
-`;
+export async function createUserWithCustomer(name, email, password_hash, phone) {
+  return await sql.begin(async (tx) => {
 
+    const users = await tx`
+      INSERT INTO users (name, email, password_hash, phone)
+      VALUES (${name}, ${email}, ${password_hash}, ${phone})
+      RETURNING *
+    `;
+
+    const user = users[0];
+
+    await tx`
+      INSERT INTO customers (user_id)
+      VALUES (${user.user_id})
+    `;
+
+    return user;
+  });
 }
+
 
 export async function getAllUsers() {
   return await sql`
@@ -24,7 +36,7 @@ export async function getUserById(user_id) {
   return result[0] || null;
 }
 
-export async function updateUser(userId, name, email, password,phone) {
+export async function updateUser(userId, name, email, password, phone) {
   const result = await sql`
     UPDATE users
     SET name = ${name},
@@ -50,11 +62,11 @@ export async function deleteUser(user_id) {
 }
 
 export async function getUserByEmail(email) {
-    const users = await sql`
+  const users = await sql`
         SELECT * FROM users WHERE email = ${email}
     `;
 
-    return users[0];
+  return users[0];
 }
 
 export async function getRoleById(userId) {
@@ -86,3 +98,4 @@ export async function changeRole(userId) {
     RETURNING user_id, role
   `;
 }
+
