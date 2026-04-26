@@ -184,6 +184,7 @@ async function handleConfirmOrder(stock) {
     
     // ลดจำนวนสินค้าในหน้าเว็บลง 1
     stock.stock_quantity -= 1;
+    await Stock.update(stock.stock_id, { stock_quantity: stock.stock_quantity });
     mktRender();
 
   } catch (err) {
