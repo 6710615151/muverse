@@ -1017,14 +1017,14 @@ img{
 }
 
 .btn--ghost {
-  background: transparent;
+  background: #fff;
   border: 1.5px solid rgb(255, 255, 255);
   color: #ff0000;
 }
 
 .btn--ghost:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: #ef4444;
+  background: rgba(255, 0, 0, 0.749);
+  border-color: #000000;
   color: #ffffff;
 }
 
