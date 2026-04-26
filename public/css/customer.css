@@ -638,6 +638,14 @@ img {
   color: #ffffff;
   font-family: "Segoe UI", sans-serif;
   padding: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+#booking .main-content {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .page-header__title {
