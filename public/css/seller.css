@@ -1018,14 +1018,14 @@ img{
 
 .btn--ghost {
   background: transparent;
-  border: 1.5px solid rgba(0,0,0,0.15);
-  color: #6b7280;
+  border: 1.5px solid rgb(255, 255, 255);
+  color: #ff0000;
 }
 
 .btn--ghost:hover {
-  background: rgba(239,68,68,0.08);
+  background: rgba(255, 255, 255, 0.08);
   border-color: #ef4444;
-  color: #dc2626;
+  color: #ffffff;
 }
 
 .btn--done {
