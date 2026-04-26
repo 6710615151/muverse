@@ -18,14 +18,8 @@ function stockRowHTML(stock) {
   const price = Number(stock.price).toLocaleString('th-TH');
 
   return `
-    <div data-stock-id="${stock.stock_id}" style="
-      display:flex;align-items:center;gap:16px;padding:14px 18px;margin-bottom:10px;
-      border-radius:14px;background:#fff;border:1px solid #77126179;
-      box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:box-shadow 0.2s;
-    " onmouseenter="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.12)'"
-       onmouseleave="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
-
-      <div style="width:64px;height:64px;flex-shrink:0;border-radius:10px;overflow:hidden;background:#f5f0e8;">
+    <div class="stock-item ${isOut ? 'stock-item--out' : 'stock-item--in'}" data-stock-id="${stock.stock_id}">
+      <div class="stock-item__img">
         ${stock.url
           ? `<img src="${stock.url}" alt="${stock.item_name}" onerror="this.style.display='none'">`
           : `<div class="stock-item__img-ph"><span class="fi fi-ts-box-open"></span></div>`}
