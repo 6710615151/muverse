@@ -3,6 +3,7 @@ import { Logout } from "./logout.js";
 import { ManageUsers, ManageWallet } from "./adminUser.js";
 import { ManageStocks } from "./adminStock.js";
 import { ManageRequests } from "./adminRequest.js";
+import { ManageNFT } from "./manageNFT.js";
 
 checkRole?.();
 
@@ -12,6 +13,7 @@ const Router = (() => {
         user: "../../pages/admin/pages/manageUser.html",
         stock: "../../pages/admin/pages/manageStock.html",
         request: "../../pages/admin/pages/manageRequest.html",
+        nft: "../../pages/admin/pages/manageNFT.html",
         reconciliation: "../../pages/admin/pages/reconciliation.html",
         logout: "../../pages/admin/pages/logout.html",
     };
@@ -20,6 +22,7 @@ const Router = (() => {
         user: () => ManageUsers.init(),
         stock: () => ManageStocks.init(),
         request: () => ManageRequests.init(),
+        nft: () => ManageNFT.init(),
         reconciliation: () => ManageWallet.init(),
         logout: () => Logout.init(),
     };
