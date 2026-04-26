@@ -1136,6 +1136,8 @@ img{
 }
 
 .btn--primary {
+  padding: 4px 2px;
+  margin-left: 40%;
   background: #600675;
   color: #fff;
 }

@@ -157,11 +157,12 @@ body {
 .canvas__loader {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top, #fcfcfc, #bc9fe6);
+  background: radial-gradient(circle at top, #42233e, #3c255c);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
+  color: #e5e7eb;
 }
 
 .canvas__loader-inner {
