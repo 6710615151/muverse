@@ -1,6 +1,5 @@
 import * as RequestModel from "../models/requestsModel.js";
 import * as WalletModel from "../models/walletModel.js";
-import * as SellerModel from "../models/sellerModel.js";
 
 export async function getAll(req, res) {
     try {
@@ -146,14 +145,8 @@ export async function acceptRequest(req, res) {
             return res.status(400).json({ success: false, error: "Request is not in WAITING status" });
         }
 
-        const sellers = await SellerModel.getSellerByUserId(seller_user_id);
-        if (!sellers.length) {
-            return res.status(404).json({ success: false, error: "Seller not found" });
-        }
-        const seller_id = sellers[0].seller_id;
-
         await WalletModel.lockFunds(request.customer_id, request.budget);
-        const updated = await RequestModel.acceptRequest(req.params.id, seller_id, request.budget);
+        const updated = await RequestModel.acceptRequest(req.params.id, seller_user_id, request.budget);
 
         res.json({ success: true, data: updated });
 

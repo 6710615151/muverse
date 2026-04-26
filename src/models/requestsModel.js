@@ -23,9 +23,8 @@ export async function getAllRequests() {
 
 export async function getRequestById(request_id) {
     const result = await sql`
-        SELECT r.*, s.user_id AS seller_user_id
+        SELECT r.*, r.seller_id AS seller_user_id
         FROM requests r
-        LEFT JOIN sellers s ON r.seller_id = s.seller_id
         WHERE r.request_id = ${request_id}
         `;
     return result[0] || null;
