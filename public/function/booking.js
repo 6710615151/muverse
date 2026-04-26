@@ -99,9 +99,9 @@ function renderList(requests) {
           <div class="booking-item__name">${r.request_title}</div>
           <div class="booking-item__meta">
             <span class="booking-item__detail-text">${r.request_detail || "-"}</span>
-            <span class="booking-item__budget">&#3647;${Number(r.budget || 0).toLocaleString()}</span>
           </div>
         </div>
+        <span class="booking-item__budget">&#3647;${Number(r.budget || 0).toLocaleString()}</span>
         <div class="booking-item__actions">
           <span class="status-badge ${statusClass}">${statusLabel}</span>
           ${actionBtn}
