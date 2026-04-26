@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Seller</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 12px;
+      width: 300px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    input {
+      background: #334155;
+      color: white;
+    }
+
+    button {
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>สร้างร้านค้า</h2>
+
+  <input type="text" id="shopName" placeholder="ชื่อร้าน">
+
+  <button onclick="handleCreateSeller()">สร้าง Seller</button>
+
+  <p id="msg"></p>
+</div>
+
+<script type="module">
+import { seller } from "./api.js";
+
+async function handleCreateSeller() {
+  try {
+    const shop_name = document.getElementById("shopName").value.trim();
+
+    if (!shop_name) {
+      return showMsg("กรุณากรอกชื่อร้าน", true);
+    }
+
+
+    const user = localStorage.getItem("user_id");
+    if (!user || !user.user_id) {
+      return showMsg("กรุณา login ก่อน", true);
+    }
+
+    const user_id = user.user_id;
+
+    const result = await seller.create({
+      user_id,
+      shop_name
+    });
+
+    showMsg("");
+
+    console.log(result);
+
+  } catch (err) {
+    showMsg(err.message, true);
+  }
+}
+
+function showMsg(msg, isError = false) {
+  const el = document.getElementById("msg");
+  el.innerText = msg;
+  el.style.color = isError ? "red" : "lightgreen";
+}
+
+</script>
+
+</body>
+</html>

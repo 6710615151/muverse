@@ -120,3 +120,42 @@ export async function checkSellerExists(req, res) {
         });
     }
 }
+
+
+
+export async function createSeller(req, res) {
+    try {
+        const user_id = req.user.user_id; 
+        const { shop_name } = req.body;
+
+        if (!shop_name) {
+            return res.status(400).json({
+                success: false,
+                error: "shop_name is required"
+            });
+        }
+
+        const exists = await sellerModel.checkSellerExists(user_id);
+        if (exists) {
+            return res.status(400).json({
+                success: false,
+                error: "Seller already exists"
+            });
+        }
+
+        const seller = await sellerModel.createSeller(user_id, shop_name);
+
+        res.status(201).json({
+            success: true,
+            data: seller
+        });
+
+    } catch (err) {
+        console.error("CREATE SELLER ERROR:", err);
+
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+}

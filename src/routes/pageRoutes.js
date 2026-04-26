@@ -17,4 +17,5 @@ router.get("/admin",     servePage("admin/index.html"));
 router.get("/upload",    servePage("testUpload.html"));
 router.get("/donate",    servePage("yantra.html"));
 router.get("/wallpaper",    servePage("wallMarket.html"));
+router.get("/shop-name",    servePage("createShop.html"));
 export default router;

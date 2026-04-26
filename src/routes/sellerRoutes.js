@@ -3,6 +3,7 @@ import * as ctrl from "../controllers/sellerController.js";
 
 const router = Router();
 
+router.post("/createSeller ",  ctrl.createSeller);
 router.get("/",                ctrl.getAllSellers);
 router.get("/user/:id",        ctrl.getSellerByUserId);
 router.patch("/:id/verify",    ctrl.verifySeller);
