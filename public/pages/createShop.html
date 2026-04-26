@@ -1,54 +1,118 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Create Seller</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      color: white;
     }
 
     .card {
-      background: #1e293b;
-      padding: 30px;
-      border-radius: 12px;
-      width: 300px;
+      background: rgba(30, 41, 59, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 20px;
+      width: 360px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      animation: fadeIn 0.8s ease;
     }
 
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: none;
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
     }
 
     input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: none;
       background: #334155;
       color: white;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      background: #475569;
+      transform: scale(1.02);
     }
 
     button {
-      background: #3b82f6;
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
       color: white;
+      font-size: 16px;
       cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    }
+
+    #msg {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .loader {
+      margin-top: 10px;
+      display: none;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(255,255,255,0.2);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
 
 <div class="card">
-  <h2>สร้างร้านค้า</h2>
+  <h2>Create Your Shop</h2>
 
-  <input type="text" id="shopName" placeholder="ชื่อร้าน">
+  <input type="text" id="shopName" placeholder="Enter shop name...">
 
-  <button onclick="handleCreateSeller()">สร้าง Seller</button>
+  <button id="createBtn">Create Seller</button>
+
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+  </div>
 
   <p id="msg"></p>
 </div>
@@ -56,32 +120,39 @@
 <script type="module">
 import { seller } from "./api.js";
 
+const btn = document.getElementById("createBtn");
+const loader = document.getElementById("loader");
+
+btn.addEventListener("click", handleCreateSeller);
+
 async function handleCreateSeller() {
   try {
     const shop_name = document.getElementById("shopName").value.trim();
 
     if (!shop_name) {
-      return showMsg("กรุณากรอกชื่อร้าน", true);
+      return showMsg("Please enter a shop name", true);
     }
 
+    const user_id = localStorage.getItem("user_id");
 
-    const user = localStorage.getItem("user_id");
-    if (!user || !user.user_id) {
-      return showMsg("กรุณา login ก่อน", true);
+    if (!user_id) {
+      return showMsg("Please login first", true);
     }
 
-    const user_id = user.user_id;
+    toggleLoading(true);
 
     const result = await seller.create({
       user_id,
       shop_name
     });
 
-    showMsg("");
+    toggleLoading(false);
 
+    showMsg("Shop created successfully ");
     console.log(result);
 
   } catch (err) {
+    toggleLoading(false);
     showMsg(err.message, true);
   }
 }
@@ -89,9 +160,14 @@ async function handleCreateSeller() {
 function showMsg(msg, isError = false) {
   const el = document.getElementById("msg");
   el.innerText = msg;
-  el.style.color = isError ? "red" : "lightgreen";
+  el.style.color = isError ? "#f87171" : "#4ade80";
 }
 
+function toggleLoading(state) {
+  loader.style.display = state ? "block" : "none";
+  btn.disabled = state;
+  btn.innerText = state ? "Creating..." : "Create Seller";
+}
 </script>
 
 </body>
