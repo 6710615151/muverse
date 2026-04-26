@@ -352,7 +352,7 @@ const PAGE_MAP = {
             navigate(el.dataset.page);
         });
 
-        navigate("");
+        navigate("user");
     }
 
     return { init };
