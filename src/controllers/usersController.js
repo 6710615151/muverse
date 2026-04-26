@@ -22,7 +22,6 @@ export async function getById(req, res) {
         res.status(500).json({ success: false, error: err.message });
     }
 }
-
 export async function create(req, res) {
     try {
         const { name, email, password, phone } = req.body;
@@ -36,26 +35,42 @@ export async function create(req, res) {
 
         const password_hash = await bcrypt.hash(password, 10);
 
-        const user = await userModel.createUser(
-            name,
-            email,
-            password_hash,
-            phone
-        );
+        const result = await sql.begin(async (tx) => {
 
-        await customerModel.createCustomer(user.user_id);
+            const users = await tx`
+                INSERT INTO users (name, email, password_hash, phone)
+                VALUES (${name}, ${email}, ${password_hash}, ${phone})
+                RETURNING *
+            `;
 
+            const user = users[0];
 
-        res.status(201).json({ success: true, data: user });
+            await tx`
+                INSERT INTO customers (user_id)
+                VALUES (${user.user_id})
+            `;
+
+            return user;
+        });
+
+        res.status(201).json({
+            success: true,
+            data: result
+        });
 
     } catch (err) {
+
         if (err.code === "23505") {
             return res.status(409).json({
                 success: false,
                 error: "Email already exists"
             });
         }
-        res.status(500).json({ success: false, error: err.message });
+
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
     }
 }
 
