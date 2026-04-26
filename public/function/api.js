@@ -17,7 +17,7 @@ export const Users = {
     getAll: () => apiFetch("/api/user"),
     getById: (id) => apiFetch(`/api/user/${id}`),
 
-    create: (body) => apiFetch("/api/user", {
+    create: (body) => apiFetch("/api/user", {        
         method: "POST", body: JSON.stringify(body),
     }),
 

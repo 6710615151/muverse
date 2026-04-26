@@ -51,6 +51,7 @@ export async function create(req, res) {
         console.log( name, email, password_hash, phone );
     } catch (err) {
 
+        console.error("CREATE USER ERROR:", err); 
         if (err.code === "23505") {
             return res.status(409).json({
                 success: false,
