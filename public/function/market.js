@@ -24,7 +24,7 @@ function productCardHTML(stock) {
         ${stock.url
       ? `<img src="${stock.url}" alt="${stock.item_name}" loading="lazy" style="border-radius: 7px;" onerror="this.style.display='none'">`
       : `<div class="product-card__img-placeholder product-card__img--${num}"></div>`}
-        ${isOut ? `<span class="product-card__tag">Out</span>` : ''}
+        
         ${isNew ? `<span class="product-card__tag product-card__tag--new">New</span>` : ''}
 
       </div>
@@ -43,11 +43,15 @@ function productCardHTML(stock) {
           <span class="product-card__price" style="font-size: 1.2rem; font-weight: 600;">฿${price}</span>
         </div>
         <div class="service-card__footer" style="display: flex; justify-content: space-between; align-items: flex-end;">
-          <span class="status-badge ${isOut ? 'status-badge--pending' : 'status-badge--confirmed'}" style="font-size: 0.85rem; font-color: #ffffffa4;margin-right: 100px;">
-            ${isOut ? 'sold out' : `have ${stock.stock_quantity} piece${stock.stock_quantity > 1 ? 's' : ''}`}
-          </span>
-          ${!isOut
-      ? `<button class="btn btn--primary btn--sm" data-order-stock="${stock.stock_id}">Buy</button>`
+          
+          ${isOut ? `<span class="status-badge status-badge--pending" style="font-size: 0.85rem;color: #ff4c4cfd;margin-right: 100px;">Sold out</span>` : ''}
+
+          
+
+          ${!isOut ? `<span class="status-badge status-badge--confirmed" style="font-size: 0.85rem; font-color: #ffffffa4;margin-right: 100px;">
+            have ${stock.stock_quantity} piece${stock.stock_quantity > 1 ? 's' : ''}</span>` : ''}
+
+          ${!isOut? `<button class="btn btn--primary btn--sm" data-order-stock="${stock.stock_id}">Buy</button>`
       : ''}
         </div>
       </div>
