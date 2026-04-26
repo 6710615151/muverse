@@ -147,11 +147,8 @@ body {
 #canvasContent {
   display: flex;
   justify-content: center;
-  /* แนวนอน */
-  align-items: center;
-  /* แนวตั้ง */
-  height: 100%;
-  /* สำคัญ */
+  align-items: flex-start;
+  min-height: 100%;
 }
 
 .canvas__loader {

@@ -13,7 +13,6 @@ async function apiFetch(url, options = {}) {
 
     return data.data;
 }
-
 export const Users = {
     getAll: () => apiFetch("/api/user"),
     getById: (id) => apiFetch(`/api/user/${id}`),
@@ -38,6 +37,11 @@ export const Users = {
 
     toggleRole: (id) => apiFetch(`/api/user/toggleRole/${id}`, {
         method: "PUT"
+    }),
+
+    updateStatus: (id, status) => apiFetch(`/api/user/status/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
     })
 };
 

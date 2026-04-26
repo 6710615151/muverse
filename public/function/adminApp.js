@@ -1,6 +1,6 @@
 import { checkRole } from "./pageRole.js";
 import { Logout } from "./logout.js";
-import { Users } from "./api.js";
+import { Users, Wallet, Stock, Requests, serviceType } from "./api.js";
 
 checkRole?.();
 
@@ -16,21 +16,21 @@ const ManageUsers = {
     loadUsers: async () => {
         const list = document.getElementById('user-list');
         if (!list) return;
-        list.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;opacity:0.5">กำลังโหลด...</td></tr>`;
+        list.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;opacity:0.5">Loading...</td></tr>`;
         try {
             const users = await Users.getAll();
             ManageUsers.renderUsers(users);
         } catch (err) {
-            list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:40px">${err.message}</td></tr>`;
+            list.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#ef4444;padding:40px">${err.message}</td></tr>`;
         }
     },
-    
+
     //จัดเรียงผู้ใช้
     renderUsers: (users) => {
         const list = document.getElementById('user-list');
         if (!list) return;
         if (users.length === 0) {
-            list.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;opacity:0.5">ไม่พบผู้ใช้</td></tr>`;
+            list.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;opacity:0.5">No users found.</td></tr>`;
             return;
         }
         list.innerHTML = users.map(u => `
@@ -39,7 +39,14 @@ const ManageUsers = {
                 <td>${u.name}</td>
                 <td>${u.email}</td>
                 <td><span class="role-badge role-badge--${u.role.toLowerCase()}">${u.role}</span></td>
-                <td style="text-align:center">
+                <td><span style="color:${u.status === 'banned' ? '#f87171' : '#4ade80'};font-weight:600">${u.status ?? 'active'}</span></td>
+                <td style="text-align:center;display:flex;gap:6px;justify-content:center">
+                    <button class="btn-toggle" data-id="${u.user_id}" data-name="${u.name}" data-role="${u.role}">🔄</button>
+                    <button class="btn-tx" data-id="${u.user_id}" data-name="${u.name}">📄</button>
+                    <button class="btn-ban" data-id="${u.user_id}" data-name="${u.name}" data-status="${u.status}"
+                        style="color:${u.status === 'banned' ? '#4ade80' : '#f87171'}">
+                        ${u.status === 'banned' ? '✅' : '🚫'}
+                    </button>
                     <button class="btn-delete" data-id="${u.user_id}" data-name="${u.name}">🗑</button>
                 </td>
             </tr>
@@ -48,16 +55,95 @@ const ManageUsers = {
         list.querySelectorAll('.btn-delete').forEach(btn =>
             btn.addEventListener('click', () => ManageUsers.deleteUser(btn.dataset.id, btn.dataset.name))
         );
+        list.querySelectorAll('.btn-toggle').forEach(btn =>
+            btn.addEventListener('click', () => ManageUsers.toggleRole(btn.dataset.id, btn.dataset.name, btn.dataset.role))
+        );
+        list.querySelectorAll('.btn-ban').forEach(btn =>
+            btn.addEventListener('click', () => ManageUsers.banUser(btn.dataset.id, btn.dataset.name, btn.dataset.status))
+        );
+        list.querySelectorAll('.btn-tx').forEach(btn =>
+            btn.addEventListener('click', () => ManageUsers.viewTransactions(btn.dataset.id, btn.dataset.name))
+        );
+    },
+    //จัดการสิทธิ์ผู้ใช้
+    banUser: async (id, name, currentStatus) => {
+        const isBanned = currentStatus === 'banned';
+        const action = isBanned ? 'Unban' : 'Ban';
+        const newStatus = isBanned ? 'active' : 'banned';
+        if (!confirm(`${action} user "${name}"?`)) return;
+        try {
+            await Users.updateStatus(id, newStatus);
+            await ManageUsers.loadUsers();
+        } catch (err) {
+            alert(`Failed to ${action.toLowerCase()} user: ` + err.message);
+        }
+    },
+
+    toggleRole: async (id, name, currentRole) => {
+        const next = currentRole === 'customer' ? 'seller' : 'customer';
+        if (!confirm(`Change role of "${name}" from ${currentRole} to ${next}?`)) return;
+        try {
+            await Users.toggleRole(id);
+            await ManageUsers.loadUsers();
+        } catch (err) {
+            alert('Failed to update role: ' + err.message);
+        }
+    },
+
+    //ดูประวัติธุรกรรมของผู้ใช้
+    viewTransactions: async (id, name) => {
+        try {
+            const records = await Wallet.getRecords(id);
+            const rows = records.length === 0
+                ? `<tr><td colspan="4" style="text-align:center;padding:24px;opacity:0.5">No transaction history.</td></tr>`
+                : records.map(r => {
+                    const isIncome = r.payment_type === 'DEPOSIT' || r.payment_type === 'INCOME';
+                    const color = isIncome ? '#4ade80' : '#f87171';
+                    const sign = isIncome ? '+' : '-';
+                    return `<tr>
+                        <td style="padding:10px 12px;color:#fff">${new Date(r.created_at).toLocaleString('th-TH')}</td>
+                        <td style="padding:10px 12px;color:${color};font-weight:600">${r.payment_type}</td>
+                        <td style="padding:10px 12px;color:${color}">${sign}฿${Number(r.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td style="padding:10px 12px;color:#fff">${r.payment_method}</td>
+                    </tr>`;
+                }).join('');
+
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999';
+            modal.innerHTML = `
+                <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:28px;width:min(700px,95vw);max-height:80vh;overflow-y:auto">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+                        <h2 style="font-size:1.1rem;font-weight:600">Transaction History — ${name}</h2>
+                        <button id="close-tx-modal" style="background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer">✕</button>
+                    </div>
+                    <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+                        <thead>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.1);opacity:0.6">
+                                <th style="text-align:left;padding:8px 12px">Date / Time</th>
+                                <th style="text-align:left;padding:8px 12px">Type</th>
+                                <th style="text-align:left;padding:8px 12px">Amount</th>
+                                <th style="text-align:left;padding:8px 12px">Method</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>`;
+            document.body.appendChild(modal);
+            modal.querySelector('#close-tx-modal').addEventListener('click', () => modal.remove());
+            modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+        } catch (err) {
+            alert('Failed to load transactions: ' + err.message);
+        }
     },
 
     //ลบผู้ใช้
     deleteUser: async (id, name) => {
-        if (!confirm(`ลบผู้ใช้ "${name}" ใช่หรือไม่?`)) return;
+        if (!confirm(`Delete user "${name}"?`)) return;
         try {
             await Users.delete(id);
             await ManageUsers.loadUsers();
         } catch (err) {
-            alert('ลบไม่สำเร็จ: ' + err.message);
+            alert('Failed to delete: ' + err.message);
         }
     },
 
@@ -71,6 +157,350 @@ const ManageUsers = {
     },
 };
 
+const ManageStocks = (() => {
+    let _all = [];
+    let _typeMap = {};
+
+    const getFiltered = () => {
+        const q = document.getElementById('stock-search')?.value.toLowerCase() ?? '';
+        const status = document.getElementById('stock-status-filter')?.value ?? '';
+        return _all.filter(s =>
+            (!q || s.item_name?.toLowerCase().includes(q) || s.shop_name?.toLowerCase().includes(q)) &&
+            (!status || s.stock_status === status)
+        );
+    };
+    
+    //แสดงสินค้า
+    const render = () => {
+        const list = document.getElementById('stock-list');
+        if (!list) return;
+        const items = getFiltered();
+        if (!items.length) {
+            list.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;opacity:0.5">No items found.</td></tr>`;
+            return;
+        }
+        list.innerHTML = items.map(s => {
+            const statusColor = s.stock_status === 'available' ? '#4ade80' : s.stock_status === 'pending' ? '#facc15' : '#f87171';
+            return `<tr data-stock-id="${s.stock_id}">
+                <td style="padding:10px 16px">
+                    ${s.url ? `<img src="${s.url}" style="width:48px;height:48px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'">` : '—'}
+                </td>
+                <td style="padding:10px 16px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.item_name}</td>
+                <td style="padding:10px 16px;opacity:0.7">${s.shop_name ?? '—'}</td>
+                <td style="padding:10px 16px">฿${Number(s.price).toLocaleString()}</td>
+                <td style="padding:10px 16px">${s.stock_quantity}</td>
+                <td style="padding:10px 16px;color:${statusColor};font-weight:600">${s.stock_status}</td>
+                <td style="padding:10px 16px;text-align:center;display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+                    <button class="btn-view" data-id="${s.stock_id}">👁️</button>
+                    ${s.stock_status === 'pending' ? `
+                        <button class="btn-status" data-id="${s.stock_id}" data-status="available" style="color:#4ade80">✅</button>
+                        <button class="btn-status" data-id="${s.stock_id}" data-status="rejected" style="color:#f87171">❌</button>
+                    ` : s.stock_status === 'available' ? `
+                        <button class="btn-status" data-id="${s.stock_id}" data-status="banned" style="color:#f87171">🚫</button>
+                    ` : s.stock_status === 'banned' ? `
+                        <button class="btn-status" data-id="${s.stock_id}" data-status="available" style="color:#4ade80">✅</button>
+                    ` : ''}
+                    <button class="btn-del" data-id="${s.stock_id}" data-name="${s.item_name}">🗑</button>
+                </td>
+            </tr>`;
+        }).join('');
+
+        list.querySelectorAll('.btn-view').forEach(btn =>
+            btn.addEventListener('click', () => {
+                const s = _all.find(x => String(x.stock_id) === btn.dataset.id);
+                if (s) viewDetail(s);
+            })
+        );
+        list.querySelectorAll('.btn-status').forEach(btn =>
+            btn.addEventListener('click', () => changeStatus(btn.dataset.id, btn.dataset.status))
+        );
+        list.querySelectorAll('.btn-del').forEach(btn =>
+            btn.addEventListener('click', () => deleteStock(btn.dataset.id, btn.dataset.name))
+        );
+    };
+
+    //เปลี่ยนสถานะสินค้า
+    const changeStatus = async (id, newStatus) => {
+        const s = _all.find(x => String(x.stock_id) === String(id));
+        if (!s) return;
+        const label = { available: 'Approve / Unban', rejected: 'Reject', banned: 'Ban' }[newStatus] ?? newStatus;
+        if (!confirm(`${label} item "${s.item_name}"?`)) return;
+        try {
+            await Stock.update(id, {
+                category_id: s.category_id,
+                item_name: s.item_name,
+                description: s.description,
+                price: s.price,
+                stock_quantity: s.stock_quantity,
+                item_type: s.item_type,
+                stock_status: newStatus,
+                url: s.url,
+            });
+            s.stock_status = newStatus;
+            render();
+        } catch (err) {
+            alert('Failed to update status: ' + err.message);
+        }
+    };
+
+    //ดูรายละเอียดสินค้า
+    const viewDetail = (s) => {
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999';
+        modal.innerHTML = `
+            <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:28px;width:min(520px,95vw);max-height:85vh;overflow-y:auto">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+                    <h2 style="font-size:1.1rem;font-weight:600">${s.item_name}</h2>
+                    <button id="close-detail-modal" style="background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer">✕</button>
+                </div>
+                ${s.url ? `<img src="${s.url}" style="width:100%;max-height:220px;object-fit:cover;border-radius:8px;margin-bottom:16px">` : ''}
+                <table style="width:100%;font-size:0.88rem;border-collapse:collapse">
+                    ${[
+                        ['Shop', s.shop_name ?? '—'],
+                        ['Price', `฿${Number(s.price).toLocaleString()}`],
+                        ['Stock', s.stock_quantity],
+                        ['Type', s.item_type ?? '—'],
+                        ['Status', s.stock_status],
+                        ['Category', s.category_name ?? '—'],
+                        ['Description', s.description ?? '—'],
+                    ].map(([k, v]) => `
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                            <td style="padding:8px 12px;opacity:0.5;white-space:nowrap">${k}</td>
+                            <td style="padding:8px 12px;color:#fff">${v}</td>
+                        </tr>`).join('')}
+                </table>
+            </div>`;
+        document.body.appendChild(modal);
+        modal.querySelector('#close-detail-modal').addEventListener('click', () => modal.remove());
+        modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    };
+
+    //ลบสินค้า
+    const deleteStock = async (id, name) => {
+        if (!confirm(`Permanently delete item "${name}"?`)) return;
+        try {
+            await Stock.delete(id);
+            _all = _all.filter(s => String(s.stock_id) !== String(id));
+            render();
+        } catch (err) {
+            alert('Failed to delete: ' + err.message);
+        }
+    };
+
+    //กรองสินค้า
+    return {
+        init: async () => {
+            const list = document.getElementById('stock-list');
+            try {
+                _all = (await Stock.getAll()) ?? [];
+                render();
+            } catch (err) {
+                if (list) list.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#ef4444;padding:40px">${err.message}</td></tr>`;
+            }
+            document.getElementById('stock-search')?.addEventListener('input', render);
+            document.getElementById('stock-status-filter')?.addEventListener('change', render);
+        }
+    };
+})();
+
+const ManageRequests = (() => {
+    let _all = [];
+    let _typeMap = {};
+
+    //กรอง request
+    const getFiltered = () => {
+        const q = document.getElementById('req-search')?.value.toLowerCase() ?? '';
+        const status = document.getElementById('req-status-filter')?.value ?? '';
+        return _all.filter(r =>
+            (!q || r.request_title?.toLowerCase().includes(q) || String(r.customer_id).includes(q)) &&
+            (!status || r.request_status === status)
+        );
+    };
+
+    //แสดง request
+    const render = () => {
+        const list = document.getElementById('req-list');
+        if (!list) return;
+        const items = getFiltered();
+        if (!items.length) {
+            list.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;opacity:0.5">No requests found.</td></tr>`;
+            return;
+        }
+        list.innerHTML = items.map(r => {
+            const statusColor = r.request_status === 'approved' ? '#4ade80' : r.request_status === 'pending' ? '#facc15' : '#f87171';
+            const typeName = _typeMap[r.service_type_id] ?? '—';
+            return `<tr data-req-id="${r.request_id}">
+                <td style="padding:10px 16px">${r.request_id}</td>
+                <td style="padding:10px 16px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.request_title}</td>
+                <td style="padding:10px 16px;opacity:0.7">${r.customer_id?.slice(0,8)}…</td>
+                <td style="padding:10px 16px;opacity:0.85">${typeName}</td>
+                <td style="padding:10px 16px">฿${Number(r.budget).toLocaleString()}</td>
+                <td style="padding:10px 16px;color:${statusColor};font-weight:600">${r.request_status}</td>
+                <td style="padding:10px 16px;text-align:center;display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+                    <button class="btn-req-view" data-id="${r.request_id}">👁️</button>
+                    <button class="btn-req-del" data-id="${r.request_id}" data-title="${r.request_title}">🗑</button>
+                </td>
+            </tr>`;
+        }).join('');
+
+        list.querySelectorAll('.btn-req-view').forEach(btn =>
+            btn.addEventListener('click', () => {
+                const r = _all.find(x => String(x.request_id) === btn.dataset.id);
+                if (r) viewDetail(r);
+            })
+        );
+        list.querySelectorAll('.btn-req-del').forEach(btn =>
+            btn.addEventListener('click', () => deleteRequest(btn.dataset.id, btn.dataset.title))
+        );
+    };
+
+    //ดูรายละเอียด request
+    const viewDetail = (r) => {
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999';
+        modal.innerHTML = `
+            <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:28px;width:min(520px,95vw);max-height:85vh;overflow-y:auto">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+                    <h2 style="font-size:1.1rem;font-weight:600">${r.request_title}</h2>
+                    <button id="close-req-modal" style="background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer">✕</button>
+                </div>
+                <table style="width:100%;font-size:0.88rem;border-collapse:collapse">
+                    ${[
+                        ['Request ID', r.request_id],
+                        ['Customer ID', r.customer_id],
+                        ['Service Type', _typeMap[r.service_type_id] ?? r.service_type_id ?? '—'],
+                        ['Budget', `฿${Number(r.budget).toLocaleString()}`],
+                        ['Status', r.request_status],
+                        ['Description', r.request_detail ?? '—'],
+                    ].map(([k, v]) => `
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                            <td style="padding:8px 12px;opacity:0.5;white-space:nowrap">${k}</td>
+                            <td style="padding:8px 12px;color:#fff">${v}</td>
+                        </tr>`).join('')}
+                </table>
+            </div>`;
+        document.body.appendChild(modal);
+        modal.querySelector('#close-req-modal').addEventListener('click', () => modal.remove());
+        modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    };
+
+
+    //ลบ request
+    const deleteRequest = async (id, title) => {
+        if (!confirm(`Permanently delete request "${title}"?`)) return;
+        try {
+            await Requests.deleteRequest(id);
+            _all = _all.filter(r => String(r.request_id) !== String(id));
+            render();
+        } catch (err) {
+            alert('Failed to delete: ' + err.message);
+        }
+    };
+
+    return {
+        init: async () => {
+            const list = document.getElementById('req-list');
+            try {
+                const [requests, types] = await Promise.all([
+                    Requests.getRequests(),
+                    serviceType.getAllServiceType(),
+                ]);
+                _all = requests ?? [];
+                _typeMap = Object.fromEntries((types ?? []).map(t => [t.service_type_id, t.name]));
+                render();
+            } catch (err) {
+                if (list) list.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#ef4444;padding:40px">${err.message}</td></tr>`;
+            }
+            document.getElementById('req-search')?.addEventListener('input', render);
+            document.getElementById('req-status-filter')?.addEventListener('change', render);
+            ManageServiceTypes.init();
+        }
+    };
+})();
+
+//admin จัดการประเภทบริการ
+const ManageServiceTypes = (() => {
+    let _types = [];
+
+    const render = () => {
+        const list = document.getElementById('svt-list');
+        if (!list) return;
+        if (!_types.length) {
+            list.innerHTML = `<li style="opacity:0.5;padding:8px 0">No service types found.</li>`;
+            return;
+        }
+        list.innerHTML = _types.map(t => `
+            <li style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+                <span id="svt-name-${t.service_type_id}" style="flex:1">${t.name}</span>
+                <div style="display:flex;gap:6px;margin-left:12px">
+                    <button class="btn-svt-edit" data-id="${t.service_type_id}" data-name="${t.name}"
+                        style="background:none;border:none;color:#facc15;cursor:pointer;font-size:0.85rem">✏️</button>
+                    <button class="btn-svt-del" data-id="${t.service_type_id}" data-name="${t.name}"
+                        style="background:none;border:none;color:#f87171;cursor:pointer;font-size:0.85rem">🗑</button>
+                </div>
+            </li>
+        `).join('');
+
+        list.querySelectorAll('.btn-svt-edit').forEach(btn =>
+            btn.addEventListener('click', () => editType(btn.dataset.id, btn.dataset.name))
+        );
+        list.querySelectorAll('.btn-svt-del').forEach(btn =>
+            btn.addEventListener('click', () => deleteType(btn.dataset.id, btn.dataset.name))
+        );
+    };
+
+    const addType = async () => {
+        const input = document.getElementById('svt-input');
+        const name = input?.value.trim();
+        if (!name) return;
+        try {
+            await serviceType.createServiceType({ name });
+            input.value = '';
+            _types = (await serviceType.getAllServiceType()) ?? [];
+            render();
+        } catch (err) {
+            alert('Failed to add: ' + err.message);
+        }
+    };
+
+    const editType = async (id, currentName) => {
+        const newName = prompt('Edit service type name:', currentName);
+        if (!newName || newName.trim() === currentName) return;
+        try {
+            await serviceType.updateServiceType(id, { name: newName.trim() });
+            const t = _types.find(x => String(x.service_type_id) === String(id));
+            if (t) t.name = newName.trim();
+            render();
+        } catch (err) {
+            alert('Failed to update: ' + err.message);
+        }
+    };
+
+    const deleteType = async (id, name) => {
+        if (!confirm(`Delete service type "${name}"?`)) return;
+        try {
+            await serviceType.deleteServiceType(id);
+            _types = _types.filter(t => String(t.service_type_id) !== String(id));
+            render();
+        } catch (err) {
+            alert('Failed to delete: ' + err.message);
+        }
+    };
+
+    return {
+        init: async () => {
+            try {
+                _types = (await serviceType.getAllServiceType()) ?? [];
+                render();
+            } catch { render(); }
+            document.getElementById('svt-add-btn')?.addEventListener('click', addType);
+            document.getElementById('svt-input')?.addEventListener('keydown', e => {
+                if (e.key === 'Enter') addType();
+            });
+        }
+    };
+})();
+
 const Router = (() => {
 
     const PAGE_MAP = {
@@ -82,8 +512,10 @@ const Router = (() => {
     };
 
     const PAGE_INIT = {
-        logout: () => requestAnimationFrame(() => Logout.init()),
-        user:   () => requestAnimationFrame(() => ManageUsers.init()),
+        logout:  () => requestAnimationFrame(() => Logout.init()),
+        user:    () => requestAnimationFrame(() => ManageUsers.init()),
+        stock:   () => requestAnimationFrame(() => ManageStocks.init()),
+        request: () => requestAnimationFrame(() => ManageRequests.init()),
     };
 
     const cache = {};
@@ -224,8 +656,8 @@ const Router = (() => {
 
         canvas.innerHTML = `
             <div style="padding:80px;text-align:center;color:gray">
-                <p style="font-size:20px">โหลดหน้าไม่สำเร็จ</p>
-                <p>path ผิด หรือไฟล์ไม่มี</p>
+                <p style="font-size:20px">Failed to load page.</p>
+                <p>The path is invalid or the file does not exist.</p>
             </div>
         `;
     }

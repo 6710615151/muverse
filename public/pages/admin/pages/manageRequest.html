@@ -4,9 +4,64 @@
     <div class="orb orb-3"></div>
     <div class="orb orb-4"></div>
     <div class="main-content">
-        request
 
+        <div class="page-header">
+            <h1 class="page-header__title">Manage Requests</h1>
+            <p class="page-header__sub">Manage all requests and service types in the system.</p>
+        </div>
 
-        
+        <!-- Service Types -->
+        <div style="margin-top:24px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px 24px">
+            <h2 style="font-size:1rem;font-weight:600;margin-bottom:16px">Service Type Management</h2>
+            <ul id="svt-list" style="list-style:none;padding:0;margin:0 0 16px 0;min-height:32px"></ul>
+            <div style="display:flex;gap:8px">
+                <input id="svt-input" type="text" placeholder="New service type name..."
+                    style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);
+                    background:rgba(255,255,255,0.05);color:#fff;font-size:0.9rem;outline:none">
+                <button id="svt-add-btn"
+                    style="padding:8px 18px;border-radius:8px;border:none;background:#6366f1;color:#fff;font-size:0.9rem;cursor:pointer;font-weight:600">
+                    + Add
+                </button>
+            </div>
+        </div>
+
+        <!-- Requests Table -->
+        <div style="margin-top:24px">
+            <h2 style="font-size:1rem;font-weight:600;margin-bottom:12px">Request List</h2>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <input id="req-search" type="text" placeholder="Search by title or Customer ID..."
+                    style="flex:1;min-width:200px;padding:10px 14px;border-radius:8px;
+                    border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);
+                    color:#fff;font-size:0.9rem;box-sizing:border-box;outline:none">
+                <select id="req-status-filter"
+                    style="padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);
+                    background:rgba(255,255,255,0.05);color:#080707;font-size:0.9rem;outline:none;cursor:pointer">
+                    <option value="">All statuses</option>
+                    <option value="pending">pending</option>
+                    <option value="approved">approved</option>
+                    <option value="rejected">rejected</option>
+                </select>
+            </div>
+
+            <div style="margin-top:16px;overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">ID</th>
+                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Title</th>
+                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Customer</th>
+                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Service Type</th>
+                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Budget</th>
+                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Status</th>
+                            <th style="text-align:center;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="req-list">
+                        <tr><td colspan="6" style="text-align:center;padding:40px;opacity:0.5">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </div>

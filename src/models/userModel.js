@@ -65,6 +65,15 @@ export async function getRoleById(userId) {
   `;
 }
 
+export async function updateUserStatus(userId, status) {
+  const result = await sql`
+    UPDATE users SET status = ${status}
+    WHERE user_id = ${userId}
+    RETURNING user_id, status
+  `;
+  return result[0] || null;
+}
+
 export async function changeRole(userId) {
   return await sql`
     UPDATE users

@@ -142,6 +142,13 @@ export async function login(req, res) {
             });
         }
 
+        if (user.status === "banned") {
+            return res.status(403).json({
+                success: false,
+                error: "Your account has been banned"
+            });
+        }
+
         res.json({
             success: true,
             data: {
@@ -185,6 +192,18 @@ export async function toggleRole(req, res) {
         });
     }
 }
+export async function updateStatus(req, res) {
+    try {
+        const { status } = req.body;
+        if (!status) return res.status(400).json({ success: false, error: "Status required" });
+        const user = await userModel.updateUserStatus(req.params.id, status);
+        if (!user) return res.status(404).json({ success: false, error: "User not found" });
+        res.json({ success: true, data: user });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+}
+
 export async function getRole(req, res) {
     try {
         const user = await userModel.getRoleById(req.params.id);
