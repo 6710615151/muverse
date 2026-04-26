@@ -165,9 +165,6 @@ const ManageStocks = (() => {
     };
 })();
 
-/* =========================
-   MANAGE REQUESTS
-========================= */
 const ManageRequests = (() => {
     let _all = [];
 
@@ -202,9 +199,6 @@ const ManageRequests = (() => {
     };
 })();
 
-/* =========================
-   ROUTER
-========================= */
 const Router = (() => {
 
     const PAGE_MAP = {

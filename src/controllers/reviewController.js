@@ -29,12 +29,18 @@ export async function create(req, res) {
       }
     }
 
-    // seller_id ที่รับมาคือ user_id — ต้อง lookup seller_id จริงจาก sellers table
-    const sellers = await SellerModel.getSellerByUserId(seller_id);
-    if (!sellers.length) {
-      return res.status(404).json({ success: false, error: "Seller not found" });
+    // seller_id ที่รับมาอาจเป็น user_id หรือ seller_id ขึ้นอยู่กับข้อมูล
+    let real_seller_id = seller_id;
+    const byUserId = await SellerModel.getSellerByUserId(seller_id);
+    if (byUserId.length) {
+      real_seller_id = byUserId[0].seller_id;
+    } else {
+      const bySellerId = await SellerModel.getSellerById(seller_id);
+      if (!bySellerId) {
+        return res.status(404).json({ success: false, error: "Seller not found" });
+      }
+      real_seller_id = bySellerId.seller_id;
     }
-    const real_seller_id = sellers[0].seller_id;
 
     const review = await ReviewModel.createReview(request_id || null, reviewer_id, real_seller_id, rating, comment || null);
     res.status(201).json({ success: true, data: review });

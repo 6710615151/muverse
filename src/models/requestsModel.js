@@ -89,9 +89,11 @@ export async function getRequestByCustomerId(customer_id) {
     const result = await sql`
         SELECT
             r.*,
-            st.name AS service_type_name
+            st.name AS service_type_name,
+            CASE WHEN rv.review_id IS NOT NULL THEN true ELSE false END AS has_review
         FROM requests r
         LEFT JOIN service_types st ON r.service_type_id = st.service_type_id
+        LEFT JOIN reviews rv ON rv.request_id = r.request_id
         WHERE r.customer_id = ${customer_id}
         ORDER BY r.created_at DESC
         `;

@@ -10,6 +10,7 @@ const STATUS_LABEL = {
   done:      "Done",
   DONE:      "Done",
   complete:  "Completed",
+  COMPLETE:  "Completed",
   COMPLETED: "Completed",
   rejected:  "Rejected",
   REJECTED:  "Rejected",
@@ -23,6 +24,7 @@ const STATUS_CLASS = {
   done:      "status-badge--done",
   DONE:      "status-badge--done",
   complete:  "status-badge--done",
+  COMPLETE:  "status-badge--done",
   COMPLETED: "status-badge--done",
   rejected:  "status-badge--rejected",
   REJECTED:  "status-badge--rejected",
@@ -76,12 +78,14 @@ function renderList(requests) {
           data-title="${r.request_title}">
           ยืนยันรับบริการ ฿${Number(r.budget || 0).toLocaleString()}
         </button>`;
-    } else if (statusUp === "COMPLETE" && r.seller_id) {
+    } else if ((statusUp === "COMPLETE" || statusUp === "COMPLETED") && r.seller_id && !r.has_review) {
       actionBtn = `
         <button class="btn-leave-review" data-id="${r.request_id}" data-seller-id="${r.seller_id || ""}"
           style="padding:6px 14px;border-radius:6px;border:none;background:#0f766e;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600;margin-left:8px">
           Leave Review
         </button>`;
+    } else if ((statusUp === "COMPLETE" || statusUp === "COMPLETED") && r.has_review) {
+      actionBtn = `<span style="font-size:0.78rem;color:#facc15;margin-left:8px">★ Reviewed</span>`;
     }
 
     return `
