@@ -208,10 +208,10 @@ const ManageRequests = (() => {
 const Router = (() => {
 
     const PAGE_MAP = {
-        user: "/pages/admin/manageUser.html",
-        stock: "/pages/admin/manageStock.html",
-        request: "/pages/admin/manageRequest.html",
-        logout: "/pages/admin/logout.html",
+        user: "../../pages/admin/pages/manageUser.html",
+        stock: "../../pages/admin/pages/manageStock.html",
+        request: "../../pages/admin/pages/manageRequest.html",
+        logout: "../../pages/admin/pages/logout.html",
     };
 
     const PAGE_INIT = {
@@ -238,7 +238,7 @@ const Router = (() => {
             navigate(el.dataset.page);
         });
 
-        navigate("user");
+        navigate("");
     }
 
     return { init };

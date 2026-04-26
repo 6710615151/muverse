@@ -1,4 +1,5 @@
 import * as userModel from "../models/userModel.js";
+import * as customerModel from "../models/customerModel.js";
 import bcrypt from "bcrypt";
 
 export async function getAll(req, res) {
@@ -41,6 +42,8 @@ export async function create(req, res) {
             password_hash,
             phone
         );
+
+        await customerModel.createCustomer(user.user_id);
 
 
         res.status(201).json({ success: true, data: user });
@@ -217,7 +220,7 @@ export async function getRole(req, res) {
 
         res.json({
             success: true,
-            data: user[0], 
+            data: user[0],
         });
 
     } catch (err) {
