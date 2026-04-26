@@ -235,9 +235,9 @@
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
     <div class="orb orb-4"></div>
-    <div class="main-content">
+    <div class="main-content" style="height: 100%;display: flex;flex-direction: column;">
 
-        <div class="page-header">
+        <div class="page-header" style="margin: 20px;">
             <h1 class="page-header__title" id="shop-name">Shop</h1>
             <p class="page-header__sub">__________________________________________</p>
         </div>
@@ -265,7 +265,7 @@
                     </div>
                 </div>
 
-                <div class="market-content">
+                <div class="market-content" style="padding:32px 64px;overflow-y: scroll; height: 100%;flex-grow: 1;">
                     <div class="product-grid" id="shop-grid">
                         <div style="grid-column:1/-1;padding:80px;text-align:center;color:var(--clr-text-muted)">
                             <p style="font-size:2rem;margin-bottom:12px">⏳</p>
@@ -284,6 +284,7 @@
             <div class="detail-popup__body">
                 <p class="detail-popup__brand" id="shop-detail-popup-brand"></p>
                 <h2 class="detail-popup__title" id="shop-detail-popup-title"></h2>
+                <p class="detail-popup__description" id="shop-detail-popup-description"></p>
                 <p class="detail-popup__stars" id="shop-detail-popup-stars"></p>
                 <div class="detail-popup__price-row">
                     <span class="detail-popup__price" id="shop-detail-popup-price"></span>

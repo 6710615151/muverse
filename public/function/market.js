@@ -48,7 +48,7 @@ function productCardHTML(stock) {
 
           
 
-          ${!isOut ? `<span class="status-badge status-badge--confirmed" style="font-size: 0.85rem; font-color: #ffffffa4;margin-right: 100px;">
+          ${!isOut ? `<span class="status-badge status-badge--confirmed" style="font-size: 0.85rem; font-color: #ffffffa4;margin-right: 10px;padding-left:0px;">
             have ${stock.stock_quantity} piece${stock.stock_quantity > 1 ? 's' : ''}</span>` : ''}
 
           ${!isOut? `<button class="btn btn--primary btn--sm" data-order-stock="${stock.stock_id}">Buy</button>`
@@ -105,6 +105,8 @@ function openDetailPopup(stock) {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('detail-popup-brand', shopName);
   set('detail-popup-title', stock.item_name);
+  set('detail-popup-description', stock.description);
+
   set('detail-popup-stars', stock.rating ? `⭐ ${stock.rating}` : '');
   set('detail-popup-price', `฿${price}`);
 
@@ -427,6 +429,8 @@ function openShopDetailPopup(stock) {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('shop-detail-popup-brand', stock.shop_name ?? '');
   set('shop-detail-popup-title', stock.item_name);
+  set('shop-detail-popup-description', stock.description);
+
   set('shop-detail-popup-stars', stock.rating ? `⭐ ${stock.rating}` : '');
   set('shop-detail-popup-price', `฿${price}`);
 
