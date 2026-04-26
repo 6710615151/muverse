@@ -524,7 +524,7 @@ img{
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(255, 255, 255, 0.6);
   display: none;
   align-items: center;
   justify-content: center;
@@ -536,7 +536,7 @@ img{
 }
 
 .modal {
-  background: #111827;
+  background: #ffffff;
   padding: 25px;
   border-radius: 14px;
   width: 100%;
@@ -1008,7 +1008,7 @@ img{
 
 .btn--primary {
   background: linear-gradient(135deg, #7c3aed, #6d28d9);
-  color: #fff;
+  color: #000000;
 }
 
 .btn--primary:hover {
@@ -1138,8 +1138,8 @@ img{
   padding: 4px 2px;
   margin-left: 40%;
   margin-right: 2%;
-  background: #e884ff;
-  color: #000000;
+  background: #530b63;
+  color: hsl(0, 100%, 99%);
 }
 
 .btn--primary:hover {
@@ -1257,7 +1257,7 @@ img{
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(255, 255, 255, 0.6);
   display: none;
   align-items: center;
   justify-content: center;
@@ -1269,7 +1269,7 @@ img{
 }
 
 .modal {
-  background: #191c23;
+  background: #ffffff;
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 16px;
   padding: 24px;
