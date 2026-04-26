@@ -793,7 +793,14 @@ img{
   color: #000;
   font-family: "Segoe UI", sans-serif;
   padding: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+#accept .main-content {
+  flex: 1;
   overflow-y: auto;
+  min-height: 0;
 }
 .page-header__title {
   font-size: 2rem;
@@ -807,33 +814,41 @@ img{
 
 .filter-bar {
   margin-top: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
 }
 
 .filter-bar__tabs {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   flex-wrap: wrap;
+  background: rgba(0,0,0,0.06);
+  padding: 5px;
+  border-radius: 14px;
+  width: fit-content;
 }
 
 .filter-tab {
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 3px solid rgba(68, 5, 75, 0.08);
+  padding: 6px 16px;
+  border-radius: 10px;
+  border: none;
   background: transparent;
-  color: #141414;
+  color: #6b7280;
   cursor: pointer;
   transition: 0.2s;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 .filter-tab:hover {
-  color: #560959;
+  color: #1a0a2e;
+  background: rgba(0,0,0,0.06);
 }
 
 .filter-tab.active {
-  background: hsl(289, 95%, 15%);
+  background: #3b0764;
   color: #fff;
-  border-color: transparent;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(59,7,100,0.3);
 }
 
 .request-list {
@@ -899,116 +914,176 @@ img{
 }
 /* container */
 #requestList {
-  display: grid;
-  gap: 16px;
-  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 10px 4px;
 }
 
 /* card */
 .booking-card {
-  background: rgba(255, 255, 255, 0.08);
+  position: relative;
+  background: rgba(255, 255, 255, 0.55);
   border-radius: 20px;
-  padding: 18px 20px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.15);
-  transition: 0.25s ease;
+  padding: 0 20px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
 }
 
 .booking-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
 }
+
+/* colored top bar */
+.booking-card__top-bar {
+  height: 4px;
+  margin: 0 -20px 16px;
+  border-radius: 20px 20px 0 0;
+}
+
+.booking-card--pending  .booking-card__top-bar { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.booking-card--accepted .booking-card__top-bar { background: linear-gradient(90deg, #10b981, #34d399); }
+.booking-card--done     .booking-card__top-bar { background: linear-gradient(90deg, #6366f1, #818cf8); }
+.booking-card--rejected .booking-card__top-bar { background: linear-gradient(90deg, #ef4444, #f87171); }
 
 /* header */
 .booking-card__header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.booking-card__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
 }
 
 .booking-card__title {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a0a2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.booking-card__customer {
+  font-size: 0.78rem;
+  color: #6b7280;
 }
 
 /* status badge */
 .badge {
-  padding: 4px 10px;
+  flex-shrink: 0;
+  padding: 4px 12px;
   border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
 }
 
-.badge.accepted {
-  background: rgba(34,197,94,0.15);
-  color: #22c55e;
-}
-
-.badge.rejected {
-  background: rgba(239,68,68,0.15);
-  color: #ef4444;
-}
-
-.badge.pending {
-  background: rgba(234,179,8,0.15);
-  color: #eab308;
-}
+.badge.accepted { background: rgba(16,185,129,0.12); color: #059669; border: 1px solid rgba(16,185,129,0.25); }
+.badge.rejected { background: rgba(239,68,68,0.12);  color: #dc2626; border: 1px solid rgba(239,68,68,0.25); }
+.badge.pending  { background: rgba(245,158,11,0.12); color: #d97706; border: 1px solid rgba(245,158,11,0.25); }
+.badge.done     { background: rgba(99,102,241,0.12); color: #4f46e5; border: 1px solid rgba(99,102,241,0.25); }
 
 /* detail */
 .booking-card__detail {
-  font-size: 0.9rem;
-  opacity: 0.8;
-  margin-bottom: 10px;
+  font-size: 0.88rem;
+  color: #4b5563;
+  margin-bottom: 12px;
+  line-height: 1.5;
 }
 
-/* meta */
+/* meta chips */
 .booking-card__meta {
   display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  opacity: 0.7;
-  margin-bottom: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.booking-card__meta-chip {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: rgba(0,0,0,0.06);
+  color: #374151;
 }
 
 /* actions */
 .booking-card__actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  margin-top: 4px;
 }
 
-/* buttons */
 .btn {
   flex: 1;
-  padding: 8px 0;
+  padding: 9px 0;
   border-radius: 12px;
   font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
   border: none;
 }
 
-/* primary */
 .btn--primary {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: #fff;
 }
 
 .btn--primary:hover {
-  opacity: 0.9;
-  transform: scale(1.03);
+  opacity: 0.88;
+  transform: translateY(-1px);
 }
 
-/* ghost */
 .btn--ghost {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.2);
-  color: inherit;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  color: #6b7280;
 }
 
 .btn--ghost:hover {
-  background: rgba(255,255,255,0.08);
+  background: rgba(239,68,68,0.08);
+  border-color: #ef4444;
+  color: #dc2626;
+}
+
+.btn--done {
+  flex: 1;
+  padding: 9px 0;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
+}
+
+.btn--done:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+/* custom scrollbar */
+#accept .main-content::-webkit-scrollbar { width: 5px; }
+#accept .main-content::-webkit-scrollbar-track { background: transparent; }
+#accept .main-content::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+  border-radius: 10px;
 }
 
 /*stock*/
