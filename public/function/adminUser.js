@@ -40,21 +40,37 @@ export const ManageUsers = {
         const list = document.getElementById('user-list');
         if (!list) return;
 
-        list.innerHTML = users.map(u => `
-            <tr>
-                <td style="padding:10px 20px 10px 16px">${u.user_id.slice(0, 8)}…</td>
-                <td style="padding:10px 28px 10px 16px">${u.name}</td>
-                <td style="padding:10px 28px 10px 16px">${u.email}</td>
-                <td style="padding:10px 20px 10px 16px">${u.role}</td>
-                <td style="padding:10px 16px">${u.status ?? 'active'}</td>
-                <td style="padding:10px 16px;text-align:center;display:flex;gap:6px;justify-content:center">
-                    <button class="view" data-id="${u.user_id}"><span class="fi fi-ts-eye"></span></button>
-                    <button class="toggle" data-id="${u.user_id}" data-role="${u.role}"><span class="fi fi-ts-users"></span></button>
-                    <button class="ban" data-id="${u.user_id}" data-status="${u.status}"><span class="fi fi-ts-ban"></span></button>
-                    <button class="delete" data-id="${u.user_id}"><span class="fi fi-ts-trash"></span></button>
-                </td>
-            </tr>
-        `).join('');
+        if (!users.length) {
+            list.innerHTML = `<p class="mgr-empty">No users found</p>`;
+            return;
+        }
+
+        list.innerHTML = users.map(u => {
+            const status = u.status ?? 'active';
+            const statusKey = status.toLowerCase();
+            const initial = (u.name || '?')[0].toUpperCase();
+            return `
+            <div class="mgr-card">
+                <div class="mgr-card__avatar">${initial}</div>
+                <div class="mgr-card__info">
+                    <div class="mgr-card__name">${u.name}</div>
+                    <div class="mgr-card__sub">${u.email}</div>
+                    <div class="mgr-card__meta">#${u.user_id.slice(0, 8)}…</div>
+                </div>
+                <div class="mgr-card__right">
+                    <div style="display:flex;gap:6px;align-items:center">
+                        <span style="padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;background:rgba(124,58,237,0.1);color:#7c3aed;">${u.role}</span>
+                        <span class="mgr-badge mgr-badge-${statusKey}">${status}</span>
+                    </div>
+                    <div style="display:flex;gap:4px">
+                        <button class="mgr-btn view" data-id="${u.user_id}" title="View"><span class="fi fi-ts-eye"></span></button>
+                        <button class="mgr-btn toggle" data-id="${u.user_id}" data-role="${u.role}" title="Toggle Role"><span class="fi fi-ts-users"></span></button>
+                        <button class="mgr-btn ban" data-id="${u.user_id}" data-status="${u.status}" title="Ban/Unban" style="color:#d97706"><span class="fi fi-ts-ban"></span></button>
+                        <button class="mgr-btn delete" data-id="${u.user_id}" title="Delete" style="color:#dc2626"><span class="fi fi-ts-trash"></span></button>
+                    </div>
+                </div>
+            </div>
+        `}).join('');
 
         list.querySelectorAll('.view').forEach(b =>
             b.onclick = () => {
@@ -70,6 +86,7 @@ export const ManageUsers = {
 
         list.querySelectorAll('.ban').forEach(b =>
             b.onclick = () => ManageUsers.banUser(b.dataset.id, b.dataset.status));
+
     },
 
     viewDetail: (u) => {
@@ -99,8 +116,8 @@ export const ManageUsers = {
 
     onSearch: (e) => {
         const q = e.target.value.toLowerCase();
-        document.querySelectorAll('#user-list tr').forEach(row => {
-            row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+        document.querySelectorAll('#user-list .mgr-card').forEach(card => {
+            card.style.display = card.innerText.toLowerCase().includes(q) ? '' : 'none';
         });
     }
 };
@@ -109,12 +126,30 @@ export const ManageWallet = (() => {
     let _all = [];
 
     const TYPE_COLOR = {
-        DEPOSIT:  "#22c55e",
-        INCOME:   "#22c55e",
-        WITHDRAW: "#ef4444",
-        PAYMENT:  "#ef4444",
-        HOLD:     "#f59e0b",
-        REFUND:   "#6366f1",
+        DEPOSIT:  "#16a34a",
+        INCOME:   "#16a34a",
+        WITHDRAW: "#dc2626",
+        PAYMENT:  "#dc2626",
+        HOLD:     "#d97706",
+        REFUND:   "#7c3aed",
+    };
+
+    const TYPE_BG = {
+        DEPOSIT:  "rgba(22,163,74,0.1)",
+        INCOME:   "rgba(22,163,74,0.1)",
+        WITHDRAW: "rgba(220,38,38,0.1)",
+        PAYMENT:  "rgba(220,38,38,0.1)",
+        HOLD:     "rgba(217,119,6,0.1)",
+        REFUND:   "rgba(124,58,237,0.1)",
+    };
+
+    const TYPE_ICON = {
+        DEPOSIT:  "↑",
+        INCOME:   "↑",
+        WITHDRAW: "↓",
+        PAYMENT:  "↓",
+        HOLD:     "⏸",
+        REFUND:   "↩",
     };
 
     function formatDate(str) {
@@ -135,10 +170,14 @@ export const ManageWallet = (() => {
         if (!el) return;
 
         el.innerHTML = Object.entries(totals).map(([type, sum]) => `
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
-                border-radius:12px;padding:14px 20px;min-width:130px;">
-                <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:4px;">${type}</div>
-                <div style="font-size:1.15rem;font-weight:700;color:${TYPE_COLOR[type] || '#e5e7eb'};">
+            <div style="background:rgba(255,255,255,0.78);border:1.5px solid ${TYPE_BG[type]||'rgba(124,58,237,0.12)'};
+                border-radius:14px;padding:16px 22px;min-width:140px;
+                box-shadow:0 2px 12px rgba(63,2,80,0.08);backdrop-filter:blur(10px);">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+                    <span style="font-size:1rem;color:${TYPE_COLOR[type]||'#475569'};">${TYPE_ICON[type]||'•'}</span>
+                    <span style="font-size:0.72rem;font-weight:700;letter-spacing:0.6px;color:#64748b;text-transform:uppercase;">${type}</span>
+                </div>
+                <div style="font-size:1.18rem;font-weight:800;color:${TYPE_COLOR[type]||'#1a1a2e'};">
                     ฿${sum.toLocaleString("th-TH", { minimumFractionDigits: 2 })}
                 </div>
             </div>
@@ -153,35 +192,40 @@ export const ManageWallet = (() => {
         if (count) count.textContent = `${records.length} records`;
 
         if (!records.length) {
-            list.innerHTML = `<tr><td colspan="6"
-                style="text-align:center;padding:40px;color:rgba(255,255,255,0.4);">
-                No records found</td></tr>`;
+            list.innerHTML = `<p class="recon-empty">No records found</p>`;
             return;
         }
 
-        list.innerHTML = records.map(r => `
-            <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
-                <td style="padding:10px 14px;color:rgba(255,255,255,0.6);font-size:0.82rem;">
-                    ${formatDate(r.created_at)}
-                </td>
-                <td style="padding:10px 14px;">
-                    <div style="font-weight:500;">${r.user_name}</div>
-                    <div style="font-size:0.78rem;color:rgba(255,255,255,0.45);">${r.user_email}</div>
-                </td>
-                <td style="padding:10px 14px;">
-                    <span style="padding:3px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;
-                        background:rgba(255,255,255,0.07);color:${TYPE_COLOR[r.payment_type] || '#e5e7eb'};">
+        list.innerHTML = records.map(r => {
+            const d = new Date(r.created_at);
+            const day   = d.toLocaleString("th-TH", { day: "2-digit" });
+            const month = d.toLocaleString("th-TH", { month: "short" });
+            const time  = d.toLocaleString("th-TH", { hour: "2-digit", minute: "2-digit" });
+            const color = TYPE_COLOR[r.payment_type] || "#475569";
+            const bg    = TYPE_BG[r.payment_type]    || "rgba(100,116,139,0.1)";
+            const icon  = TYPE_ICON[r.payment_type]  || "•";
+            return `
+            <div class="recon-card">
+                <div class="recon-card__date">
+                    <span class="recon-card__day">${day}</span>
+                    <span class="recon-card__month">${month}</span>
+                </div>
+                <div class="recon-card__info">
+                    <div class="recon-card__name">${r.user_name}</div>
+                    <div class="recon-card__email">${r.user_email}</div>
+                    <div class="recon-card__method">${r.payment_method} · ${time}</div>
+                </div>
+                <div class="recon-card__right">
+                    <div class="recon-card__amount" style="color:${color}">
+                        ${icon} ฿${Number(r.amount).toLocaleString("th-TH", { minimumFractionDigits: 2 })}
+                    </div>
+                    <span class="recon-card__badge" style="background:${bg};color:${color}">
                         ${r.payment_type}
                     </span>
-                </td>
-                <td style="padding:10px 14px;text-align:right;font-weight:600;
-                    color:${TYPE_COLOR[r.payment_type] || '#e5e7eb'};">
-                    ฿${Number(r.amount).toLocaleString("th-TH", { minimumFractionDigits: 2 })}
-                </td>
-                <td style="padding:10px 14px;color:rgba(255,255,255,0.7);">${r.payment_method}</td>
-                <td style="padding:10px 14px;color:rgba(255,255,255,0.7);">${r.status}</td>
-            </tr>
-        `).join("");
+                    <span class="recon-card__status">${r.status}</span>
+                </div>
+            </div>
+        `}).join("");
     }
 
     function applyFilter() {

@@ -60,6 +60,23 @@ body {
   z-index: 1;
 }
 
+#admin-content {
+  display: flex;
+  flex-direction: column;
+  background:rgba(255,255,255,0.72);
+  border-radius: 30px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  border: 1px solid rgba(248, 215, 255, 0.79);
+  height: 90vh;
+  width: 98%;
+  color: #fff;
+  font-family: "Segoe UI", sans-serif;
+  padding: 20px;
+  overflow: hidden;
+  align-items: center;
+}
 /*navbar*/
 
 .nav {
