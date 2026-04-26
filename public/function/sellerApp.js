@@ -2,6 +2,7 @@ import { Role } from "./changeRole.js";
 import { checkRole } from "./pageRole.js";
 import { Logout } from "./logout.js";
 import { WalletFlow } from "./wallet.js";
+import { SellerStock } from "./stockManager.js";
 
 checkRole?.();
 
@@ -18,6 +19,7 @@ checkRole?.();
 
         const PAGE_INIT = {
             //accept: () => Market.init(),
+            stock: () => requestAnimationFrame(() => SellerStock.init()),
             user: () => requestAnimationFrame(() => Role?.init()),
             logout: () => requestAnimationFrame(() => Logout.init()),
             wallet: () => requestAnimationFrame(() => WalletFlow.init()),
