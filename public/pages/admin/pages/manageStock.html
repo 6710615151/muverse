@@ -1,42 +1,216 @@
 <style>
-  .mgr-wrapper{width:100%;max-width:1100px;padding:12px 0 40px}
-  .mgr-header{margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid rgba(124,58,237,0.15)}
-  .mgr-title{font-family:'DM Sans',sans-serif;font-size:2rem;font-weight:800;color:#1a1a2e;letter-spacing:2px;text-transform:uppercase}
-  .mgr-title em{font-style:normal;color:#7c3aed}
-  .mgr-sub{color:#64748b;font-size:0.88rem;margin-top:6px}
-  .mgr-filter-bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:0 0 16px}
-  .mgr-input,.mgr-select{padding:10px 16px;border-radius:10px;border:1.5px solid rgba(124,58,237,0.25);background:rgba(255,255,255,0.88);color:#1a1a2e;font-size:0.88rem;outline:none;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(63,2,80,0.06);transition:border-color 0.2s}
-  .mgr-input{flex:1;min-width:220px}
-  .mgr-input::placeholder{color:#94a3b8}
-  .mgr-input:focus,.mgr-select:focus{border-color:#7c3aed}
-  .mgr-empty{text-align:center;padding:52px;color:#94a3b8;font-size:0.9rem}
-  .mgr-badge{padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;display:inline-block}
-  .mgr-badge-available{background:rgba(22,163,74,0.1);color:#16a34a}
-  .mgr-badge-out_of_stock{background:rgba(220,38,38,0.1);color:#dc2626}
-  .mgr-badge-pending{background:rgba(217,119,6,0.1);color:#d97706}
-  .mgr-badge-banned{background:rgba(220,38,38,0.15);color:#dc2626}
-  .mgr-btn{border:none;background:none;cursor:pointer;font-size:1rem;padding:6px 8px;border-radius:8px;transition:background 0.15s;color:#475569}
-  .mgr-btn:hover{background:rgba(124,58,237,0.1)}
+  .mgr-wrapper {
+    width: 100%;
+    max-width: 1100px;
+    padding: 12px 0 40px
+  }
+
+  .mgr-header {
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid rgba(124, 58, 237, 0.15)
+  }
+
+  .mgr-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    letter-spacing: 2px;
+    text-transform: uppercase
+  }
+
+  .mgr-title em {
+    font-style: normal;
+    color: #7c3aed
+  }
+
+  .mgr-sub {
+    color: #64748b;
+    font-size: 0.88rem;
+    margin-top: 6px
+  }
+
+  .mgr-filter-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0 0 16px
+  }
+
+  .mgr-input,
+  .mgr-select {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(124, 58, 237, 0.25);
+    background: rgba(255, 255, 255, 0.88);
+    color: #1a1a2e;
+    font-size: 0.88rem;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 2px 8px rgba(63, 2, 80, 0.06);
+    transition: border-color 0.2s
+  }
+
+  .mgr-input {
+    flex: 1;
+    min-width: 220px
+  }
+
+  .mgr-input::placeholder {
+    color: #94a3b8
+  }
+
+  .mgr-input:focus,
+  .mgr-select:focus {
+    border-color: #7c3aed
+  }
+
+  .mgr-empty {
+    text-align: center;
+    padding: 52px;
+    color: #94a3b8;
+    font-size: 0.9rem
+  }
+
+  .mgr-badge {
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-block
+  }
+
+  .mgr-badge-available {
+    background: rgba(22, 163, 74, 0.1);
+    color: #16a34a
+  }
+
+  .mgr-badge-out_of_stock {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626
+  }
+
+  .mgr-badge-pending {
+    background: rgba(217, 119, 6, 0.1);
+    color: #d97706
+  }
+
+  .mgr-badge-banned {
+    background: rgba(220, 38, 38, 0.15);
+    color: #dc2626
+  }
+
+  .mgr-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: background 0.15s;
+    color: #475569
+  }
+
+  .mgr-btn:hover {
+    background: rgba(124, 58, 237, 0.1)
+  }
+
   /* Card styles */
-  .mgr-list-wrap{display:flex;flex-direction:column;gap:10px}
-  .mgr-card{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.72);border-radius:14px;border:1px solid rgba(124,58,237,0.12);padding:16px 20px;backdrop-filter:blur(10px);box-shadow:0 2px 12px rgba(63,2,80,0.07);transition:box-shadow 0.15s,transform 0.15s}
-  .mgr-card:hover{box-shadow:0 6px 24px rgba(63,2,80,0.13);transform:translateY(-1px)}
-  .mgr-card__img{width:54px;height:54px;border-radius:12px;object-fit:cover;flex-shrink:0;box-shadow:0 2px 8px rgba(63,2,80,0.12)}
-  .mgr-card__img-ph{width:54px;height:54px;border-radius:12px;background:rgba(124,58,237,0.08);display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:1.3rem;flex-shrink:0}
-  .mgr-card__info{flex:1;min-width:0}
-  .mgr-card__name{font-weight:700;color:#1a1a2e;font-size:0.95rem}
-  .mgr-card__sub{font-size:0.78rem;color:#64748b;margin-top:2px}
-  .mgr-card__meta{font-size:0.75rem;color:#7c3aed;margin-top:3px;font-weight:500}
-  .mgr-card__right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
-  .mgr-card__price{font-size:1rem;font-weight:800;color:#1a1a2e}
+  .mgr-list-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+  }
+
+  .mgr-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 14px;
+    border: 1px solid rgba(124, 58, 237, 0.12);
+    padding: 16px 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(63, 2, 80, 0.07);
+    transition: box-shadow 0.15s, transform 0.15s
+  }
+
+  .mgr-card:hover {
+    box-shadow: 0 6px 24px rgba(63, 2, 80, 0.13);
+    transform: translateY(-1px)
+  }
+
+  .mgr-card__img {
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(63, 2, 80, 0.12)
+  }
+
+  .mgr-card__img-ph {
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    background: rgba(124, 58, 237, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 1.3rem;
+    flex-shrink: 0
+  }
+
+  .mgr-card__info {
+    flex: 1;
+    min-width: 0
+  }
+
+  .mgr-card__name {
+    font-weight: 700;
+    color: #1a1a2e;
+    font-size: 0.95rem
+  }
+
+  .mgr-card__sub {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 2px
+  }
+
+  .mgr-card__meta {
+    font-size: 0.75rem;
+    color: #7c3aed;
+    margin-top: 3px;
+    font-weight: 500
+  }
+
+  .mgr-card__right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0
+  }
+
+  .mgr-card__price {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1a1a2e
+  }
 </style>
 
-<div id="admin-content" style="transition: 0.45s cubic-bezier(0.22, 1, 0.36, 1); opacity: 1; transform: translateY(0px) scale(1); filter: blur(0px);">
+<div id="admin-content"
+  style="transition: 0.45s cubic-bezier(0.22, 1, 0.36, 1); opacity: 1; transform: translateY(0px) scale(1); filter: blur(0px);">
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
   <div class="orb orb-4"></div>
-  <div class="main-content mgr-wrapper" style="padding-bottom:0px;height: auto;display: flex;flex-direction: column;overflow-y: hidden;">
+  <div class="main-content mgr-wrapper"
+    style="padding-bottom:0px;height: auto;display: flex;flex-direction: column;overflow-y: hidden;">
 
     <div class="mgr-header">
       <h1 class="mgr-title">MANAGE <em>STOCKS</em></h1>
@@ -54,9 +228,10 @@
       </select>
     </div>
     <div style="overflow-y: scroll; height: 100%;flex-grow: 1;">
-    <div class="mgr-list-wrap" id="stock-list">
-      <p class="mgr-empty">Loading...</p>
-    </div></div>
+      <div class="mgr-list-wrap" id="stock-list">
+        <p class="mgr-empty">Loading...</p>
+      </div>
+    </div>
 
   </div>
 </div>

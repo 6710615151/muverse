@@ -247,7 +247,7 @@
 
         <!-- ─── Back + Search ─── -->
         <div class="filter-bar">
-            <button class="btn btn--ghost btn--sm" id="shop-back-btn">← Back</button>
+            <button class="btn btn--ghost btn--sm" id="shop-back-btn"><span class="fi fi-ts-angle-left"></span> Back</button>
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;">
                 <div><span style="font-size:0.82rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase"
                         class="fi fi-ts-search"></span></div>
@@ -264,14 +264,14 @@
                         Found <strong id="shop-count">0</strong> items
                     </p>
                     <div class="marketplace-view-toggle">
-                        <button class="view-btn active" id="shop-filter-toggle-btn" title="Filter">⊞</button>
+                        <button class="view-btn active" id="shop-filter-toggle-btn" title="Filter"><span class="fi fi-ts-bars-filter"></span></button>
                     </div>
                 </div>
 
                 <div class="market-content" style="padding:32px 64px;overflow-y: scroll; height: 100%;flex-grow: 1;">
                     <div class="product-grid" id="shop-grid">
                         <div style="grid-column:1/-1;padding:80px;text-align:center;color:var(--clr-text-muted)">
-                            <p style="font-size:2rem;margin-bottom:12px">⏳</p>
+                            <p style="font-size:2rem;margin-bottom:12px"><span class="fi fi-ts-hourglass-end"></span></p>
                             <p>Loading products...</p>
                         </div>
                     </div>
@@ -300,7 +300,7 @@
         <!-- Order Confirmation Popup -->
         <div class="order-overlay" id="shop-order-overlay"></div>
         <div class="order-popup" id="shop-order-popup">
-            <div class="order-popup__icon">🛒</div>
+            <div class="order-popup__icon"><span class="fi fi-ts-shopping-cart"></span></div>
             <h3 class="order-popup__title">Confirm Order</h3>
             <p class="order-popup__item" id="shop-order-popup-item"></p>
             <p class="order-popup__price" id="shop-order-popup-price"></p>

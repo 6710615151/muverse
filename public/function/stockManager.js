@@ -28,7 +28,7 @@ function stockRowHTML(stock) {
       <div style="width:64px;height:64px;flex-shrink:0;border-radius:10px;overflow:hidden;background:#f5f0e8;">
         ${stock.url
           ? `<img src="${stock.url}" alt="${stock.item_name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`
-          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">📦</div>`}
+          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;"><span class="fi fi-ts-box-open"></span></div>`}
       </div>
 
       <div style="flex:1;min-width:0;">
@@ -89,7 +89,7 @@ function render() {
 
   if (!items.length) {
     list.innerHTML = `<div style="padding:80px;text-align:center;color:var(--clr-text-muted)">
-      <p style="font-size:2rem;margin-bottom:12px">📦</p>
+      <p style="font-size:2rem;margin-bottom:12px"><span class="fi fi-ts-box-open"></span></p>
       <p>No products found. Click "Add New Product" to start.</p>
     </div>`;
     return;
@@ -197,7 +197,7 @@ async function handleSubmit(e) {
     if (_selectedFile) {
       if (resultEl) resultEl.textContent = 'Uploading image...';
       url = await uploadImage(_selectedFile);
-      if (resultEl) resultEl.textContent = 'Upload successful ✅';
+      if (resultEl) resultEl.textContent = 'Upload successful';
     }
 
     const body = {

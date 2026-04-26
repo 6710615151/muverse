@@ -13,7 +13,7 @@ function productCardHTML(stock) {
   const isOut = stock.stock_quantity <= 0 || stock.stock_status === 'out_of_stock';
   const price = Number(stock.price).toLocaleString('th-TH', { minimumFractionDigits: 0 });
   const shopName = stock.shop_name ?? ` #${stock.seller_id}`;
-  const rating = stock.rating ? `⭐${stock.rating}` : '';
+  const rating = stock.rating ? `<span class="fi fi-ts-star"></span>${stock.rating}` : '';
   const isNew = stock.stock_status === 'new';
 
   return `
@@ -58,7 +58,7 @@ function renderEmpty(msg = 'No products found') {
 
 function renderError() {
   return `<div style="grid-column:1/-1;padding:80px;text-align:center;color:var(--clr-text-muted)">
-    <p style="font-size:1.8rem;margin-bottom:10px">⚠️</p>
+    <p style="font-size:1.8rem;margin-bottom:10px"><span class="fi fi-ts-triangle-warning"></span></p>
     <p>Failed to load data. Please try again.</p>
   </div>`;
 }
@@ -97,7 +97,7 @@ function openDetailPopup(stock) {
   set('wm-detail-popup-title', stock.item_name);
   set('wm-detail-popup-description', stock.description);
 
-  set('wm-detail-popup-stars', stock.rating ? `⭐ ${stock.rating}` : '');
+  set('wm-detail-popup-stars', stock.rating ? `<span class="fi fi-ts-star"></span> ${stock.rating}` : '');
   set('wm-detail-popup-price', `฿${price}`);
 
   const badge = document.getElementById('wm-detail-popup-badge');
@@ -387,7 +387,7 @@ function openShopDetailPopup(stock) {
   set('shop-detail-popup-title', stock.item_name);
   set('shop-detail-popup-description', stock.description);
 
-  set('shop-detail-popup-stars', stock.rating ? `⭐ ${stock.rating}` : '');
+  set('shop-detail-popup-stars', stock.rating ? `<span class="fi fi-ts-star"></span> ${stock.rating}` : '');
   set('shop-detail-popup-price', `฿${price}`);
 
   const badge = document.getElementById('shop-detail-popup-badge');

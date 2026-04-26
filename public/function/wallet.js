@@ -124,21 +124,21 @@ export const WalletFlow = {
             </div>
         `;
 
-        const trigger  = list.querySelector('#pm-trigger');
+        const trigger = list.querySelector('#pm-trigger');
         const dropdown = list.querySelector('#pm-dropdown');
-        const arrow    = list.querySelector('#pm-arrow');
+        const arrow = list.querySelector('#pm-arrow');
 
         trigger.addEventListener('click', () => {
             dropdownOpen = !dropdownOpen;
             dropdown.style.display = dropdownOpen ? 'block' : 'none';
-            arrow.style.transform  = dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+            arrow.style.transform = dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)';
         });
 
         document.addEventListener('click', (e) => {
             if (!list.contains(e.target)) {
                 dropdownOpen = false;
                 dropdown.style.display = 'none';
-                arrow.style.transform  = 'rotate(0deg)';
+                arrow.style.transform = 'rotate(0deg)';
             }
         }, { once: true });
 
@@ -182,7 +182,7 @@ export const WalletFlow = {
             input.focus();
 
             const btnConfirm = overlay.querySelector('#walletModalConfirm');
-            const btnCancel  = overlay.querySelector('#walletModalCancel');
+            const btnCancel = overlay.querySelector('#walletModalCancel');
 
             const close = (value) => {
                 overlay.classList.remove('active');
@@ -194,9 +194,9 @@ export const WalletFlow = {
             };
 
             const onConfirm = () => close(input.value);
-            const onCancel  = () => close(null);
+            const onCancel = () => close(null);
             const onOverlay = (e) => { if (e.target === overlay) close(null); };
-            const onKey     = (e) => {
+            const onKey = (e) => {
                 if (e.key === 'Enter') close(input.value);
                 if (e.key === 'Escape') close(null);
             };

@@ -48,9 +48,9 @@ function orderCard(order) {
         <span class="${statusClass}">${statusLabel}</span>
       </div>
       <div class="booking-card__meta">
-        <span class="booking-card__meta-chip">📅 ${day} ${month}</span>
-        <span class="booking-card__meta-chip">💰 ฿${total}</span>
-        <span class="booking-card__meta-chip">💳 ${order.payment_status}</span>
+        <span class="booking-card__meta-chip"><span class="fi fi-ts-calendar-clock"></span> ${day} ${month}</span>
+        <span class="booking-card__meta-chip"><span class="fi fi-ts-sack-dollar"></span> ฿${total}</span>
+        <span class="booking-card__meta-chip"><span class="fi fi-ts-credit-card"></span> ${order.payment_status}</span>
       </div>
       ${canShip ? `
         <div class="booking-card__actions">

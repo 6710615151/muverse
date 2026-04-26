@@ -57,14 +57,14 @@ function renderRequests(requests) {
             <div class="booking-card__header">
                 <div class="booking-card__title-group">
                     <span class="booking-card__title">${r.request_title}</span>
-                    <span class="booking-card__customer">👤 ${r.customer_name || "Customer"}</span>
+                    <span class="booking-card__customer"><span class="fi fi-ts-user"></span> ${r.customer_name || "Customer"}</span>
                 </div>
                 <span class="${badgeClass(r.request_status)}">${r.request_status}</span>
             </div>
             <p class="booking-card__detail">${r.request_detail || "-"}</p>
             <div class="booking-card__meta">
-                <span class="booking-card__meta-chip">💰 ${Number(r.budget ?? 0).toLocaleString()} THB</span>
-                <span class="booking-card__meta-chip">🔖 ${r.service_type_name || "-"}</span>
+                <span class="booking-card__meta-chip"><span class="fi fi-ts-sack-dollar"></span> ${Number(r.budget ?? 0).toLocaleString()} THB</span>
+                <span class="booking-card__meta-chip"><span class="fi fi-ts-tags"></span> ${r.service_type_name || "-"}</span>
             </div>
             ${actionButtons(r) ? `<div class="booking-card__actions">${actionButtons(r)}</div>` : ""}
         </div>
