@@ -347,10 +347,6 @@ img {
   font-style: normal;
 }
 
-.page-header__sub {
-  color: #9ca3af;
-  margin-top: 8px;
-}
 
 .filter-bar {
   display: flex;
@@ -663,8 +659,9 @@ img {
   color: rgba(255,255,255,0.35);
   margin-top: 8px;
   border: none;
-  height: 1px;
-  background: rgba(255,255,255,0.2);
+  height: 1.7px;
+  background: rgba(239, 238, 238, 0.755);
+  margin-top: 30px;
 }
 
 .btn {

@@ -176,7 +176,7 @@ const Router = (() => {
 
     function init() {
         bindLinks();
-        navigate("nft");
+        navigate("market");
     }
 
     return {
