@@ -23,6 +23,7 @@ export async function getById(req, res) {
 }
 
 export async function create(req, res) {
+    console.log("REQ BODY:", req.body);
     try {
         const { name, email, password, phone } = req.body;
         console.log( name, email, password, phone );
@@ -35,7 +36,7 @@ export async function create(req, res) {
 
         const password_hash = await bcrypt.hash(password, 10);
 
-       
+       console.log("MODEL DATA:", { name, email, password_hash, phone });
         const user = await userModel.createUserWithCustomer(
             name,
             email,
