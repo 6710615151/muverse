@@ -256,33 +256,33 @@
         <div class="page-header" style="margin: 20px;">
 
             <h1 class="page-header__title">MARKET <em>PLACE</em></h1>
-            <p class="page-header__sub">__________________________________________</p>
+            <p class="page-header__sub" style="margin-top: 15px;"></p>
         </div>
 
         <!-- ─── Category Tabs + Search ─── -->
-        <div class="filter-bar">
-            <div class="filter-bar__tabs" id="wm-cat-tabs">
-                <button class="filter-tab active" data-cat-id="all">✦ All</button>
-            </div>
-            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content: center;">
-                <div><span style="font-size: 2rem;color:#ffffff;margin-right: 2px;font-size:0.82rem;font-weight:500;letter-spacing:0.05em;
-      text-transform:uppercase;margin-bottom:10px" class="fi fi-ts-search"></span></div>
-                <input type="text" id="wm-search" class="form-input" placeholder="Search products..."
-                    style="width:200px;padding:8px 14px">
-            </div>
-        </div>
+        
 
         <div class="marketplace-layout">
             <!-- Main content -->
             <div class="marketplace-main">
                 <div class="marketplace-toolbar">
-                    <p class="marketplace-count" style="color: #ffffffc9;font-size: 0.75rem;">
+                    <p class="marketplace-count" style="color: #ffffffc9;font-size: 0.75rem;margin-left: 20px;">
                         Found <strong id="wm-count">0</strong> items
                     </p>
-                    
+                    <div class="filter-bar" >
+                        <div class="filter-bar__tabs" id="wm-cat-tabs">
+                            <button class="filter-tab active" data-cat-id="all">✦ All</button>
+                        </div>
+                        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content: center;">
+                            <div><span style="font-size: 2rem;color:#ffffff;margin-right: 2px;font-size:0.82rem;font-weight:500;letter-spacing:0.05em;
+                                text-transform:uppercase;margin-bottom:10px" class="fi fi-ts-search"></span></div>
+                            <input type="text" id="wm-search" class="form-input" placeholder="Search products..."
+                                style="width:200px;padding:8px 14px">
+                        </div>
+        </div>
                 </div>
 
-                <div class="market-content" style="padding:32px 64px;overflow-y: scroll; height: 100%;flex-grow: 1;">
+                <div class="market-content" style="padding:10px 64px;overflow-y: scroll; height: 100%;flex-grow: 1;">
                     <div class="product-grid" id="wm-grid">
                         <div style="grid-column:1/-1;padding:80px;text-align:center;color:var(--clr-text-muted)">
                             <!-- <p style="font-size:2rem;margin-bottom:12px"></p> -->
