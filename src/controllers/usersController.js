@@ -1,4 +1,5 @@
 import * as userModel from "../models/userModel.js";
+import * as customerModel from "../models/customerModel.js"
 import bcrypt from "bcrypt";
 
 export async function getAll(req, res) {
@@ -23,10 +24,9 @@ export async function getById(req, res) {
 }
 
 export async function create(req, res) {
-    console.log("REQ BODY:", req.body);
     try {
         const { name, email, password, phone } = req.body;
-        console.log( name, email, password, phone );
+
         if (!name || !email || !password || !phone) {
             return res.status(400).json({
                 success: false,
@@ -36,23 +36,23 @@ export async function create(req, res) {
 
         const password_hash = await bcrypt.hash(password, 10);
 
-       console.log("MODEL DATA:", { name, email, password_hash, phone });
-        const user = await userModel.createUserWithCustomer(
+        const user = await userModel.createUser(
             name,
             email,
             password_hash,
             phone
         );
 
+        await customerModel.createCustomer(user.user_id);
+
         res.status(201).json({
             success: true,
             data: user
         });
 
-        console.log( name, email, password_hash, phone );
     } catch (err) {
+        console.error("CREATE USER ERROR:", err);
 
-        console.error("CREATE USER ERROR:", err); 
         if (err.code === "23505") {
             return res.status(409).json({
                 success: false,

@@ -18,3 +18,14 @@ export async function getCustomerByUserId(userId) {
     WHERE user_id = ${userId}
   `;
 }
+
+export async function createCustomer(user_id) {
+  if (!user_id) {
+    throw new Error("Invalid user_id");
+  }
+
+  await sql`
+    INSERT INTO customers (user_id)
+    VALUES (${user_id})
+  `;
+}

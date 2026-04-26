@@ -1,35 +1,34 @@
 import sql from "../config/db.js";
 
-export async function createUserWithCustomer(name, email, password_hash, phone) {
-  return await sql(async (tx) => {
+export async function createUser(name, email, password_hash, phone) {
 
-    console.log("MODEL DATA:", { name, email, password_hash, phone });
-
-    if (!name || !email || !password_hash || !phone) {
-      throw new Error("Missing required fields in model");
+  const clean = (v) => {
+    if (v === undefined || v === null) return null;
+    if (typeof v === "string") {
+      const val = v.trim();
+      if (val === "" || val === "undefined" || val === "null") return null;
+      return val;
     }
+    return v;
+  };
 
-    const users = await tx`
-      INSERT INTO users (name, email, password_hash, phone)
-      VALUES (${name}, ${email}, ${password_hash}, ${phone})
-      RETURNING *
-    `;
+  name = clean(name);
+  email = clean(email);
+  password_hash = clean(password_hash);
+  phone = clean(phone);
 
-    const user = users[0];
+  if (!name || !email || !password_hash || !phone) {
+    throw new Error("Missing required fields");
+  }
 
-    if (!user || !user.user_id) {
-      throw new Error("User insert failed");
-    }
+  const users = await sql`
+    INSERT INTO users (name, email, password_hash, phone)
+    VALUES (${name}, ${email}, ${password_hash}, ${phone})
+    RETURNING *
+  `;
 
-    await tx`
-      INSERT INTO customers (user_id)
-      VALUES (${user.user_id})
-    `;
-
-    return user;
-  });
+  return users[0];
 }
-
 
 export async function getAllUsers() {
   return await sql`
