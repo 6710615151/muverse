@@ -23,9 +23,24 @@ export async function getAllRequests() {
 
 export async function getRequestById(request_id) {
     const result = await sql`
-        SELECT * FROM requests
-        WHERE request_id = ${request_id}
+        SELECT r.*, s.user_id AS seller_user_id
+        FROM requests r
+        LEFT JOIN sellers s ON r.seller_id = s.seller_id
+        WHERE r.request_id = ${request_id}
         `;
+    return result[0] || null;
+}
+
+// เมื่อผู้ขายรับงาน — บันทึก seller_id และ locked_amount
+export async function acceptRequest(request_id, seller_id, locked_amount) {
+    const result = await sql`
+        UPDATE requests
+        SET request_status = 'ACCEPTED',
+            seller_id      = ${seller_id},
+            locked_amount  = ${locked_amount}
+        WHERE request_id = ${request_id}
+        RETURNING *
+    `;
     return result[0] || null;
 }
 

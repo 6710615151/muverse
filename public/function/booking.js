@@ -1,19 +1,43 @@
+<<<<<<< Updated upstream
 import { Requests, serviceType, Wallet } from "./api.js";
+=======
+import { Requests, serviceType, Review } from "./api.js";
+>>>>>>> Stashed changes
 
 const getCustomerId = () => localStorage.getItem("user_id");
 
 const STATUS_LABEL = {
   pending:   "Pending",
+<<<<<<< Updated upstream
   accepted:  "Accepted",
   done:      "Done",
   complete:  "Complete",
+=======
+  PENDING:   "Pending",
+  accepted:  "Accepted",
+  ACCEPTED:  "Accepted",
+  done:      "Done",
+  COMPLETED: "Completed",
+  rejected:  "Rejected",
+  REJECTED:  "Rejected",
+>>>>>>> Stashed changes
 };
 
 const STATUS_CLASS = {
   pending:   "status-badge--pending",
+<<<<<<< Updated upstream
   accepted:  "status-badge--accepted",
   done:      "status-badge--done",
   complete:  "status-badge--complete",
+=======
+  PENDING:   "status-badge--pending",
+  accepted:  "status-badge--accepted",
+  ACCEPTED:  "status-badge--accepted",
+  done:      "status-badge--done",
+  COMPLETED: "status-badge--done",
+  rejected:  "status-badge--rejected",
+  REJECTED:  "status-badge--rejected",
+>>>>>>> Stashed changes
 };
 
 let _allRequests = [];
@@ -30,7 +54,10 @@ function renderList(requests) {
 
   const filtered = _activeFilter === "all"
     ? requests
-    : requests.filter(r => r.request_status === _activeFilter);
+    : requests.filter(r =>
+        r.request_status === _activeFilter ||
+        (r.request_status || "").toUpperCase() === _activeFilter.toUpperCase()
+      );
 
   if (filtered.length === 0) {
     list.innerHTML = `<p style="color:var(--clr-text-muted); text-align:center; padding:40px 0;">No requests found</p>`;
@@ -41,9 +68,25 @@ function renderList(requests) {
     const { day, month } = formatDate(r.created_at);
     const statusClass = STATUS_CLASS[r.request_status] || "status-badge--pending";
     const statusLabel = STATUS_LABEL[r.request_status] || r.request_status;
+    const statusUp    = (r.request_status || "").toUpperCase();
+
+    let actionBtn = "";
+    if (statusUp === "ACCEPTED") {
+      actionBtn = `
+        <button class="btn-confirm-done" data-id="${r.request_id}"
+          style="padding:6px 14px;border-radius:6px;border:none;background:#7c3aed;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600">
+          Confirm Completion
+        </button>`;
+    } else if (statusUp === "COMPLETED" || statusUp === "DONE") {
+      actionBtn = `
+        <button class="btn-leave-review" data-id="${r.request_id}" data-seller-id="${r.seller_id || ""}"
+          style="padding:6px 14px;border-radius:6px;border:none;background:#0f766e;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600">
+          Leave Review
+        </button>`;
+    }
 
     return `
-      <div class="booking-item booking-item--${r.request_status}">
+      <div class="booking-item booking-item--${(r.request_status || "").toLowerCase()}">
         <div class="booking-item__accent"></div>
         <div class="booking-item__date">
           <span class="booking-item__day">${day}</span>
@@ -57,6 +100,7 @@ function renderList(requests) {
           </div>
         </div>
         <div class="booking-item__actions">
+<<<<<<< Updated upstream
           ${r.request_status === "done" && r.seller_id
         ? `<button class="btn btn--primary btn--sm btn-pay-now"
                  data-id="${r.request_id}"
@@ -67,10 +111,121 @@ function renderList(requests) {
                </button>`
         : `<span class="status-badge ${statusClass}">${statusLabel}</span>`
       }
+=======
+          <span class="status-badge ${statusClass}">${statusLabel}</span>
+          ${actionBtn}
+>>>>>>> Stashed changes
         </div>
       </div>
     `;
   }).join("");
+
+  list.querySelectorAll(".btn-confirm-done").forEach(btn => {
+    btn.addEventListener("click", () => confirmCompletion(btn.dataset.id));
+  });
+
+  list.querySelectorAll(".btn-leave-review").forEach(btn => {
+    btn.addEventListener("click", () => openReviewModal(btn.dataset.id, btn.dataset.sellerId));
+  });
+}
+
+async function confirmCompletion(requestId) {
+  if (!confirm("Confirm that the service is complete? Funds will be released to the seller.")) return;
+  try {
+    await Requests.updateRequestStatus(requestId, { request_status: "COMPLETED" });
+    await loadRequests();
+  } catch (err) {
+    alert("Error: " + err.message);
+  }
+}
+
+function openReviewModal(requestId, sellerId) {
+  const existing = document.getElementById("reviewModal");
+  if (existing) existing.remove();
+
+  const modal = document.createElement("div");
+  modal.id = "reviewModal";
+  modal.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999";
+  modal.innerHTML = `
+    <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:28px;width:min(420px,95vw)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h3 style="color:#fff;margin:0;font-size:1.1rem">Leave a Review</h3>
+        <button id="btnCloseReview" style="background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer">✕</button>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="color:#e2e8f0;font-size:0.9rem;display:block;margin-bottom:8px">Rating</label>
+        <div id="starRating" style="display:flex;gap:8px;font-size:2rem;cursor:pointer">
+          ${[1,2,3,4,5].map(i => `<span data-star="${i}" style="color:#4b5563;transition:color 0.15s">★</span>`).join("")}
+        </div>
+        <input type="hidden" id="reviewRating" value="0">
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="color:#e2e8f0;font-size:0.9rem;display:block;margin-bottom:8px">Comment (optional)</label>
+        <textarea id="reviewComment" rows="3"
+          style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px;color:#fff;resize:none;font-size:0.9rem"></textarea>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button id="btnCancelReview"
+          style="padding:8px 18px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:#e2e8f0;cursor:pointer">
+          Cancel
+        </button>
+        <button id="btnSubmitReview"
+          style="padding:8px 18px;border-radius:8px;border:none;background:#7c3aed;color:#fff;font-weight:600;cursor:pointer">
+          Submit
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const stars       = modal.querySelectorAll("[data-star]");
+  const ratingInput = modal.querySelector("#reviewRating");
+
+  stars.forEach(star => {
+    star.addEventListener("mouseover", () => {
+      const val = Number(star.dataset.star);
+      stars.forEach(s => { s.style.color = Number(s.dataset.star) <= val ? "#facc15" : "#4b5563"; });
+    });
+    star.addEventListener("click", () => {
+      ratingInput.value = star.dataset.star;
+    });
+  });
+
+  modal.querySelector("#starRating").addEventListener("mouseleave", () => {
+    const selected = Number(ratingInput.value);
+    stars.forEach(s => { s.style.color = Number(s.dataset.star) <= selected ? "#facc15" : "#4b5563"; });
+  });
+
+  const closeModal = () => modal.remove();
+  modal.querySelector("#btnCloseReview").addEventListener("click", closeModal);
+  modal.querySelector("#btnCancelReview").addEventListener("click", closeModal);
+  modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+
+  modal.querySelector("#btnSubmitReview").addEventListener("click", async () => {
+    const rating  = Number(ratingInput.value);
+    const comment = modal.querySelector("#reviewComment").value.trim();
+    if (!rating) { alert("Please select a rating (1–5 stars)"); return; }
+
+    const submitBtn = modal.querySelector("#btnSubmitReview");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Submitting…";
+
+    try {
+      await Review.create({
+        request_id:  requestId,
+        reviewer_id: getCustomerId(),
+        seller_id:   sellerId,
+        rating,
+        comment:     comment || null,
+      });
+      closeModal();
+      await loadRequests();
+    } catch (err) {
+      alert("Error: " + err.message);
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit";
+    }
+  });
 }
 
 async function loadRequests() {
@@ -94,11 +249,10 @@ async function loadServiceTypes() {
       opt.textContent = t.name;
       select.appendChild(opt);
     });
-  } catch { /* ไม่ critical */ }
+  } catch { /* not critical */ }
 }
 
 function bindEvents() {
-  // filter tabs
   document.querySelectorAll(".filter-tab").forEach(tab => {
     tab.addEventListener("click", () => {
       document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
@@ -108,18 +262,15 @@ function bindEvents() {
     });
   });
 
-  // เปิด modal
   document.getElementById("btnNewRequest")?.addEventListener("click", () => {
     document.getElementById("modalNewRequest")?.classList.add("active");
   });
 
-  // ปิด modal
-  document.getElementById("btnCancelRequest")?.addEventListener("click", closeModal);
+  document.getElementById("btnCancelRequest")?.addEventListener("click", closeNewRequestModal);
   document.getElementById("modalNewRequest")?.addEventListener("click", (e) => {
-    if (e.target === e.currentTarget) closeModal();
+    if (e.target === e.currentTarget) closeNewRequestModal();
   });
 
-  // submit
   document.getElementById("btnSubmitRequest")?.addEventListener("click", submitRequest);
 
   // pay รอคนกดชำระเงิน
@@ -135,7 +286,7 @@ function bindEvents() {
   });
 }
 
-function closeModal() {
+function closeNewRequestModal() {
   document.getElementById("modalNewRequest")?.classList.remove("active");
   document.getElementById("inputTitle").value = "";
   document.getElementById("inputDetail").value = "";
@@ -163,7 +314,7 @@ async function submitRequest() {
       customer_id: getCustomerId(),
       service_type_id,
     });
-    closeModal();
+    closeNewRequestModal();
     await loadRequests();
   } catch (err) {
     alert("Error: " + err.message);

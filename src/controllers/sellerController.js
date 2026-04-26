@@ -1,5 +1,20 @@
 import * as sellerModel from "../models/sellerModel.js";
 
+export async function verifySeller(req, res) {
+    try {
+        const { seller_status } = req.body;
+        const validStatuses = ["verified", "unverified", "suspended"];
+        if (!seller_status || !validStatuses.includes(seller_status)) {
+            return res.status(400).json({ success: false, error: `seller_status must be one of: ${validStatuses.join(", ")}` });
+        }
+        const seller = await sellerModel.verifySeller(req.params.id, seller_status);
+        if (!seller) return res.status(404).json({ success: false, error: "Seller not found" });
+        res.json({ success: true, data: seller });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+}
+
 export async function getAllSellers(req, res) {
     try {
         const data = await sellerModel.getAllSellers();

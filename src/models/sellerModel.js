@@ -21,7 +21,7 @@ export async function getSellerByUserId(userId) {
 
 export async function getAllSellers() {
   return await sql`
-    SELECT seller_id, shop_name
+    SELECT seller_id, user_id, shop_name, rating, seller_status
     FROM sellers
     ORDER BY seller_id ASC
   `;
@@ -29,9 +29,34 @@ export async function getAllSellers() {
 
 export async function getSellerById(seller_id) {
   const result = await sql`
-    SELECT seller_id, shop_name
+    SELECT seller_id, user_id, shop_name, rating, seller_status
     FROM sellers
     WHERE seller_id = ${seller_id}
+  `;
+  return result[0] || null;
+}
+
+// Admin: เปลี่ยนสถานะการยืนยัน ('unverified' | 'verified' | 'suspended')
+export async function verifySeller(seller_id, seller_status) {
+  const result = await sql`
+    UPDATE sellers
+    SET seller_status = ${seller_status}
+    WHERE seller_id = ${seller_id}
+    RETURNING seller_id, shop_name, seller_status
+  `;
+  return result[0] || null;
+}
+
+// คำนวณ rating เฉลี่ยจากตาราง reviews แล้วอัปเดตกลับ
+export async function updateSellerRating(seller_id) {
+  const result = await sql`
+    UPDATE sellers
+    SET rating = COALESCE(
+      (SELECT ROUND(AVG(rating)::numeric, 2) FROM reviews WHERE seller_id = ${seller_id}),
+      0
+    )
+    WHERE seller_id = ${seller_id}
+    RETURNING seller_id, rating
   `;
   return result[0] || null;
 }

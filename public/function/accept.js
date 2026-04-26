@@ -1,29 +1,37 @@
-import { Requests } from "./api.js";
+import { Requests, seller } from "./api.js";
 
 let listEl;
 let filterBtns;
-
 let allRequests  = [];
 let activeStatus = "all";
+let currentSellerId = null;
 
 function badgeClass(status) {
+<<<<<<< Updated upstream
     if (status === "accepted") return "badge accepted";
     if (status === "rejected") return "badge rejected";
     if (status === "done")     return "badge done";
     if (status === "complete") return "badge complete";
+=======
+    const s = (status || "").toUpperCase();
+    if (s === "ACCEPTED")  return "badge accepted";
+    if (s === "REJECTED")  return "badge rejected";
+    if (s === "COMPLETED") return "badge done";
+>>>>>>> Stashed changes
     return "badge pending";
 }
 
 function actionButtons(r) {
-    if (r.request_status === "pending") {
+    const s = (r.request_status || "").toUpperCase();
+    if (s === "PENDING" || s === "WAITING") {
         return `
-            <button class="btn btn--primary" data-id="${r.request_id}" data-status="accepted">Accept</button>
-            <button class="btn btn--ghost"   data-id="${r.request_id}" data-status="rejected">Reject</button>
+            <button class="btn btn--primary" data-id="${r.request_id}" data-status="ACCEPTED">Accept</button>
+            <button class="btn btn--ghost"   data-id="${r.request_id}" data-status="REJECTED">Reject</button>
         `;
     }
-    if (r.request_status === "accepted") {
+    if (s === "ACCEPTED") {
         return `
-            <button class="btn btn--done" data-id="${r.request_id}" data-status="done">Mark as Done</button>
+            <button class="btn btn--done" data-id="${r.request_id}" data-status="COMPLETED">Mark as Done</button>
         `;
     }
     return "";
@@ -34,7 +42,7 @@ function renderRequests(requests) {
 
     const filtered = activeStatus === "all"
         ? requests
-        : requests.filter(r => r.request_status === activeStatus);
+        : requests.filter(r => (r.request_status || "").toUpperCase() === activeStatus.toUpperCase());
 
     if (!filtered.length) {
         listEl.innerHTML = `<p style="color:var(--clr-text-muted);text-align:center;padding:40px 0;">No requests found.</p>`;
@@ -42,7 +50,7 @@ function renderRequests(requests) {
     }
 
     listEl.innerHTML = filtered.map(r => `
-        <div class="booking-card booking-card--${r.request_status}" data-id="${r.request_id}">
+        <div class="booking-card booking-card--${(r.request_status || "").toLowerCase()}" data-id="${r.request_id}">
             <div class="booking-card__top-bar"></div>
             <div class="booking-card__header">
                 <div class="booking-card__title-group">
@@ -75,8 +83,16 @@ async function updateStatus(btn) {
     card.querySelectorAll("button").forEach(b => b.disabled = true);
 
     try {
+<<<<<<< Updated upstream
         const seller_id = status === "accepted" ? localStorage.getItem("user_id") : null;
         await Requests.updateRequestStatus(id, { request_status: status, seller_id });
+=======
+        const body = { request_status: status };
+        if (status === "ACCEPTED" && currentSellerId) {
+            body.seller_id = currentSellerId;
+        }
+        await Requests.updateRequestStatus(id, body);
+>>>>>>> Stashed changes
         await loadRequests();
     } catch {
         card.querySelectorAll("button").forEach(b => b.disabled = false);
@@ -109,10 +125,20 @@ function bindFilters() {
 
 export const Accept = {
     async init() {
-        listEl = document.getElementById("requestList");
+        listEl    = document.getElementById("requestList");
         filterBtns = document.querySelectorAll(".filter-tab");
 
         if (!listEl) return;
+
+        const userId = localStorage.getItem("user_id");
+        if (userId) {
+            try {
+                const sellerData = await seller.getByUserId(userId);
+                currentSellerId = sellerData?.seller_id ?? null;
+            } catch {
+                currentSellerId = null;
+            }
+        }
 
         bindFilters();
         loadRequests();
