@@ -23,8 +23,8 @@ export const ManageStocks = (() => {
             const statusKey = (s.stock_status || '').toLowerCase();
             const statusClass = STATUS_CLASS[statusKey] || '';
             const imgEl = s.url
-                ? `<img src="${s.url}" class="mgr-card__img" onerror="this.outerHTML='<div class=\\'mgr-card__img-ph\\'><span class="fi fi-ts-box-open"></span></div>'">`
-                : `<div class="mgr-card__img-ph"><span class="fi fi-ts-box-open"></span></div>`;
+                ? `<img src="${s.url}" class="mgr-card__img" onerror="this.outerHTML='<div class=\\'mgr-card__img-ph\\'>📦</div>'">`
+                : `<div class="mgr-card__img-ph">📦</div>`;
             return `
             <div class="mgr-card">
                 ${imgEl}
