@@ -30,12 +30,21 @@ function actionButtons(r) {
     return "";
 }
 
+const REQ_PRIORITY = { WAITING: 0, PENDING: 0, ACCEPTED: 1, DONE: 2, COMPLETE: 3, COMPLETED: 3, REJECTED: 4 };
+
+function sortRequests(requests) {
+    return [...requests].sort((a, b) =>
+        (REQ_PRIORITY[(a.request_status || "").toUpperCase()] ?? 9) -
+        (REQ_PRIORITY[(b.request_status || "").toUpperCase()] ?? 9)
+    );
+}
+
 function renderRequests(requests) {
     if (!listEl) return;
 
-    const filtered = activeStatus === "all"
+    const filtered = sortRequests(activeStatus === "all"
         ? requests
-        : requests.filter(r => (r.request_status || "").toUpperCase() === activeStatus.toUpperCase());
+        : requests.filter(r => (r.request_status || "").toUpperCase() === activeStatus.toUpperCase()));
 
     if (!filtered.length) {
         listEl.innerHTML = `<p style="color:var(--clr-text-muted);text-align:center;padding:40px 0;">No requests found.</p>`;

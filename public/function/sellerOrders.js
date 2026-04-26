@@ -2,6 +2,14 @@ import { Order } from "./api.js";
 
 const getSellerId = () => localStorage.getItem("user_id");
 
+const ORDER_PRIORITY = { pending: 0, shipped: 1, completed: 2, cancelled: 3 };
+
+function sortOrders(orders) {
+  return [...orders].sort((a, b) =>
+    (ORDER_PRIORITY[a.order_status] ?? 9) - (ORDER_PRIORITY[b.order_status] ?? 9)
+  );
+}
+
 const STATUS_LABEL = {
   pending:   "Pending",
   shipped:   "Shipped",
@@ -59,9 +67,9 @@ function renderOrders() {
   const list = document.getElementById("sellerOrderList");
   if (!list) return;
 
-  const filtered = _activeFilter === "all"
+  const filtered = sortOrders(_activeFilter === "all"
     ? _allOrders
-    : _allOrders.filter(o => o.order_status === _activeFilter);
+    : _allOrders.filter(o => o.order_status === _activeFilter));
 
   if (!filtered.length) {
     list.innerHTML = `<p style="color:var(--clr-text-muted);text-align:center;padding:40px 0;">No orders found.</p>`;

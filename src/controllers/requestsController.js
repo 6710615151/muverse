@@ -141,7 +141,8 @@ export async function acceptRequest(req, res) {
         if (!request) {
             return res.status(404).json({ success: false, error: "Request not found" });
         }
-        if ((request.request_status || "").toUpperCase() !== "WAITING") {
+        const st = (request.request_status || "").toUpperCase();
+        if (st !== "WAITING" && st !== "PENDING") {
             return res.status(400).json({ success: false, error: "Request is not in WAITING status" });
         }
 

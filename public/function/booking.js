@@ -36,16 +36,25 @@ function formatDate(dateStr) {
   return { day: d.getDate(), month: d.toLocaleString("th-TH", { month: "short" }) };
 }
 
+const REQUEST_PRIORITY = { WAITING: 0, PENDING: 0, ACCEPTED: 1, DONE: 2, COMPLETE: 3, COMPLETED: 3, REJECTED: 4 };
+
+function sortRequests(requests) {
+  return [...requests].sort((a, b) =>
+    (REQUEST_PRIORITY[(a.request_status || "").toUpperCase()] ?? 9) -
+    (REQUEST_PRIORITY[(b.request_status || "").toUpperCase()] ?? 9)
+  );
+}
+
 function renderList(requests) {
   const list = document.getElementById("requestList");
   if (!list) return;
 
-  const filtered = _activeFilter === "all"
+  const filtered = sortRequests(_activeFilter === "all"
     ? requests
     : requests.filter(r =>
         r.request_status === _activeFilter ||
         (r.request_status || "").toUpperCase() === _activeFilter.toUpperCase()
-      );
+      ));
 
   if (filtered.length === 0) {
     list.innerHTML = `<p style="color:var(--clr-text-muted); text-align:center; padding:40px 0;">No requests found</p>`;
