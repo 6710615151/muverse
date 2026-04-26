@@ -12,6 +12,7 @@ router.get("/seller/:seller_id",         ctrl.getAllBySeller);
 router.get("/:id",                       ctrl.getById);
 router.post("/",                         ctrl.create);
 router.put("/:id",                       ctrl.update);
+router.patch("/:id/quantity",            ctrl.updateQuantity);
 router.delete("/:id",                    ctrl.remove);
 
 export default router;

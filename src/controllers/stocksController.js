@@ -90,3 +90,17 @@ export async function getByCategory(req, res) {
     res.status(500).json({ success: false, error: err.message });
   }
 }
+
+export async function updateQuantity(req, res) {
+  try {
+    const { quantity } = req.body;
+    if (!quantity || quantity <= 0) {
+      return res.status(400).json({ success: false, error: "Invalid quantity" });
+    }
+    await stockModel.updateStockQuantity(req.params.id, quantity);
+    res.json({ success: true, message: "Stock quantity updated" });
+
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}

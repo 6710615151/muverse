@@ -68,6 +68,11 @@ export const Stock = {
 
     delete: (id) => apiFetch(`/api/stock/${id}`, {
         method: "DELETE",
+    }),
+
+    updateQuantity: (id, quantity) => apiFetch(`/api/stock/${id}/quantity`, {
+        method: "PATCH",
+        body: JSON.stringify({ quantity }),
     })
 }
 
