@@ -318,9 +318,6 @@ const ManageWallet = (() => {
     };
 })();
 
-/* =========================
-   ROUTER
-========================= */
 const Router = (() => {
 const PAGE_MAP = {
     user:           "/pages/admin/pages/manageUser.html",
