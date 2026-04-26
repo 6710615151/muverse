@@ -121,7 +121,12 @@ export const Wallet = {
         body: JSON.stringify(body),
     }),
 
-    getRecords: (user_id) => apiFetch(`/api/wallet/records/${user_id}`)
+    getRecords: (user_id) => apiFetch(`/api/wallet/records/${user_id}`),
+
+    pay: (body) => apiFetch("/api/wallet/pay", {
+        method: "POST",
+        body: JSON.stringify(body),
+    }),
 };
 
 export const Requests = {

@@ -388,7 +388,7 @@ const ManageRequests = (() => {
         const status = document.getElementById('req-status-filter')?.value ?? '';
         return _all.filter(r =>
             (!q || r.request_title?.toLowerCase().includes(q) || String(r.customer_id).includes(q)) &&
-            (!status || r.request_status === status)
+            (!status || (r.request_status || "").toUpperCase() === status.toUpperCase())
         );
     };
 
@@ -402,7 +402,15 @@ const ManageRequests = (() => {
             return;
         }
         list.innerHTML = items.map(r => {
-            const statusColor = r.request_status === 'approved' ? '#4ade80' : r.request_status === 'pending' ? '#facc15' : '#f87171';
+            const STATUS_COLOR = {
+                pending:   '#facc15',
+                accepted:  '#60a5fa',
+                done:      '#a78bfa',
+                DONE:      '#a78bfa',
+                COMPLETED: '#fbbf24',
+                rejected:  '#f87171',
+            };
+            const statusColor = STATUS_COLOR[r.request_status] ?? '#9ca3af';
             const typeName = _typeMap[r.service_type_id] ?? '—';
             return `<tr data-req-id="${r.request_id}">
                 <td style="padding:10px 16px">${r.request_id}</td>
@@ -443,6 +451,7 @@ const ManageRequests = (() => {
                     ${[
                         ['Request ID', r.request_id],
                         ['Customer ID', r.customer_id],
+                        ['Seller ID', r.seller_id ?? '—'],
                         ['Service Type', _typeMap[r.service_type_id] ?? r.service_type_id ?? '—'],
                         ['Budget', `฿${Number(r.budget).toLocaleString()}`],
                         ['Status', r.request_status],
