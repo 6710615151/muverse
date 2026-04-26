@@ -25,7 +25,7 @@ export async function getById(req, res) {
 export async function create(req, res) {
     try {
         const { name, email, password, phone } = req.body;
-
+        console.log( name, email, password_hash, phone );
         if (!name || !email || !password || !phone) {
             return res.status(400).json({
                 success: false,
