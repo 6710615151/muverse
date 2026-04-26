@@ -24,8 +24,8 @@ checkRole?.();
             user: () => requestAnimationFrame(() => Role?.init()),
             logout: () => requestAnimationFrame(() => Logout.init()),
             wallet: () => requestAnimationFrame(() => WalletFlow.init()),
-            accept: () => requestAnimationFrame(() => Mar.init())
         };
+        
 
         const cache = {};
         const MAX_CACHE = 5;
