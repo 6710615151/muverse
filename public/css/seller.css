@@ -194,42 +194,6 @@ body {
   transition: 0.3s;
 }
 
-@media (max-width: 768px) {
-  .nav {
-    position: fixed;
-    left: -260px;
-    top: 0;
-    transition: 0.3s;
-    z-index: 100;
-  }
-
-  .nav.open {
-    left: 0;
-  }
-
-  .nav__burger {
-    display: block;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 200;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-
-  .nav__burger span {
-    display: block;
-    width: 24px;
-    height: 2px;
-    background: #fff;
-    margin: 5px 0;
-  }
-
-  .canvas {
-    width: 100%;
-  }
-}
 img{
   width: 100%;
   height: 100%;
@@ -319,7 +283,6 @@ img{
 }
 
 
-/*wallet*/
 
 
 /*wallet*/
@@ -1122,7 +1085,7 @@ img{
 }
 
 .page-header__title em {
-  color: #fbbf24;
+  color: #e884ff;
   font-style: normal;
 }
 
@@ -1143,8 +1106,9 @@ img{
 .btn--primary {
   padding: 4px 2px;
   margin-left: 40%;
-  background: #600675;
-  color: #fff;
+  margin-right: 2%;
+  background: #e884ff;
+  color: #000000;
 }
 
 .btn--primary:hover {
@@ -1217,7 +1181,7 @@ img{
 }
 
 .stock-card {
-  background: #111827;
+  background: #e8edf8;
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 14px;
   padding: 16px;
@@ -1272,7 +1236,7 @@ img{
 }
 
 .modal {
-  background: #111827;
+  background: #191c23;
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 16px;
   padding: 24px;
