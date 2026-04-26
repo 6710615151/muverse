@@ -125,8 +125,7 @@ export async function checkSellerExists(req, res) {
 
 export async function createSeller(req, res) {
     try {
-        const user_id = req.user.user_id; 
-        const { shop_name } = req.body;
+         const { user_id, shop_name } = req.body;
 
         if (!shop_name) {
             return res.status(400).json({
