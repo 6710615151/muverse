@@ -1,62 +1,153 @@
-<div id="reconciliation">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="main-content">
+<style>
+  .recon-wrapper {
+    width: 100%;
+    max-width: 1100px;
+    padding: 12px 0 40px;
+  }
+  .recon-header {
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid rgba(124,58,237,0.15);
+  }
+  .recon-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .recon-title em {
+    font-style: normal;
+    color: #7c3aed;
+  }
+  .recon-sub {
+    color: #64748b;
+    font-size: 0.88rem;
+    margin-top: 6px;
+  }
+  .recon-summary-grid {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .recon-filter-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .recon-select, .recon-search-input {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(124,58,237,0.25);
+    background: rgba(255,255,255,0.88);
+    color: #1a1a2e;
+    font-size: 0.88rem;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 2px 8px rgba(63,2,80,0.06);
+    transition: border-color 0.2s;
+  }
+  .recon-search-input { flex: 1; min-width: 220px; }
+  .recon-search-input::placeholder { color: #94a3b8; }
+  .recon-select:focus, .recon-search-input:focus { border-color: #7c3aed; }
+  .recon-count {
+    font-size: 0.82rem;
+    color: #7c3aed;
+    white-space: nowrap;
+    font-weight: 600;
+    background: rgba(124,58,237,0.09);
+    padding: 6px 16px;
+    border-radius: 20px;
+  }
+  .recon-list-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .recon-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255,255,255,0.72);
+    border-radius: 14px;
+    border: 1px solid rgba(124,58,237,0.12);
+    padding: 16px 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(63,2,80,0.07);
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  .recon-card:hover {
+    box-shadow: 0 6px 24px rgba(63,2,80,0.13);
+    transform: translateY(-1px);
+  }
+  .recon-card__date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #3f0250;
+    border-radius: 12px;
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  .recon-card__day { font-size: 1.25rem; font-weight: 800; line-height: 1; }
+  .recon-card__month { font-size: 0.62rem; font-weight: 500; opacity: 0.8; margin-top: 2px; }
+  .recon-card__info { flex: 1; min-width: 0; }
+  .recon-card__name { font-weight: 700; color: #1a1a2e; font-size: 0.92rem; }
+  .recon-card__email { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; }
+  .recon-card__method { font-size: 0.78rem; color: #7c3aed; margin-top: 3px; font-weight: 500; }
+  .recon-card__right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+  .recon-card__amount { font-size: 1rem; font-weight: 800; }
+  .recon-card__badge { padding: 2px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+  .recon-card__status { font-size: 0.72rem; color: #94a3b8; font-weight: 500; }
+  .recon-empty {
+    text-align: center;
+    padding: 52px;
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+</style>
 
-        <div class="page-header">
-            <h1 class="page-header__title">Wallet Reconciliation</h1>
-            <p class="page-header__sub">Transaction records across all users for financial audit.</p>
-        </div>
+<div id="admin-content" style="transition: 0.45s cubic-bezier(0.22, 1, 0.36, 1); opacity: 1; transform: translateY(0px) scale(1); filter: blur(0px);">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
 
-        <!-- Summary Cards -->
-        <div id="recon-summary" style="display:flex;gap:12px;flex-wrap:wrap;margin:20px 0 24px;"></div>
+  <div class="main-content recon-wrapper" style="padding-bottom:0px;height: auto;display: flex;flex-direction: column;overflow-y: hidden;">
 
-        <!-- Filter + Search -->
-        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:center;">
-            <select id="recon-type-filter"
-                style="padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);
-                background:rgba(255,255,255,0.05);color:#fff;font-size:0.88rem;outline:none;">
-                <option value="">All Types</option>
-                <option value="DEPOSIT">DEPOSIT</option>
-                <option value="WITHDRAW">WITHDRAW</option>
-                <option value="PAYMENT">PAYMENT</option>
-                <option value="INCOME">INCOME</option>
-                <option value="HOLD">HOLD</option>
-                <option value="REFUND">REFUND</option>
-            </select>
-            <input id="recon-search" type="text" placeholder="Search user name or email..."
-                style="flex:1;min-width:200px;padding:8px 14px;border-radius:8px;
-                border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);
-                color:#fff;font-size:0.88rem;outline:none;">
-            <span id="recon-count"
-                style="font-size:0.82rem;color:rgba(255,255,255,0.45);white-space:nowrap;">
-                0 records
-            </span>
-        </div>
-
-        <!-- Table -->
-        <div style="overflow-x:auto;">
-            <table style="width:100%;border-collapse:collapse;font-size:0.88rem;min-width:820px;">
-                <thead>
-                    <tr style="border-bottom:2px solid rgba(255,255,255,0.1);">
-                        <th style="text-align:left;padding:10px 14px;">Date</th>
-                        <th style="text-align:left;padding:10px 14px;">User</th>
-                        <th style="text-align:left;padding:10px 14px;">Type</th>
-                        <th style="text-align:right;padding:10px 14px;">Amount (฿)</th>
-                        <th style="text-align:left;padding:10px 14px;">Method</th>
-                        <th style="text-align:left;padding:10px 14px;">Status</th>
-                    </tr>
-                </thead>
-                <tbody id="recon-list">
-                    <tr>
-                        <td colspan="6"
-                            style="text-align:center;padding:40px;color:rgba(255,255,255,0.4);">
-                            Loading...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
+    <div class="recon-header">
+      <h1 class="recon-title">WALLET <em>RECONCILIATION</em></h1>
+      <p class="recon-sub">Transaction records across all users for financial audit.</p>
     </div>
+
+    <!-- Summary Cards -->
+    <div id="recon-summary" class="recon-summary-grid"></div>
+
+    <!-- Filter + Search -->
+    <div class="recon-filter-bar">
+      <select id="recon-type-filter" class="recon-select">
+        <option value="">All Types</option>
+        <option value="DEPOSIT">DEPOSIT</option>
+        <option value="WITHDRAW">WITHDRAW</option>
+        <option value="PAYMENT">PAYMENT</option>
+        <option value="INCOME">INCOME</option>
+        <option value="HOLD">HOLD</option>
+        <option value="REFUND">REFUND</option>
+      </select>
+      <input id="recon-search" type="text" placeholder="Search user name or email..." class="recon-search-input">
+      <span id="recon-count" class="recon-count">0 records</span>
+    </div>
+
+    <!-- Card List -->
+    <div style="padding: 12px 24px 32px;overflow-y: scroll; height: 100%;flex-grow: 1;">
+    <div class="recon-list-wrap" id="recon-list">
+      <p class="recon-empty">Loading...</p>
+    </div></div>
+
+  </div>
 </div>

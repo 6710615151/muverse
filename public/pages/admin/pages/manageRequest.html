@@ -1,69 +1,80 @@
-<div id="request">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="orb orb-4"></div>
-    <div class="main-content">
+<style>
+  .mgr-wrapper{width:100%;max-width:1100px;padding:12px 0 40px}
+  .mgr-header{margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid rgba(124,58,237,0.15)}
+  .mgr-title{font-family:'DM Sans',sans-serif;font-size:2rem;font-weight:800;color:#1a1a2e;letter-spacing:2px;text-transform:uppercase}
+  .mgr-title em{font-style:normal;color:#7c3aed}
+  .mgr-sub{color:#64748b;font-size:0.88rem;margin-top:6px}
+  .mgr-filter-bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:0 0 16px}
+  .mgr-input,.mgr-select{padding:10px 16px;border-radius:10px;border:1.5px solid rgba(124,58,237,0.25);background:rgba(255,255,255,0.88);color:#1a1a2e;font-size:0.88rem;outline:none;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(63,2,80,0.06);transition:border-color 0.2s}
+  .mgr-input{flex:1;min-width:220px}
+  .mgr-input::placeholder{color:#94a3b8}
+  .mgr-input:focus,.mgr-select:focus{border-color:#7c3aed}
+  .mgr-section{background:rgba(255,255,255,0.72);border-radius:18px;border:1px solid rgba(124,58,237,0.14);backdrop-filter:blur(14px);box-shadow:0 6px 32px rgba(63,2,80,0.1);margin-bottom:20px;padding:22px 24px}
+  .mgr-section-title{font-size:0.8rem;font-weight:700;color:#3f0250;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:16px}
+  .mgr-empty{text-align:center;padding:52px;color:#94a3b8;font-size:0.9rem}
+  .mgr-badge{padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;display:inline-block}
+  .mgr-badge-pending{background:rgba(217,119,6,0.1);color:#d97706}
+  .mgr-badge-accepted{background:rgba(22,163,74,0.1);color:#16a34a}
+  .mgr-badge-rejected{background:rgba(220,38,38,0.1);color:#dc2626}
+  .mgr-badge-done,.mgr-badge-completed{background:rgba(124,58,237,0.1);color:#7c3aed}
+  .mgr-btn{border:none;background:none;cursor:pointer;font-size:1rem;padding:6px 8px;border-radius:8px;transition:background 0.15s;color:#475569}
+  .mgr-btn:hover{background:rgba(124,58,237,0.1)}
+  .mgr-btn-add{padding:10px 20px;border-radius:10px;border:none;background:#7c3aed;color:#fff;font-size:0.88rem;cursor:pointer;font-weight:700;transition:background 0.2s}
+  .mgr-btn-add:hover{background:#6d28d9}
+  #svt-list li{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:10px;background:rgba(124,58,237,0.06);margin-bottom:8px;color:#1a1a2e;font-size:0.88rem;font-weight:500}
+  /* Card styles */
+  .mgr-list-wrap{display:flex;flex-direction:column;gap:10px}
+  .mgr-card{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.72);border-radius:14px;border:1px solid rgba(124,58,237,0.12);padding:16px 20px;backdrop-filter:blur(10px);box-shadow:0 2px 12px rgba(63,2,80,0.07);transition:box-shadow 0.15s,transform 0.15s}
+  .mgr-card:hover{box-shadow:0 6px 24px rgba(63,2,80,0.13);transform:translateY(-1px)}
+  .mgr-card__avatar{display:flex;align-items:center;justify-content:center;background:#3f0250;border-radius:12px;width:54px;height:54px;flex-shrink:0;color:#fff;font-size:1rem;font-weight:800;text-align:center;padding:4px}
+  .mgr-card__info{flex:1;min-width:0}
+  .mgr-card__name{font-weight:700;color:#1a1a2e;font-size:0.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mgr-card__sub{font-size:0.78rem;color:#64748b;margin-top:2px}
+  .mgr-card__meta{font-size:0.75rem;color:#7c3aed;margin-top:3px;font-weight:500}
+  .mgr-card__right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+  .mgr-card__price{font-size:1rem;font-weight:800;color:#1a1a2e}
+</style>
 
-        <div class="page-header">
-            <h1 class="page-header__title">Manage Requests</h1>
-            <p class="page-header__sub">Manage all requests and service types in the system.</p>
-        </div>
+<div id="admin-content" style="transition: 0.45s cubic-bezier(0.22, 1, 0.36, 1); opacity: 1; transform: translateY(0px) scale(1); filter: blur(0px);">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+  <div class="main-content mgr-wrapper" style="padding-bottom:0px;flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;">
 
-        <!-- Service Types -->
-        <div style="margin-top:24px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px 24px">
-            <h2 style="font-size:1rem;font-weight:600;margin-bottom:16px">Service Type Management</h2>
-            <ul id="svt-list" style="list-style:none;padding:0;margin:0 0 16px 0;min-height:32px"></ul>
-            <div style="display:flex;gap:8px">
-                <input id="svt-input" type="text" placeholder="New service type name..."
-                    style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);
-                    background:rgba(255,255,255,0.05);color:#fff;font-size:0.9rem;outline:none">
-                <button id="svt-add-btn"
-                    style="padding:8px 18px;border-radius:8px;border:none;background:#6366f1;color:#fff;font-size:0.9rem;cursor:pointer;font-weight:600">
-                    + Add
-                </button>
-            </div>
-        </div>
-
-        <!-- Requests Table -->
-        <div style="margin-top:24px">
-            <h2 style="font-size:1rem;font-weight:600;margin-bottom:12px">Request List</h2>
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-                <input id="req-search" type="text" placeholder="Search by title or Customer ID..."
-                    style="flex:1;min-width:200px;padding:10px 14px;border-radius:8px;
-                    border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);
-                    color:#fff;font-size:0.9rem;box-sizing:border-box;outline:none">
-                <select id="req-status-filter"
-                    style="padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);
-                    background:rgba(255,255,255,0.05);color:#080707;font-size:0.9rem;outline:none;cursor:pointer">
-                    <option value="">All statuses</option>
-                    <option value="pending">pending</option>
-                    <option value="accepted">accepted</option>
-                    <option value="DONE">DONE</option>
-                    <option value="COMPLETED">COMPLETED</option>
-                    <option value="rejected">rejected</option>
-                </select>
-            </div>
-
-            <div style="margin-top:16px;overflow-x:auto">
-                <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
-                    <thead>
-                        <tr>
-                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">ID</th>
-                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Title</th>
-                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Customer</th>
-                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Service Type</th>
-                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Budget</th>
-                            <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Status</th>
-                            <th style="text-align:center;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="req-list">
-                        <tr><td colspan="6" style="text-align:center;padding:40px;opacity:0.5">Loading...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
+    <div class="mgr-header">
+      <h1 class="mgr-title">MANAGE <em>REQUESTS</em></h1>
+      <p class="mgr-sub">Manage all requests and service types in the system.</p>
     </div>
+
+    <!-- Service Types -->
+    <div class="mgr-section">
+      <h2 class="mgr-section-title">Service Type Management</h2>
+      <ul id="svt-list" style="list-style:none;padding:0;margin:0 0 16px 0;min-height:32px"></ul>
+      <div style="display:flex;gap:8px">
+        <input id="svt-input" type="text" placeholder="New service type name..." class="mgr-input">
+        <button id="svt-add-btn" class="mgr-btn-add">+ Add</button>
+      </div>
+    </div>
+
+    <!-- Requests List -->
+    <div style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;">
+      <div class="mgr-filter-bar">
+        <input id="req-search" type="text" placeholder="Search by title or Customer ID..." class="mgr-input">
+        <select id="req-status-filter" class="mgr-select">
+          <option value="">All statuses</option>
+          <option value="pending">pending</option>
+          <option value="accepted">accepted</option>
+          <option value="DONE">DONE</option>
+          <option value="COMPLETED">COMPLETED</option>
+          <option value="rejected">rejected</option>
+        </select>
+      </div>
+      <div style="overflow-y:auto;flex:1;min-height:0;">
+      <div class="mgr-list-wrap" id="req-list">
+        <p class="mgr-empty">Loading...</p>
+      </div></div>
+    </div>
+
+  </div>
 </div>

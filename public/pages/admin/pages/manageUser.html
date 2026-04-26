@@ -1,47 +1,53 @@
-<div id="user">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="orb orb-4"></div>
-    <div class="main-content" >
+<style>
+  .mgr-wrapper{width:100%;max-width:1100px;padding:12px 0 40px}
+  .mgr-header{margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid rgba(124,58,237,0.15)}
+  .mgr-title{font-family:'DM Sans',sans-serif;font-size:2rem;font-weight:800;color:#1a1a2e;letter-spacing:2px;text-transform:uppercase}
+  .mgr-title em{font-style:normal;color:#7c3aed}
+  .mgr-sub{color:#64748b;font-size:0.88rem;margin-top:6px}
+  .mgr-filter-bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:20px 0 16px}
+  .mgr-input,.mgr-select{padding:10px 16px;border-radius:10px;border:1.5px solid rgba(124,58,237,0.25);background:rgba(255,255,255,0.88);color:#1a1a2e;font-size:0.88rem;outline:none;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(63,2,80,0.06);transition:border-color 0.2s}
+  .mgr-input{flex:1;min-width:220px}
+  .mgr-input::placeholder{color:#94a3b8}
+  .mgr-input:focus,.mgr-select:focus{border-color:#7c3aed}
+  .mgr-empty{text-align:center;padding:52px;color:#94a3b8;font-size:0.9rem}
+  .mgr-badge{padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;display:inline-block}
+  .mgr-badge-active{background:rgba(22,163,74,0.1);color:#16a34a}
+  .mgr-badge-banned{background:rgba(220,38,38,0.1);color:#dc2626}
+  .mgr-badge-pending{background:rgba(217,119,6,0.1);color:#d97706}
+  .mgr-btn{border:none;background:none;cursor:pointer;font-size:1rem;padding:6px 8px;border-radius:8px;transition:background 0.15s;color:#475569}
+  .mgr-btn:hover{background:rgba(124,58,237,0.1)}
+  /* Card styles */
+  .mgr-list-wrap{display:flex;flex-direction:column;gap:10px}
+  .mgr-card{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.72);border-radius:14px;border:1px solid rgba(124,58,237,0.12);padding:16px 20px;backdrop-filter:blur(10px);box-shadow:0 2px 12px rgba(63,2,80,0.07);transition:box-shadow 0.15s,transform 0.15s}
+  .mgr-card:hover{box-shadow:0 6px 24px rgba(63,2,80,0.13);transform:translateY(-1px)}
+  .mgr-card__avatar{display:flex;align-items:center;justify-content:center;background:#3f0250;border-radius:12px;width:54px;height:54px;flex-shrink:0;color:#fff;font-size:1.4rem;font-weight:800}
+  .mgr-card__info{flex:1;min-width:0}
+  .mgr-card__name{font-weight:700;color:#1a1a2e;font-size:0.95rem}
+  .mgr-card__sub{font-size:0.78rem;color:#64748b;margin-top:2px}
+  .mgr-card__meta{font-size:0.75rem;color:#94a3b8;margin-top:2px;font-family:monospace}
+  .mgr-card__right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+  .mgr-card__actions{display:flex;gap:4px}
+</style>
 
-        <div class="page-header">
-            <h1 class="page-header__title">Manage Users</h1>
-            <p class="page-header__sub">Manage all users in the system.</p>
-        </div>
+<div id="admin-content" style="transition: 0.45s cubic-bezier(0.22, 1, 0.36, 1); opacity: 1; transform: translateY(0px) scale(1); filter: blur(0px);">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+  <div class="main-content mgr-wrapper" style="padding-bottom:0px;height: auto;display: flex;flex-direction: column;overflow-y: hidden;">
 
-        <input id="user-search" type="text" placeholder="Search by name or email..."
-            style="width:100%;padding:10px 14px;margin-top:16px;border-radius:8px;
-            border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);
-            color:#fff;font-size:0.9rem;box-sizing:border-box;outline:none">
-
-        <div style="margin-top:20px;overflow-x:auto">
-            <table style="width:100%;border-collapse:collapse;font-size:0.9rem;min-width:700px">
-                <colgroup>
-                    <col style="width:110px">
-                    <col style="width:150px">
-                    <col>
-                    <col style="width:100px">
-                    <col style="width:80px">
-                    <col style="width:190px">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th style="text-align:left;padding:12px 20px 12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">ID</th>
-                        <th style="text-align:left;padding:12px 28px 12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Name</th>
-                        <th style="text-align:left;padding:12px 28px 12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Email</th>
-                        <th style="text-align:left;padding:12px 20px 12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Role</th>
-                        <th style="text-align:left;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Status</th>
-                        <th style="text-align:center;padding:12px 16px;border-bottom:2px solid rgba(255,255,255,0.1)">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="user-list">
-                    <tr>
-                        <td colspan="6" style="text-align:center;padding:40px;opacity:0.5">Loading...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
+    <div class="mgr-header">
+      <h1 class="mgr-title">MANAGE <em>USERS</em></h1>
+      <p class="mgr-sub">Manage all users in the system.</p>
     </div>
+
+    <div class="mgr-filter-bar">
+      <input id="user-search" type="text" placeholder="Search by name or email..." class="mgr-input">
+    </div>
+    <div style="overflow-y: scroll; height: 100%;flex-grow: 1;">
+    <div class="mgr-list-wrap" id="user-list" >
+      <p class="mgr-empty">Loading...</p>
+    </div></div>
+
+  </div>
 </div>

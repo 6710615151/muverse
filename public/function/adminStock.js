@@ -3,25 +3,45 @@ import { Stock } from "./api.js";
 export const ManageStocks = (() => {
     let _all = [];
 
+    const STATUS_CLASS = {
+        available:    'mgr-badge-available',
+        out_of_stock: 'mgr-badge-out_of_stock',
+        pending:      'mgr-badge-pending',
+        banned:       'mgr-badge-banned',
+    };
+
     const render = () => {
         const list = document.getElementById('stock-list');
         if (!list) return;
 
-        list.innerHTML = _all.map(s => `
-            <tr>
-                <td style="padding:10px 16px">
-                    ${s.url ? `<img src="${s.url}" style="width:48px;height:48px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'">` : '—'}
-                </td>
-                <td style="padding:10px 16px">${s.item_name}</td>
-                <td style="padding:10px 16px;opacity:0.7">${s.shop_name ?? '—'}</td>
-                <td style="padding:10px 16px">฿${Number(s.price).toLocaleString()}</td>
-                <td style="padding:10px 16px">${s.stock_quantity}</td>
-                <td style="padding:10px 16px">${s.stock_status}</td>
-                <td style="padding:10px 16px;text-align:center">
-                    <button data-id="${s.stock_id}" class="del">🗑</button>
-                </td>
-            </tr>
-        `).join('');
+        if (!_all.length) {
+            list.innerHTML = `<p class="mgr-empty">No stock items found</p>`;
+            return;
+        }
+
+        list.innerHTML = _all.map(s => {
+            const statusKey = (s.stock_status || '').toLowerCase();
+            const statusClass = STATUS_CLASS[statusKey] || '';
+            const imgEl = s.url
+                ? `<img src="${s.url}" class="mgr-card__img" onerror="this.outerHTML='<div class=\\'mgr-card__img-ph\\'>📦</div>'">`
+                : `<div class="mgr-card__img-ph">📦</div>`;
+            return `
+            <div class="mgr-card">
+                ${imgEl}
+                <div class="mgr-card__info">
+                    <div class="mgr-card__name">${s.item_name}</div>
+                    <div class="mgr-card__sub">${s.shop_name ?? '—'}</div>
+                    <div class="mgr-card__meta">Stock: ${s.stock_quantity} units</div>
+                </div>
+                <div class="mgr-card__right">
+                    <div class="mgr-card__price">฿${Number(s.price).toLocaleString()}</div>
+                    <span class="mgr-badge ${statusClass}">${s.stock_status}</span>
+                    <button data-id="${s.stock_id}" class="mgr-btn del" style="color:#dc2626" title="Delete">
+                        <span class="fi fi-ts-trash"></span>
+                    </button>
+                </div>
+            </div>
+        `}).join('');
 
         list.querySelectorAll('.del').forEach(btn =>
             btn.onclick = async () => {
