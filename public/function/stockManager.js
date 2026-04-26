@@ -18,6 +18,7 @@ function stockRowHTML(stock) {
   const price = Number(stock.price).toLocaleString('th-TH');
 
   return `
+<<<<<<< Updated upstream
     <div data-stock-id="${stock.stock_id}" style="
       display:flex;align-items:center;gap:16px;padding:14px 18px;margin-bottom:10px;
       border-radius:14px;background:#fff;border:1px solid #77126179;
@@ -26,35 +27,29 @@ function stockRowHTML(stock) {
        onmouseleave="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
 
       <div style="width:64px;height:64px;flex-shrink:0;border-radius:10px;overflow:hidden;background:#f5f0e8;">
+=======
+    <div class="stock-item ${isOut ? 'stock-item--out' : 'stock-item--in'}" data-stock-id="${stock.stock_id}">
+      <div class="stock-item__img">
+>>>>>>> Stashed changes
         ${stock.url
-          ? `<img src="${stock.url}" alt="${stock.item_name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`
-          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;"><span class="fi fi-ts-box-open"></span></div>`}
+          ? `<img src="${stock.url}" alt="${stock.item_name}" onerror="this.style.display='none'">`
+          : `<div class="stock-item__img-ph"><span class="fi fi-ts-box-open"></span></div>`}
       </div>
-
-      <div style="flex:1;min-width:0;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
-          <span style="font-size:0.7rem;background:#f0e8d8;color:#92671a;padding:2px 8px;border-radius:20px;font-weight:600;">${stock.category_name ?? 'ไม่มีหมวดหมู่'}</span>
-          <span style="font-size:0.7rem;padding:2px 8px;border-radius:20px;font-weight:600;
-            background:${isOut ? '#fde8e8' : '#e8fdf0'};color:${isOut ? '#c53030' : '#276749'};">
-            ${isOut ? 'หมดสต็อก' : 'มีสินค้า'}
-          </span>
+      <div class="stock-item__body">
+        <div class="stock-item__badges">
+          <span class="stock-badge stock-badge--cat">${stock.category_name ?? 'ไม่มีหมวดหมู่'}</span>
+          <span class="stock-badge ${isOut ? 'stock-badge--out' : 'stock-badge--in'}">${isOut ? 'หมดสต็อก' : 'มีสินค้า'}</span>
         </div>
-        <h3 style="font-size:0.95rem;font-weight:700;color:#1a1a1a;margin:4px 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${stock.item_name}</h3>
-        <p style="font-size:0.78rem;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${stock.description ?? '-'}</p>
+        <h3 class="stock-item__name">${stock.item_name}</h3>
+        <p class="stock-item__desc">${stock.description ?? '-'}</p>
       </div>
-
-      <div style="text-align:right;flex-shrink:0;min-width:90px;">
-        <p style="font-size:1.15rem;font-weight:800;color:#7c3aed;">฿${price}</p>
-        <p style="font-size:0.78rem;color:#999;margin-top:2px;">คงเหลือ ${stock.stock_quantity} ชิ้น</p>
+      <div class="stock-item__price-block">
+        <span class="stock-item__price">฿${price}</span>
+        <span class="stock-item__qty">คงเหลือ <strong>${stock.stock_quantity}</strong> ชิ้น</span>
       </div>
-
-      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;margin-left:8px;">
-        <button data-edit-id="${stock.stock_id}" style="
-          padding:6px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;
-          background:#7c3aed;color:#fff;border:none;">แก้ไข</button>
-        <button data-delete-id="${stock.stock_id}" data-delete-name="${stock.item_name}" style="
-          padding:6px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;
-          background:#fff;color:#e53e3e;border:1.5px solid #e53e3e;">ลบ</button>
+      <div class="stock-item__actions">
+        <button class="stock-btn stock-btn--edit" data-edit-id="${stock.stock_id}">แก้ไข</button>
+        <button class="stock-btn stock-btn--del" data-delete-id="${stock.stock_id}" data-delete-name="${stock.item_name}">ลบ</button>
       </div>
     </div>`;
 }
@@ -88,9 +83,9 @@ function render() {
   if (outEl)   outEl.textContent   = _all.filter(s => s.stock_quantity <= 0 || s.stock_status === 'out_of_stock').length;
 
   if (!items.length) {
-    list.innerHTML = `<div style="padding:80px;text-align:center;color:var(--clr-text-muted)">
-      <p style="font-size:2rem;margin-bottom:12px"><span class="fi fi-ts-box-open"></span></p>
-      <p>No products found. Click "Add New Product" to start.</p>
+    list.innerHTML = `<div class="stock-empty">
+      <div class="stock-empty__icon"><span class="fi fi-ts-box-open"></span></div>
+      <p class="stock-empty__text">No products found. Click "Add New Product" to start.</p>
     </div>`;
     return;
   }
@@ -290,7 +285,7 @@ export const SellerStock = {
 
     } catch (err) {
       console.error('[SellerStock]', err);
-      if (list) list.innerHTML = `<div style="padding:80px;text-align:center">Failed to load data</div>`;
+      if (list) list.innerHTML = `<div class="stock-empty"><div class="stock-empty__icon"><span class="fi fi-ts-triangle-warning"></span></div><p class="stock-empty__text">Failed to load data</p></div>`;
     }
 
     document.getElementById('add-stock-btn')?.addEventListener('click', openModal);
