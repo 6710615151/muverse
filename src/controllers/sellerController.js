@@ -106,17 +106,11 @@ export async function checkSellerExists(req, res) {
     try {
         const { userId } = req.params;
 
-        const { data, error } = await supabase
-            .from("sellers")
-            .select("seller_id")
-            .eq("user_id", userId)
-            .maybeSingle(); // เอาแค่ 1 record
-
-        if (error) throw error;
+        const exists = await sellerModel.checkSellerExists(userId);
 
         return res.json({
             success: true,
-            data: !!data // มี = true, ไม่มี = false
+            data: exists
         });
 
     } catch (err) {
@@ -126,4 +120,3 @@ export async function checkSellerExists(req, res) {
         });
     }
 }
-

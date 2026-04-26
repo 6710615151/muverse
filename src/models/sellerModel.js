@@ -69,3 +69,14 @@ export async function updateSellerRating(seller_id) {
   `;
   return result[0] || null;
 }
+
+export async function checkSellerExists(userId) {
+  const result = await sql`
+    SELECT seller_id
+    FROM sellers
+    WHERE user_id = ${userId}
+    LIMIT 1
+  `;
+
+  return result.length > 0;
+}
