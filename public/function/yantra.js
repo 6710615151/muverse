@@ -47,17 +47,17 @@ async function loadData() {
     },
     {
       name: "TIGER YANTRA",
-      price: 129,
+      price: 99,
       img: "../assets/tiger.png",
     },
     {
       name: "HANUMAN YANTRA",
-      price: 79,
+      price: 888,
       img: "../assets/hanuman.png",
     },
     {
       name: "LORD GANESHA YANTRA",
-      price: 79,
+      price: 999,
       img: "../assets/gens.png",
     }
   ]
