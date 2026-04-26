@@ -1,5 +1,6 @@
 import * as userModel from "../models/userModel.js";
 import * as customerModel from "../models/customerModel.js"
+import * as sellerModel from "../models/sellerModel.js";
 import bcrypt from "bcrypt";
 
 export async function getAll(req, res) {
@@ -188,6 +189,10 @@ export async function toggleRole(req, res) {
                 success: false,
                 error: "User not found"
             });
+        }
+
+        if (user[0].role === "seller") {
+            await sellerModel.createSellerIfNotExists(req.params.id);
         }
 
         res.json({

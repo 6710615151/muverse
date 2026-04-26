@@ -55,18 +55,19 @@ export async function getAllUserSeller(req, res) {
 
 export async function getSellerByUserId(req, res) {
     try {
-        const seller = await sellerModel.getSellerByUserId(req.params.id);
+        let seller = await sellerModel.getSellerByUserId(req.params.id);
 
         if (!seller || seller.length === 0) {
-            return res.status(404).json({
-                success: false,
-                error: "Seller not found"
-            });
+            const created = await sellerModel.createSellerIfNotExists(req.params.id);
+            if (!created) {
+                return res.status(404).json({ success: false, error: "Seller not found" });
+            }
+            return res.json({ success: true, data: created });
         }
 
         res.json({
             success: true,
-            data: seller[0], 
+            data: seller[0],
         });
 
     } catch (err) {

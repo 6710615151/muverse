@@ -46,6 +46,17 @@ export async function verifySeller(seller_id, seller_status) {
   return result[0] || null;
 }
 
+export async function createSellerIfNotExists(userId) {
+  const existing = await sql`SELECT seller_id, user_id, shop_name, seller_status FROM sellers WHERE user_id = ${userId}`;
+  if (existing.length) return existing[0];
+  const result = await sql`
+    INSERT INTO sellers (user_id, shop_name, rating, seller_status)
+    VALUES (${userId}, 'My Shop', 0, 'unverified')
+    RETURNING seller_id, user_id, shop_name, seller_status
+  `;
+  return result[0] || null;
+}
+
 export async function updateSellerRating(seller_id) {
   const result = await sql`
     UPDATE sellers
