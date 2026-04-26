@@ -13,8 +13,8 @@ export async function getUserSeller() {
 
 export async function getSellerByUserId(userId) {
   return await sql`
-    SELECT customer_id
-    FROM customers
+    SELECT seller_id
+    FROM sellers
     WHERE user_id = ${userId}
   `;
 }

@@ -1,4 +1,4 @@
-import { Stock, Category } from "./api.js";
+import { Stock, Category, seller as SellerAPI } from "./api.js";
 
 let _all = [];
 let _search = '';
@@ -7,14 +7,15 @@ let _sort = '';
 let _editId = null;
 let _deleteId = null;
 let _selectedFile = null;
+let _sellerId = null;
 
-const getSellerId = () => localStorage.getItem('id');
+const getSellerId = () => _sellerId;
 
 // ── Render ─────────────────────────────────────────────────────────────────
 
 function stockRowHTML(stock) {
   const isOut = stock.stock_quantity <= 0 || stock.stock_status === 'out_of_stock';
-  const price = Number(stock.price).toLocaleString('th-TH');
+  const price = Number(stock.price).toLocaleString('en-US'); // Changed locale to US
   const statusClass = isOut ? 'status-badge--pending' : 'status-badge--confirmed';
 
   return `
@@ -37,16 +38,16 @@ function stockRowHTML(stock) {
           text-overflow:ellipsis">${stock.description ?? ''}</p>
       </div>
       <div style="text-align:right;flex-shrink:0">
-        <p style="font-size:1.1rem;font-weight:700;margin-bottom:4px">฿${price}</p>
-        <p style="font-size:0.78rem;opacity:0.55;margin-bottom:6px">จำนวน: ${stock.stock_quantity}</p>
-        <span class="status-badge ${statusClass}">${isOut ? 'หมด' : 'พร้อมขาย'}</span>
+        <p style="font-size:1.1rem;font-weight:700;margin-bottom:4px">$${price}</p>
+        <p style="font-size:0.78rem;opacity:0.55;margin-bottom:6px">Qty: ${stock.stock_quantity}</p>
+        <span class="status-badge ${statusClass}">${isOut ? 'Out of Stock' : 'Available'}</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;margin-left:8px">
-        <button class="btn btn--outline btn--sm" data-edit-id="${stock.stock_id}">แก้ไข</button>
+        <button class="btn btn--outline btn--sm" data-edit-id="${stock.stock_id}">Edit</button>
         <button class="btn btn--sm"
           style="background:rgba(229,62,62,0.15);color:#e53e3e;border:1px solid rgba(229,62,62,0.3)"
           data-delete-id="${stock.stock_id}"
-          data-delete-name="${stock.item_name}">ลบ</button>
+          data-delete-name="${stock.item_name}">Delete</button>
       </div>
     </div>`;
 }
@@ -82,7 +83,7 @@ function render() {
   if (!items.length) {
     list.innerHTML = `<div style="padding:80px;text-align:center;color:var(--clr-text-muted)">
       <p style="font-size:2rem;margin-bottom:12px">📦</p>
-      <p>ยังไม่มีสินค้า กดเพิ่มสินค้าใหม่ได้เลย</p>
+      <p>No products found. Click "Add New Product" to start.</p>
     </div>`;
     return;
   }
@@ -111,8 +112,8 @@ function openModal() {
   _editId = null;
   document.getElementById('stock-form')?.reset();
   resetImagePreview();
-  document.getElementById('modal-title').textContent = 'เพิ่มสินค้าใหม่';
-  document.getElementById('modal-save-btn').textContent = 'เพิ่มสินค้า';
+  document.getElementById('modal-title').textContent = 'Add New Product';
+  document.getElementById('modal-save-btn').textContent = 'Add Product';
   document.getElementById('stock-modal').style.display = 'flex';
 }
 
@@ -123,8 +124,8 @@ function openEditModal(stockId) {
   _editId = stockId;
   resetImagePreview();
 
-  document.getElementById('modal-title').textContent = 'แก้ไขสินค้า';
-  document.getElementById('modal-save-btn').textContent = 'บันทึกการเปลี่ยนแปลง';
+  document.getElementById('modal-title').textContent = 'Edit Product';
+  document.getElementById('modal-save-btn').textContent = 'Save Changes';
   document.getElementById('f-item-name').value   = stock.item_name ?? '';
   document.getElementById('f-category').value    = stock.category_id ?? '';
   document.getElementById('f-item-type').value   = stock.item_type ?? '';
@@ -137,7 +138,7 @@ function openEditModal(stockId) {
     const preview = document.getElementById('img-preview');
     const resultEl = document.getElementById('upload-result');
     if (preview) { preview.src = stock.url; preview.style.display = 'block'; }
-    if (resultEl) resultEl.textContent = 'มีรูปภาพอยู่แล้ว (เลือกไฟล์ใหม่เพื่อเปลี่ยน)';
+    if (resultEl) resultEl.textContent = 'Current image exists (upload new to replace)';
   }
 
   document.getElementById('stock-modal').style.display = 'flex';
@@ -152,7 +153,7 @@ function closeModal() {
 function openDeleteModal(stockId, name) {
   _deleteId = stockId;
   const nameEl = document.getElementById('delete-modal-name');
-  if (nameEl) nameEl.textContent = `"${name}" จะถูกลบออกจากระบบถาวร`;
+  if (nameEl) nameEl.textContent = `"${name}" will be permanently removed from the system.`;
   document.getElementById('delete-modal').style.display = 'flex';
 }
 
@@ -181,15 +182,15 @@ async function handleSubmit(e) {
   const origLabel = saveBtn.textContent;
 
   saveBtn.disabled = true;
-  saveBtn.textContent = 'กำลังบันทึก...';
+  saveBtn.textContent = 'Saving...';
 
   try {
     let url = _editId ? (_all.find(s => s.stock_id === _editId)?.url ?? '') : '';
 
     if (_selectedFile) {
-      if (resultEl) resultEl.textContent = 'กำลังอัพโหลดรูป...';
+      if (resultEl) resultEl.textContent = 'Uploading image...';
       url = await uploadImage(_selectedFile);
-      if (resultEl) resultEl.textContent = 'อัพโหลดสำเร็จ ✅';
+      if (resultEl) resultEl.textContent = 'Upload successful ✅';
     }
 
     const body = {
@@ -215,7 +216,7 @@ async function handleSubmit(e) {
     render();
 
   } catch (err) {
-    alert('เกิดข้อผิดพลาด: ' + err.message);
+    alert('An error occurred: ' + err.message);
   } finally {
     saveBtn.disabled = false;
     saveBtn.textContent = origLabel;
@@ -232,7 +233,7 @@ async function handleDelete() {
     closeDeleteModal();
     render();
   } catch (err) {
-    alert('ลบไม่สำเร็จ: ' + err.message);
+    alert('Delete failed: ' + err.message);
   } finally {
     btn.disabled = false;
   }
@@ -249,12 +250,15 @@ export const SellerStock = {
     _deleteId = null;
     _selectedFile = null;
 
-    const sellerId = getSellerId();
+    const userId = localStorage.getItem('user_id');
     const list = document.getElementById('stock-list');
 
     try {
+      const sellerData = await SellerAPI.getByUserId(userId);
+      _sellerId = sellerData.seller_id;
+
       const [stocks, cats] = await Promise.all([
-        Stock.getBySeller(sellerId),
+        Stock.getBySeller(_sellerId),
         Category.getAll(),
       ]);
 
@@ -272,7 +276,7 @@ export const SellerStock = {
 
     } catch (err) {
       console.error('[SellerStock]', err);
-      if (list) list.innerHTML = `<div style="padding:80px;text-align:center">โหลดข้อมูลไม่สำเร็จ</div>`;
+      if (list) list.innerHTML = `<div style="padding:80px;text-align:center">Failed to load data</div>`;
     }
 
     document.getElementById('add-stock-btn')?.addEventListener('click', openModal);
@@ -285,7 +289,7 @@ export const SellerStock = {
       if (e.target.id === 'stock-modal') closeModal();
     });
 
-    // Image pick → preview (logic จาก testUpload.html)
+    // Image pick → preview
     document.getElementById('f-image')?.addEventListener('change', e => {
       const file = e.target.files[0];
       if (!file) return;
