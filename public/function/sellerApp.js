@@ -19,13 +19,13 @@ checkRole?.();
         };
 
         const PAGE_INIT = {
-            accept: () => Accept.init(),
+            accept: () => requestAnimationFrame(() =>Accept.init()),
             stock: () => requestAnimationFrame(() => SellerStock.init()),
             user: () => requestAnimationFrame(() => Role?.init()),
             logout: () => requestAnimationFrame(() => Logout.init()),
             wallet: () => requestAnimationFrame(() => WalletFlow.init()),
         };
-        
+
 
         const cache = {};
         const MAX_CACHE = 5;
