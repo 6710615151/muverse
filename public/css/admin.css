@@ -306,3 +306,140 @@ img {
     will-change: transform, opacity, filter;
     backface-visibility: hidden;
 }
+
+body {
+  font-family: system-ui, sans-serif;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 10px 14px;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.table td {
+  padding: 10px 14px;
+  color: #cbd5e1;
+}
+
+.table tr {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.table-striped tr:nth-child(even) {
+  background: rgba(255,255,255,0.03);
+}
+
+.table-empty {
+  text-align: center;
+  padding: 40px;
+  opacity: 0.5;
+}
+
+.table-error {
+  text-align: center;
+  padding: 40px;
+  color: #ef4444;
+}
+
+.btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  transform: scale(1.1);
+}
+
+.btn-success { color: #4ade80; }
+.btn-danger { color: #f87171; }
+.btn-warning { color: #facc15; }
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge-income {
+  background: rgba(74,222,128,0.15);
+  color: #4ade80;
+}
+
+.badge-expense {
+  background: rgba(248,113,113,0.15);
+  color: #f87171;
+}
+
+.status-active { color: #4ade80; font-weight: 600; }
+.status-banned { color: #f87171; font-weight: 600; }
+.status-pending { color: #facc15; font-weight: 600; }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-box {
+  background: #1a1a2e;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 28px;
+  width: min(600px, 95vw);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.img-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.action-group {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/*stock*/
+/*request*/
+/*user*/
