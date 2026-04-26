@@ -37,7 +37,7 @@ function orderCard(order) {
         <span class="booking-item__month">${month}</span>
       </div>
       <div class="booking-item__info">
-        <div class="booking-item__name">Order #${order.order_id}</div>
+        <div class="booking-item__name">Order ID : ${order.order_id}</div>
         <div class="booking-item__meta">
           <span class="booking-item__detail-text">Seller: ${order.seller_name || "-"}</span>
           <span class="booking-item__budget">฿${total}</span>
