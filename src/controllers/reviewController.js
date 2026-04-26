@@ -1,5 +1,6 @@
 import * as ReviewModel from "../models/reviewModel.js";
 import * as RequestModel from "../models/requestsModel.js";
+import * as SellerModel from "../models/sellerModel.js";
 
 // POST /api/review — สร้าง review หลังบริการเสร็จ
 export async function create(req, res) {
@@ -28,7 +29,14 @@ export async function create(req, res) {
       }
     }
 
-    const review = await ReviewModel.createReview(request_id || null, reviewer_id, seller_id, rating, comment || null);
+    // seller_id ที่รับมาคือ user_id — ต้อง lookup seller_id จริงจาก sellers table
+    const sellers = await SellerModel.getSellerByUserId(seller_id);
+    if (!sellers.length) {
+      return res.status(404).json({ success: false, error: "Seller not found" });
+    }
+    const real_seller_id = sellers[0].seller_id;
+
+    const review = await ReviewModel.createReview(request_id || null, reviewer_id, real_seller_id, rating, comment || null);
     res.status(201).json({ success: true, data: review });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
