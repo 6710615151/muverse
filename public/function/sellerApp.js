@@ -17,6 +17,7 @@ checkRole?.();
         };
 
         const PAGE_INIT = {
+
             //accept: () => Market.init(),
             user: () => requestAnimationFrame(() => Role?.init()),
             logout: () => requestAnimationFrame(() => Logout.init()),
