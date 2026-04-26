@@ -191,7 +191,7 @@ button:disabled {
 
         <input type="text" id="shopName" placeholder="Enter shop name...">
 
-        <button id="createBtn">Create Seller</button>
+        <button id="createBtn">SUBMIT</button>
 
         <div class="loader" id="loader">
             <div class="spinner"></div>
@@ -232,6 +232,7 @@ button:disabled {
                 toggleLoading(false);
 
                 showMsg("Shop created successfully ");
+                localStorage.setItem("role","seller")
                 window.location.href = "/seller";
 
             } catch (err) {
