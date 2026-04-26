@@ -9,6 +9,7 @@ const STATUS_LABEL = {
   ACCEPTED:  "Accepted",
   done:      "Done",
   DONE:      "Done",
+  complete:  "Completed",
   COMPLETED: "Completed",
   rejected:  "Rejected",
   REJECTED:  "Rejected",
@@ -21,6 +22,7 @@ const STATUS_CLASS = {
   ACCEPTED:  "status-badge--accepted",
   done:      "status-badge--done",
   DONE:      "status-badge--done",
+  complete:  "status-badge--done",
   COMPLETED: "status-badge--done",
   rejected:  "status-badge--rejected",
   REJECTED:  "status-badge--rejected",
@@ -66,7 +68,7 @@ function renderList(requests) {
           data-title="${r.request_title}">
           payment ฿${Number(r.budget || 0).toLocaleString()}
         </button>`;
-    } else if (statusUp === "COMPLETED" && r.seller_id) {
+    } else if (statusUp === "COMPLETE" && r.seller_id) {
       actionBtn = `
         <button class="btn-leave-review" data-id="${r.request_id}" data-seller-id="${r.seller_id || ""}"
           style="padding:6px 14px;border-radius:6px;border:none;background:#0f766e;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600;margin-left:8px">
@@ -124,7 +126,7 @@ async function handleServicePayment({ id, seller_id, amount, title }) {
       description:    `ชำระค่าบริการ: ${title}`,
     });
 
-    await Requests.updateStatus(id, "COMPLETED");
+    await Requests.updateStatus(id, "complete");
 
     alert("ชำระเงินสำเร็จ!");
     await loadRequests();
