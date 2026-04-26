@@ -11,10 +11,10 @@ export async function createRequest(request_title,request_detail,budget,request_
 
 export async function getAllRequests() {
     return await sql`
-        SELECT 
-            r.*, 
-            st.service_type_name,     -- ดึงชื่อประเภทบริการมา
-            u.username as customer_name -- ดึงชื่อลูกค้า (ถ้าต้องการ)
+        SELECT
+            r.*,
+            st.name AS service_type_name,
+            u.name AS customer_name
         FROM requests r
         LEFT JOIN service_types st ON r.service_type_id = st.service_type_id
         LEFT JOIN users u ON r.customer_id = u.user_id
@@ -64,9 +64,9 @@ export async function updateStatusRequest(request_id,request_status) {
 
 export async function getRequestByCustomerId(customer_id) {
     const result = await sql`
-        SELECT 
-            r.*, 
-            st.service_type_name 
+        SELECT
+            r.*,
+            st.name AS service_type_name
         FROM requests r
         LEFT JOIN service_types st ON r.service_type_id = st.service_type_id
         WHERE r.customer_id = ${customer_id}
