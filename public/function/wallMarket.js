@@ -19,10 +19,10 @@ function productCardHTML(stock) {
   return `
     <div class="product-card" data-stock-id="${stock.stock_id}" style="display: flex;
   flex-direction: column;
-  height: 370px;">
-      <div class="product-card__img">
+  height: auto;width: auto;">
+      <div class="product-card__img" style="; width: 100%; height: 216%;">
         ${stock.url
-      ? `<img src="${stock.url}" alt="${stock.item_name}" loading="lazy" style="border-radius: 7px;" onerror="this.style.display='none'">`
+      ? `<img src="${stock.url}" alt="${stock.item_name}" loading="lazy" style="border-radius: 7px;width: 100%;height: 100%;object-fit: cover;" onerror="this.style.display='none'">`
       : `<div class="product-card__img-placeholder product-card__img--${num}"></div>`}
         
         ${isNew ? `<span class="product-card__tag product-card__tag--new">New</span>` : ''}
@@ -32,27 +32,17 @@ function productCardHTML(stock) {
         
         <h3 class="product-card__name" style="font-size: 1.1rem; font-weight: 400;margin-bottom: 3px;">${stock.item_name}</h3>
         <p class="product-card__brand" style="font-size:0.8rem;">
-          <a href="#" class="shop-link"
-            data-seller-id="${stock.seller_id}"
-            data-seller-name="${shopName}" style="color: #ffffff94; text-decoration: none;">
-            ${shopName}
-          </a>
+        
         </p>
         <!-- <p class="product-card__stars">${rating}</p> -->
-        <div class="product-card__price-row" style="margin-top:4px;margin-bottom: 4px;">
+        <div class="product-card__price-row" style="margin-top:4px;margin-bottom: 4px;display: flex;justify-content: space-between; align-items: center;">
           <span class="product-card__price" style="font-size: 1.2rem; font-weight: 600;">฿${price}</span>
-        </div>
+            <div>
+                <button class="btn btn--primary btn--sm" data-order-stock="${stock.stock_id}" >Buy</button></div>
+          </div>
         <div class="service-card__footer" style="display: flex; justify-content: space-between; align-items: flex-end;">
-          
-          ${isOut ? `<span class="status-badge status-badge--pending" style="font-size: 0.85rem;color: #ff4c4cfd;margin-right: 100px;">Sold out</span>` : ''}
 
-          
 
-          ${!isOut ? `<span class="status-badge status-badge--confirmed" style="font-size: 0.85rem; font-color: #ffffffa4;margin-right: 10px;padding-left:0px;">
-            have ${stock.stock_quantity} piece${stock.stock_quantity > 1 ? 's' : ''}</span>` : ''}
-
-          ${!isOut? `<button class="btn btn--primary btn--sm" data-order-stock="${stock.stock_id}">Buy</button>`
-      : ''}
         </div>
       </div>
     </div>`;
@@ -111,10 +101,10 @@ function openDetailPopup(stock) {
   set('wm-detail-popup-price', `฿${price}`);
 
   const badge = document.getElementById('wm-detail-popup-badge');
-  if (badge) {
-    badge.textContent = isOut ? 'Out of stock' : `${stock.stock_quantity} in stock`;
-    badge.className = `detail-popup__badge status-badge ${isOut ? 'status-badge--pending' : 'status-badge--confirmed'}`;
-  }
+  // if (badge) {
+  //   badge.textContent = isOut ? 'Out of stock' : `${stock.stock_quantity} in stock`;
+  //   badge.className = `detail-popup__badge status-badge ${isOut ? 'status-badge--pending' : 'status-badge--confirmed'}`;
+  // }
 
   const orderBtn = document.getElementById('wm-detail-popup-order-btn');
   if (orderBtn) orderBtn.disabled = isOut;
@@ -166,12 +156,12 @@ async function handleConfirmOrder(stock) {
     // Call API
     console.log("Processing payment...", { customer: currentUserId, seller: stock.seller_user_id, price: stock.price });
     
-    await Wallet.transfer({
-        customer_id: currentUserId,         // buyer UUID
-        amount: Number(stock.price),        // item price
-        seller_id: stock.seller_user_id,    // seller UUID
-        payment_method: "WALLET"
-    });
+    // await Wallet.transfer({
+    //     customer_id: currentUserId,         // buyer UUID
+    //     amount: Number(stock.price),        // item price
+    //     seller_id: stock.seller_user_id,    // seller UUID
+    //     payment_method: "WALLET"
+    // });
 
     // 4. (Optional) Create order record in ORDERS table
     /* await Order.create({
@@ -189,9 +179,9 @@ async function handleConfirmOrder(stock) {
     if (window.WalletFlow && window.WalletFlow.loadBalance) window.WalletFlow.loadBalance();
     
     // Decrease product quantity by 1 locally
-    stock.stock_quantity -= 1;
-    await Stock.updateQuantity(stock.stock_id, 1);
-    mktRender();
+    // stock.stock_quantity -= 1;
+    // await Stock.updateQuantity(stock.stock_id, 1);
+    // mktRender();
 
   } catch (err) {
     console.error("Order failed:", err);
@@ -260,7 +250,13 @@ export const Market = {
     const tabs = document.getElementById('wm-cat-tabs');
 
     try {
-      const [stocks, cats, sellers] = await Promise.all([Stock.getAll(), Category.getAll(), SellerAPI.getAllSeller()]);
+      const [cats, sellers] = await Promise.all([Category.getAll(), SellerAPI.getAllSeller()]);
+
+      const wallpaperCat = (cats ?? []).find(c => c.name?.toLowerCase().includes('wallpaper'));
+      const stocks = wallpaperCat
+        ? await Stock.getByCategory(wallpaperCat.category_id)
+        : [];
+
       const sellerMap = Object.fromEntries((sellers ?? []).map(s => [String(s.seller_id), s.shop_name]));
       const sellerUserIdMap = Object.fromEntries((sellers ?? []).map(s => [String(s.seller_id), s.user_id]));
       _mktAll = (stocks ?? []).map(s => ({
@@ -269,21 +265,7 @@ export const Market = {
         seller_user_id: s.seller_user_id || sellerUserIdMap[String(s.seller_id)]
       }));
 
-      if (tabs && cats?.length) {
-        const extra = cats
-          .map(c => `<button class="filter-tab" data-cat-id="${c.category_id}">${c.name}</button>`)
-          .join('');
-        tabs.innerHTML = `<button class="filter-tab active" data-cat-id="all">✦ All</button>${extra}`;
-
-        tabs.querySelectorAll('.filter-tab').forEach(btn => {
-          btn.addEventListener('click', () => {
-            tabs.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            _mktCatId = btn.dataset.catId;
-            mktRender();
-          });
-        });
-      }
+      if (tabs) tabs.style.display = 'none';
 
       mktRender();
     } catch (err) {

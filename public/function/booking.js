@@ -1,43 +1,29 @@
-<<<<<<< Updated upstream
-import { Requests, serviceType, Wallet } from "./api.js";
-=======
-import { Requests, serviceType, Review } from "./api.js";
->>>>>>> Stashed changes
+import { Requests, serviceType, Wallet, Review } from "./api.js";
 
 const getCustomerId = () => localStorage.getItem("user_id");
 
 const STATUS_LABEL = {
   pending:   "Pending",
-<<<<<<< Updated upstream
-  accepted:  "Accepted",
-  done:      "Done",
-  complete:  "Complete",
-=======
   PENDING:   "Pending",
   accepted:  "Accepted",
   ACCEPTED:  "Accepted",
   done:      "Done",
+  DONE:      "Done",
   COMPLETED: "Completed",
   rejected:  "Rejected",
   REJECTED:  "Rejected",
->>>>>>> Stashed changes
 };
 
 const STATUS_CLASS = {
   pending:   "status-badge--pending",
-<<<<<<< Updated upstream
-  accepted:  "status-badge--accepted",
-  done:      "status-badge--done",
-  complete:  "status-badge--complete",
-=======
   PENDING:   "status-badge--pending",
   accepted:  "status-badge--accepted",
   ACCEPTED:  "status-badge--accepted",
   done:      "status-badge--done",
+  DONE:      "status-badge--done",
   COMPLETED: "status-badge--done",
   rejected:  "status-badge--rejected",
   REJECTED:  "status-badge--rejected",
->>>>>>> Stashed changes
 };
 
 let _allRequests = [];
@@ -71,16 +57,19 @@ function renderList(requests) {
     const statusUp    = (r.request_status || "").toUpperCase();
 
     let actionBtn = "";
-    if (statusUp === "ACCEPTED") {
+    if (statusUp === "DONE" && r.seller_id) {
       actionBtn = `
-        <button class="btn-confirm-done" data-id="${r.request_id}"
-          style="padding:6px 14px;border-radius:6px;border:none;background:#7c3aed;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600">
-          Confirm Completion
+        <button class="btn btn--primary btn--sm btn-pay-now"
+          data-id="${r.request_id}"
+          data-seller="${r.seller_id}"
+          data-amount="${r.budget || 0}"
+          data-title="${r.request_title}">
+          payment ฿${Number(r.budget || 0).toLocaleString()}
         </button>`;
-    } else if (statusUp === "COMPLETED" || statusUp === "DONE") {
+    } else if (statusUp === "COMPLETED" && r.seller_id) {
       actionBtn = `
         <button class="btn-leave-review" data-id="${r.request_id}" data-seller-id="${r.seller_id || ""}"
-          style="padding:6px 14px;border-radius:6px;border:none;background:#0f766e;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600">
+          style="padding:6px 14px;border-radius:6px;border:none;background:#0f766e;color:#fff;cursor:pointer;font-size:0.82rem;font-weight:600;margin-left:8px">
           Leave Review
         </button>`;
     }
@@ -100,28 +89,20 @@ function renderList(requests) {
           </div>
         </div>
         <div class="booking-item__actions">
-<<<<<<< Updated upstream
-          ${r.request_status === "done" && r.seller_id
-        ? `<button class="btn btn--primary btn--sm btn-pay-now"
-                 data-id="${r.request_id}"
-                 data-seller="${r.seller_id}"
-                 data-amount="${r.budget || 0}"
-                 data-title="${r.request_title}">
-                 payment ฿${Number(r.budget || 0).toLocaleString()}
-               </button>`
-        : `<span class="status-badge ${statusClass}">${statusLabel}</span>`
-      }
-=======
           <span class="status-badge ${statusClass}">${statusLabel}</span>
           ${actionBtn}
->>>>>>> Stashed changes
         </div>
       </div>
     `;
   }).join("");
 
-  list.querySelectorAll(".btn-confirm-done").forEach(btn => {
-    btn.addEventListener("click", () => confirmCompletion(btn.dataset.id));
+  list.querySelectorAll(".btn-pay-now").forEach(btn => {
+    btn.addEventListener("click", () => handleServicePayment({
+      id:        btn.dataset.id,
+      seller_id: btn.dataset.seller,
+      amount:    btn.dataset.amount,
+      title:     btn.dataset.title,
+    }));
   });
 
   list.querySelectorAll(".btn-leave-review").forEach(btn => {
@@ -129,13 +110,27 @@ function renderList(requests) {
   });
 }
 
-async function confirmCompletion(requestId) {
-  if (!confirm("Confirm that the service is complete? Funds will be released to the seller.")) return;
+async function handleServicePayment({ id, seller_id, amount, title }) {
+  if (!confirm(`ยืนยันชำระเงิน ฿${Number(amount).toLocaleString()} สำหรับ "${title}"?`)) return;
+
+  const customer_id = getCustomerId();
+
   try {
-    await Requests.updateRequestStatus(requestId, { request_status: "COMPLETED" });
+    await Wallet.transfer({
+      customer_id,
+      amount:         Number(amount),
+      seller_id,
+      payment_method: "WALLET",
+      description:    `ชำระค่าบริการ: ${title}`,
+    });
+
+    await Requests.updateStatus(id, "COMPLETED");
+
+    alert("ชำระเงินสำเร็จ!");
     await loadRequests();
+    window.WalletFlow?.loadBalance?.();
   } catch (err) {
-    alert("Error: " + err.message);
+    alert("เกิดข้อผิดพลาด: " + err.message);
   }
 }
 
@@ -272,18 +267,6 @@ function bindEvents() {
   });
 
   document.getElementById("btnSubmitRequest")?.addEventListener("click", submitRequest);
-
-  // pay รอคนกดชำระเงิน
-  document.getElementById("requestList")?.addEventListener("click", (e) => {
-    const btn = e.target.closest(".btn-pay-now");
-    if (!btn) return;
-    handleServicePayment({
-      id: btn.dataset.id,
-      seller_id: btn.dataset.seller,
-      amount: btn.dataset.amount,
-      title: btn.dataset.title,
-    });
-  });
 }
 
 function closeNewRequestModal() {
@@ -295,9 +278,9 @@ function closeNewRequestModal() {
 }
 
 async function submitRequest() {
-  const title = document.getElementById("inputTitle")?.value.trim();
-  const detail = document.getElementById("inputDetail")?.value.trim();
-  const budget = document.getElementById("inputBudget")?.value;
+  const title           = document.getElementById("inputTitle")?.value.trim();
+  const detail          = document.getElementById("inputDetail")?.value.trim();
+  const budget          = document.getElementById("inputBudget")?.value;
   const service_type_id = document.getElementById("inputServiceType")?.value;
 
   if (!title || !service_type_id) {
@@ -307,41 +290,17 @@ async function submitRequest() {
 
   try {
     await Requests.createRequest({
-      request_title: title,
+      request_title:  title,
       request_detail: detail,
-      budget: budget || 0,
+      budget:         budget || 0,
       request_status: "pending",
-      customer_id: getCustomerId(),
+      customer_id:    getCustomerId(),
       service_type_id,
     });
     closeNewRequestModal();
     await loadRequests();
   } catch (err) {
     alert("Error: " + err.message);
-  }
-}
-
-async function handleServicePayment({ id, seller_id, amount, title }) {
-  if (!confirm(`ยืนยันชำระเงิน ฿${Number(amount).toLocaleString()} สำหรับ "${title}"?`)) return;
-
-  const customer_id = getCustomerId();
-
-  try {
-    await Wallet.transfer({
-      customer_id,
-      amount: Number(amount),
-      seller_id,
-      payment_method: "WALLET",
-      description: `ชำระค่าบริการ: ${title}`,
-    });
-
-    await Requests.updateStatus(id, "complete");
-
-    alert("ชำระเงินสำเร็จ!");
-    await loadRequests();
-    window.WalletFlow?.loadBalance?.();
-  } catch (err) {
-    alert("เกิดข้อผิดพลาด: " + err.message);
   }
 }
 

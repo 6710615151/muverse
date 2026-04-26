@@ -1,4 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/customer.css">
+</head>
+<body>
+
 <style>
+    body {
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
     .order-overlay {
         display: none;
         position: fixed;
@@ -231,7 +246,7 @@
     }
 </style>
 
-<div id="wall-market-page">
+<div id="market-page">
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
@@ -264,9 +279,7 @@
                     <p class="marketplace-count" style="color: #ffffffc9;font-size: 0.75rem;">
                         Found <strong id="wm-count">0</strong> items
                     </p>
-                    <div class="marketplace-view-toggle">
-                        <button class="view-btn active" id="wm-filter-toggle-btn" title="Filter">⊞</button>
-                    </div>
+                    
                 </div>
 
                 <div class="market-content" style="padding:32px 64px;overflow-y: scroll; height: 100%;flex-grow: 1;">
@@ -286,7 +299,7 @@
             <button class="detail-popup__close" id="wm-detail-close-btn">✕</button>
             <div class="detail-popup__img" id="wm-detail-popup-img"></div>
             <div class="detail-popup__body">
-                <p class="detail-popup__brand" id="wm-detail-popup-brand"></p>
+             
                 <h2 class="detail-popup__title" id="wm-detail-popup-title"></h2>
                 <p class="detail-popup__description" id="wm-detail-popup-description"></p>
                 <p class="detail-popup__stars" id="wm-detail-popup-stars"></p>
@@ -311,46 +324,14 @@
             </div>
         </div>
 
-        <div class="filter-backdrop" id="wm-filter-backdrop"></div>
-        <aside class="marketplace-sidebar" id="wm-filter-sidebar">
-            <div class="sidebar-header">
-                <h3 class="sidebar-title">Filters</h3>
-                <button class="sidebar-close-btn" id="wm-filter-close-btn">✕</button>
-            </div>
-
-            <div class="sidebar-section">
-                <p class="sidebar-section__title">Sort by</p>
-                <select id="wm-sort" class="filter-select" style="width:100%">
-                    <option value="">Sort by</option>
-                    <option value="price-asc">Price ↑ Low to High</option>
-                    <option value="price-desc">Price ↓ High to Low</option>
-                    <option value="name">Name A–Z</option>
-                </select>
-            </div>
-
-            <div class="sidebar-section">
-                <p class="sidebar-section__title">Max Price</p>
-                <div class="price-range">
-                    <input type="range" class="range-slider" id="wm-price-range" min="0" max="10000" value="10000"
-                        step="100">
-                    <div class="price-range__labels">
-                        <span>฿0</span>
-                        <span id="wm-price-display">฿10,000</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <p class="sidebar-section__title">Availability</p>
-                <label class="sidebar-check">
-                    <input type="checkbox" id="wm-filter-available" checked>
-                    In Stock
-                </label>
-                <label class="sidebar-check">
-                    <input type="checkbox" id="wm-filter-outofstock">
-                    Out of Stock
-                </label>
-            </div>
-        </aside>
+        
+        
     </div>
 </div>
+    <script type="module">
+        import { Market } from "../function/wallMarket.js";
+        Market.init();
+    </script>
+</body>
+
+</html>

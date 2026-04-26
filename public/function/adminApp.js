@@ -4,6 +4,9 @@ import { Users, Wallet, Stock, Requests, serviceType, seller } from "./api.js";
 
 checkRole?.();
 
+/* =========================
+   MODAL
+========================= */
 const Modal = {
     open(html) {
         const modal = document.createElement("div");
@@ -29,8 +32,10 @@ const Modal = {
     }
 };
 
+/* =========================
+   MANAGE USERS
+========================= */
 const ManageUsers = {
-
     _cache: [],
 
     init: async () => {
@@ -43,14 +48,14 @@ const ManageUsers = {
         const list = document.getElementById('user-list');
         if (!list) return;
 
-        list.innerHTML = `<tr><td class="table-empty">Loading...</td></tr>`;
+        list.innerHTML = `<tr><td>Loading...</td></tr>`;
 
         try {
             const users = await Users.getAll();
             ManageUsers._cache = users;
             ManageUsers.renderUsers(users);
         } catch (err) {
-            list.innerHTML = `<tr><td class="table-error">${err.message}</td></tr>`;
+            list.innerHTML = `<tr><td>${err.message}</td></tr>`;
         }
     },
 
@@ -58,35 +63,22 @@ const ManageUsers = {
         const list = document.getElementById('user-list');
         if (!list) return;
 
-        if (!users.length) {
-            list.innerHTML = `<tr><td class="table-empty">No users found</td></tr>`;
-            return;
-        }
-
         list.innerHTML = users.map(u => `
-            <tr data-user-id="${u.user_id}" data-name="${u.name}" data-email="${u.email}">
-                <td>${u.user_id.slice(0, 8)}…</td>
+            <tr>
+                <td>${u.user_id.slice(0, 8)}</td>
                 <td>${u.name}</td>
                 <td>${u.email}</td>
-                <td><span class="role-badge role-${u.role}">${u.role}</span></td>
-                <td class="${u.status === 'banned' ? 'status-banned' : 'status-active'}">
-                    ${u.status ?? 'active'}
-                </td>
-                <td class="action-group">
-                    <button class="btn view" data-id="${u.user_id}">👁️</button>
-                    <button class="btn toggle" data-id="${u.user_id}" data-role="${u.role}">🔄</button>
-                    <button class="btn tx" data-id="${u.user_id}">📄</button>
-                    ${u.role === 'seller' ? `<button class="btn verify" data-id="${u.user_id}">🛡️</button>` : ''}
-                    <button class="btn ban ${u.status === 'banned' ? 'btn-success' : 'btn-danger'}"
-                        data-id="${u.user_id}" data-status="${u.status}">
-                        ${u.status === 'banned' ? '✅' : '🚫'}
-                    </button>
-                    <button class="btn delete" data-id="${u.user_id}">🗑</button>
+                <td>${u.role}</td>
+                <td>${u.status ?? 'active'}</td>
+                <td>
+                    <button class="view" data-id="${u.user_id}"><span class="fi fi-ts-eye"></span></button>
+                    <button class="toggle" data-id="${u.user_id}" data-role="${u.role}"><span class="fi fi-ts-users"></span></button>
+                    <button class="ban" data-id="${u.user_id}" data-status="${u.status}"><span class="fi fi-ts-ban"></span></button>
+                    <button class="delete" data-id="${u.user_id}"><span class="fi fi-ts-trash"></span></button>
                 </td>
             </tr>
         `).join('');
 
-        // bind
         list.querySelectorAll('.view').forEach(b =>
             b.onclick = () => {
                 const u = ManageUsers._cache.find(x => x.user_id === b.dataset.id);
@@ -101,101 +93,31 @@ const ManageUsers = {
 
         list.querySelectorAll('.ban').forEach(b =>
             b.onclick = () => ManageUsers.banUser(b.dataset.id, b.dataset.status));
-
-        list.querySelectorAll('.tx').forEach(b =>
-            b.onclick = () => ManageUsers.viewTransactions(b.dataset.id));
-
-        list.querySelectorAll('.verify').forEach(b =>
-            b.onclick = () => ManageUsers.verifySeller(b.dataset.id));
     },
 
     viewDetail: (u) => {
         Modal.open(`
-            <div class="modal-header">
-                <div class="modal-title">${u.name}</div>
-                <button data-close class="modal-close">✕</button>
-            </div>
-
-            <table class="table">
-                <tr><td>ID</td><td>${u.user_id}</td></tr>
-                <tr><td>Email</td><td>${u.email}</td></tr>
-                <tr><td>Role</td><td>${u.role}</td></tr>
-                <tr><td>Status</td><td>${u.status ?? 'active'}</td></tr>
-            </table>
+            <h2>${u.name}</h2>
+            <p>${u.email}</p>
+            <p>${u.role}</p>
         `);
     },
 
     banUser: async (id, status) => {
         const next = status === 'banned' ? 'active' : 'banned';
-        if (!confirm(`Set user to ${next}?`)) return;
-
         await Users.updateStatus(id, next);
         ManageUsers.loadUsers();
     },
 
-    toggleRole: async (id, role) => {
-        const next = role === 'customer' ? 'seller' : 'customer';
-        if (!confirm(`Change role to ${next}?`)) return;
-
+    toggleRole: async (id) => {
         await Users.toggleRole(id);
         ManageUsers.loadUsers();
-    },
-
-    viewTransactions: async (id) => {
-        const records = await Wallet.getRecords(id);
-
-        Modal.open(`
-            <div class="modal-header">
-                <div class="modal-title">Transactions</div>
-                <button data-close class="modal-close">✕</button>
-            </div>
-
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Amount</th>
-                        <th>Method</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${records.map(r => {
-                        const income = ['DEPOSIT','INCOME'].includes(r.payment_type);
-                        return `
-                        <tr>
-                            <td>${new Date(r.created_at).toLocaleString()}</td>
-                            <td>
-                                <span class="badge ${income?'badge-income':'badge-expense'}">
-                                    ${r.payment_type}
-                                </span>
-                            </td>
-                            <td class="${income?'status-active':'status-banned'}">
-                                ${income?'+':'-'}฿${Number(r.amount).toLocaleString()}
-                            </td>
-                            <td>${r.payment_method}</td>
-                        </tr>`;
-                    }).join('')}
-                </tbody>
-            </table>
-        `);
     },
 
     deleteUser: async (id) => {
         if (!confirm("Delete user?")) return;
         await Users.delete(id);
         ManageUsers.loadUsers();
-    },
-
-    verifySeller: async (userId) => {
-        const s = await seller.getByUserId(userId);
-        if (!s) return alert("No seller profile");
-
-        const status = prompt("verified / unverified / suspended", s.seller_status);
-        if (!status) return;
-
-        await seller.verifySeller(s.seller_id, status);
-        alert("Updated");
     },
 
     onSearch: (e) => {
@@ -206,17 +128,97 @@ const ManageUsers = {
     }
 };
 
+/* =========================
+   MANAGE STOCKS
+========================= */
+const ManageStocks = (() => {
+    let _all = [];
 
+    const render = () => {
+        const list = document.getElementById('stock-list');
+        if (!list) return;
+
+        list.innerHTML = _all.map(s => `
+            <tr>
+                <td>${s.item_name}</td>
+                <td>฿${s.price}</td>
+                <td>${s.stock_status}</td>
+                <td>
+                    <button data-id="${s.stock_id}" class="del">🗑</button>
+                </td>
+            </tr>
+        `).join('');
+
+        list.querySelectorAll('.del').forEach(btn =>
+            btn.onclick = async () => {
+                await Stock.delete(btn.dataset.id);
+                _all = _all.filter(x => x.stock_id != btn.dataset.id);
+                render();
+            });
+    };
+
+    return {
+        init: async () => {
+            _all = await Stock.getAll();
+            render();
+        }
+    };
+})();
+
+/* =========================
+   MANAGE REQUESTS
+========================= */
+const ManageRequests = (() => {
+    let _all = [];
+
+    const render = () => {
+        const list = document.getElementById('req-list');
+        if (!list) return;
+
+        list.innerHTML = _all.map(r => `
+            <tr>
+                <td>${r.request_title}</td>
+                <td>฿${r.budget}</td>
+                <td>${r.request_status}</td>
+                <td>
+                    <button data-id="${r.request_id}" class="del">🗑</button>
+                </td>
+            </tr>
+        `).join('');
+
+        list.querySelectorAll('.del').forEach(btn =>
+            btn.onclick = async () => {
+                await Requests.deleteRequest(btn.dataset.id);
+                _all = _all.filter(x => x.request_id != btn.dataset.id);
+                render();
+            });
+    };
+
+    return {
+        init: async () => {
+            _all = await Requests.getRequests();
+            render();
+        }
+    };
+})();
+
+/* =========================
+   ROUTER
+========================= */
 const Router = (() => {
 
     const PAGE_MAP = {
-        user: "../../pages/admin/pages/manageUser.html",
-        logout: "../../pages/admin/pages/logout.html",
+        user: "/pages/admin/manageUser.html",
+        stock: "/pages/admin/manageStock.html",
+        request: "/pages/admin/manageRequest.html",
+        logout: "/pages/admin/logout.html",
     };
 
     const PAGE_INIT = {
-        logout: () => Logout.init(),
         user: () => ManageUsers.init(),
+        stock: () => ManageStocks.init(),
+        request: () => ManageRequests.init(),
+        logout: () => Logout.init(),
     };
 
     const canvas = () => document.getElementById("canvasContent");
