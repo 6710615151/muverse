@@ -139,6 +139,7 @@ function closeOrderPopup() {
   document.getElementById('wm-order-popup')?.classList.remove('open');
 }
 
+
 async function handleConfirmOrder(stock) {
   try {
     const currentUserId = window.WalletFlow?.userId || localStorage.getItem('user_id');
