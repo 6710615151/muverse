@@ -131,7 +131,7 @@ export async function getByCustomerId(req, res) {
 
 export async function updateStatus(req, res) {
     try {
-        const { request_status } = req.body;
+        const { request_status, seller_id } = req.body;
 
         if (!request_status) {
             return res.status(400).json({
@@ -140,7 +140,7 @@ export async function updateStatus(req, res) {
             });
         }
 
-        const requestData = await RequestModel.updateStatusRequest(req.params.id,request_status);
+        const requestData = await RequestModel.updateStatusRequest(req.params.id, request_status, seller_id ?? null);
 
         if (!requestData) {
             return res.status(404).json({

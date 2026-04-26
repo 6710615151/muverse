@@ -53,7 +53,16 @@ export async function deleteRequest(request_id) {
 }
 
 
-export async function updateStatusRequest(request_id,request_status) {
+export async function updateStatusRequest(request_id, request_status, seller_id = null) {
+    if (seller_id) {
+        const result = await sql`
+            UPDATE requests
+            SET request_status = ${request_status},
+                seller_id = ${seller_id}
+            WHERE request_id = ${request_id}
+            RETURNING *`;
+        return result[0] || null;
+    }
     const result = await sql`
         UPDATE requests
         SET request_status = ${request_status}
