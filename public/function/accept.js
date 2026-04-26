@@ -1,16 +1,10 @@
-import { Requests, Category } from "./api.js";
+import { Requests } from "./api.js";
 
 let listEl;
 let filterBtns;
 
-let categories   = [];
 let allRequests  = [];
 let activeStatus = "all";
-
-function categoryName(category_id) {
-    const cat = categories.find(c => c.category_id === category_id);
-    return cat ? cat.name : "-";
-}
 
 function badgeClass(status) {
     if (status === "accepted") return "badge accepted";
@@ -39,7 +33,7 @@ function renderRequests(requests) {
             <p class="booking-card__detail">${r.request_detail || "-"}</p>
             <div class="booking-card__meta">
                 <span>Budget: ${r.budget ?? "-"} THB</span>
-                <span>Category: ${categoryName(r.category_id)}</span>
+                <span>Service Type: ${r.service_type_name || "-"}</span>
             </div>
             <div class="booking-card__actions">
                 <button class="btn btn--primary" data-id="${r.request_id}" data-status="accepted">Accept</button>
@@ -96,17 +90,10 @@ function bindFilters() {
 
 export const Accept = {
     async init() {
-
         listEl = document.getElementById("requestList");
         filterBtns = document.querySelectorAll(".filter-tab");
 
-        if (!listEl) return; 
-
-        try {
-            categories = await Category.getAll();
-        } catch {
-            categories = [];
-        }
+        if (!listEl) return;
 
         bindFilters();
         loadRequests();
