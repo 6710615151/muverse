@@ -196,3 +196,6 @@ export const Review = {
     getBySeller: (seller_id) => apiFetch(`/api/review/seller/${seller_id}`),
 };
 
+export const Customer = {
+    getByUserId: (userId) => apiFetch(`/api/customer/user/${userId}`),
+}
