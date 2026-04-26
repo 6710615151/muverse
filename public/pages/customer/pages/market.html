@@ -252,7 +252,7 @@
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content: center;">
                 <div><span style="font-size: 2rem;color:#ffffff;margin-right: 2px;font-size:0.82rem;font-weight:500;letter-spacing:0.05em;
       text-transform:uppercase;margin-bottom:10px" class="fi fi-ts-search"></span></div>
-                <input type="text" id="mkt-search" class="form-input" placeholder="ค้นหาสินค้า..."
+                <input type="text" id="mkt-search" class="form-input" placeholder="Search products..."
                     style="width:200px;padding:8px 14px">
             </div>
         </div>
@@ -262,10 +262,10 @@
             <div class="marketplace-main">
                 <div class="marketplace-toolbar">
                     <p class="marketplace-count" style="color: #ffffffc9;font-size: 0.75rem;">
-                        พบ <strong id="mkt-count">0</strong> รายการ
+                        Found <strong id="mkt-count">0</strong> items
                     </p>
                     <div class="marketplace-view-toggle">
-                        <button class="view-btn active" id="filter-toggle-btn" title="ตัวกรอง">⊞</button>
+                        <button class="view-btn active" id="filter-toggle-btn" title="Filter">⊞</button>
                     </div>
                 </div>
 
@@ -273,7 +273,7 @@
                     <div class="product-grid" id="mkt-grid">
                         <div style="grid-column:1/-1;padding:80px;text-align:center;color:var(--clr-text-muted)">
                             <p style="font-size:2rem;margin-bottom:12px">⏳</p>
-                            <p>กำลังโหลดสินค้า...</p>
+                            <p>Loading products...</p>
                         </div>
                     </div>
                 </div>
@@ -293,7 +293,7 @@
                     <span class="detail-popup__price" id="detail-popup-price"></span>
                     <span class="detail-popup__badge" id="detail-popup-badge"></span>
                 </div>
-                <button class="detail-popup__order-btn" id="detail-popup-order-btn">สั่งซื้อ</button>
+                <button class="detail-popup__order-btn" id="detail-popup-order-btn">Order Now</button>
             </div>
         </div>
 
@@ -301,34 +301,34 @@
         <div class="order-overlay" id="order-overlay"></div>
         <div class="order-popup" id="order-popup">
             <div class="order-popup__icon">🛒</div>
-            <h3 class="order-popup__title">ยืนยันการสั่งซื้อ</h3>
+            <h3 class="order-popup__title">Confirm Order</h3>
             <p class="order-popup__item" id="order-popup-item"></p>
             <p class="order-popup__price" id="order-popup-price"></p>
             <div class="order-popup__actions">
-                <button class="order-popup__cancel" id="order-popup-cancel">ยกเลิก</button>
-                <button class="order-popup__confirm" id="order-popup-confirm">ยืนยัน</button>
+                <button class="order-popup__cancel" id="order-popup-cancel">Cancel</button>
+                <button class="order-popup__confirm" id="order-popup-confirm">Confirm</button>
             </div>
         </div>
 
         <div class="filter-backdrop" id="filter-backdrop"></div>
         <aside class="marketplace-sidebar" id="filter-sidebar">
             <div class="sidebar-header">
-                <h3 class="sidebar-title">ตัวกรอง</h3>
+                <h3 class="sidebar-title">Filters</h3>
                 <button class="sidebar-close-btn" id="filter-close-btn">✕</button>
             </div>
 
             <div class="sidebar-section">
-                <p class="sidebar-section__title">เรียงลำดับ</p>
+                <p class="sidebar-section__title">Sort by</p>
                 <select id="mkt-sort" class="filter-select" style="width:100%">
-                    <option value="">เรียงลำดับ</option>
-                    <option value="price-asc">ราคา ↑ น้อยไปมาก</option>
-                    <option value="price-desc">ราคา ↓ มากไปน้อย</option>
-                    <option value="name">ชื่อ A–Z</option>
+                    <option value="">Sort by</option>
+                    <option value="price-asc">Price ↑ Low to High</option>
+                    <option value="price-desc">Price ↓ High to Low</option>
+                    <option value="name">Name A–Z</option>
                 </select>
             </div>
 
             <div class="sidebar-section">
-                <p class="sidebar-section__title">ราคาสูงสุด</p>
+                <p class="sidebar-section__title">Max Price</p>
                 <div class="price-range">
                     <input type="range" class="range-slider" id="mkt-price-range" min="0" max="10000" value="10000"
                         step="100">
@@ -340,14 +340,14 @@
             </div>
 
             <div class="sidebar-section">
-                <p class="sidebar-section__title">สถานะสินค้า</p>
+                <p class="sidebar-section__title">Availability</p>
                 <label class="sidebar-check">
                     <input type="checkbox" id="mkt-filter-available" checked>
-                    มีสินค้าพร้อมส่ง
+                    In Stock
                 </label>
                 <label class="sidebar-check">
                     <input type="checkbox" id="mkt-filter-outofstock">
-                    สินค้าหมด
+                    Out of Stock
                 </label>
             </div>
         </aside>

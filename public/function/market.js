@@ -24,8 +24,8 @@ function productCardHTML(stock) {
         ${stock.url
       ? `<img src="${stock.url}" alt="${stock.item_name}" loading="lazy" style="border-radius: 7px;" onerror="this.style.display='none'">`
       : `<div class="product-card__img-placeholder product-card__img--${num}"></div>`}
-        ${isOut ? `<span class="product-card__tag">หมด</span>` : ''}
-        ${isNew ? `<span class="product-card__tag product-card__tag--new">ใหม่</span>` : ''}
+        ${isOut ? `<span class="product-card__tag">Out</span>` : ''}
+        ${isNew ? `<span class="product-card__tag product-card__tag--new">New</span>` : ''}
 
       </div>
       <div class="product-card__body">
@@ -54,7 +54,7 @@ function productCardHTML(stock) {
     </div>`;
 }
 
-function renderEmpty(msg = 'ไม่พบสินค้า') {
+function renderEmpty(msg = 'No products found') {
   return `<div style="grid-column:1/-1;padding:80px;text-align:center;color:var(--clr-text-muted)">
     <div style="padding:10px"><span style="font-size: 2rem;color:#ffffff;margin-right: 2px;font-size:0.82rem;font-weight:500;letter-spacing:0.05em;
       text-transform:uppercase;margin-bottom:10px" class="fi fi-ts-search"></span></div>
@@ -65,7 +65,7 @@ function renderEmpty(msg = 'ไม่พบสินค้า') {
 function renderError() {
   return `<div style="grid-column:1/-1;padding:80px;text-align:center;color:var(--clr-text-muted)">
     <p style="font-size:1.8rem;margin-bottom:10px">⚠️</p>
-    <p>โหลดข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง</p>
+    <p>Failed to load data. Please try again.</p>
   </div>`;
 }
 
@@ -89,7 +89,7 @@ function openDetailPopup(stock) {
   const isOut = stock.stock_quantity <= 0 || stock.stock_status === 'out_of_stock';
   const num = imgNum(stock.stock_id);
   const price = Number(stock.price).toLocaleString('th-TH', { minimumFractionDigits: 0 });
-  const shopName = stock.shop_name ?? `ร้าน #${stock.seller_id}`;
+  const shopName = stock.shop_name ?? `Shop #${stock.seller_id}`;
 
   const imgEl = document.getElementById('detail-popup-img');
   if (imgEl) {
@@ -106,7 +106,7 @@ function openDetailPopup(stock) {
 
   const badge = document.getElementById('detail-popup-badge');
   if (badge) {
-    badge.textContent = isOut ? 'หมดชั่วคราว' : `มี ${stock.stock_quantity} ชิ้น`;
+    badge.textContent = isOut ? 'Out of stock' : `${stock.stock_quantity} in stock`;
     badge.className = `detail-popup__badge status-badge ${isOut ? 'status-badge--pending' : 'status-badge--confirmed'}`;
   }
 
@@ -144,30 +144,30 @@ function closeOrderPopup() {
 }
 
 async function handleConfirmOrder(stock) {
-  //การสั่งซื้อ
+  // Place order
   try {
-    //UserID ของคนซื้อ 
-    const currentUserId = window.WalletFlow?.userId || localStorage.getItem('user_id'); 
+    // Buyer's user ID
+    const currentUserId = window.WalletFlow?.userId || localStorage.getItem('user_id');
     if (!currentUserId) {
-        return alert("กรุณาล็อกอินก่อนทำการสั่งซื้อ");
+        return alert("Please log in before placing an order");
     }
 
-    //หา UserID ของคนขายเจอไหม
+    // Verify seller user ID exists
     if (!stock.seller_user_id) {
-        return alert("เกิดข้อผิดพลาด: ไม่พบข้อมูลเจ้าของร้าน");
+        return alert("Error: Seller information not found");
     }
 
-    //เรียก API
-    console.log("กำลังหักเงิน...", { customer: currentUserId, seller: stock.seller_user_id, price: stock.price });
+    // Call API
+    console.log("Processing payment...", { customer: currentUserId, seller: stock.seller_user_id, price: stock.price });
     
     await Wallet.transfer({
-        customer_id: currentUserId,         // UUID คนซื้อ
-        amount: Number(stock.price),        // ราคาสินค้า
-        seller_id: stock.seller_user_id,    // UUID คนขาย
+        customer_id: currentUserId,         // buyer UUID
+        amount: Number(stock.price),        // item price
+        seller_id: stock.seller_user_id,    // seller UUID
         payment_method: "WALLET"
     });
 
-    // 4. (ทางเลือก) สร้างใบสั่งซื้อลงตาราง ORDERS
+    // 4. (Optional) Create order record in ORDERS table
     /* await Order.create({
         customer_id: currentUserId,
         seller_id: stock.seller_id,
@@ -176,20 +176,20 @@ async function handleConfirmOrder(stock) {
     });
     */
 
-    alert(`🎉 สั่งซื้อ "${stock.item_name}" สำเร็จ!`);
+    alert(`🎉 Order "${stock.item_name}" placed successfully!`);
 
-    // 5. ปิด Popup และอัปเดตหน้าจอ (ลดจำนวนสินค้า, อัปเดตยอดเงิน)
+    // 5. Close popup and update UI (reduce quantity, refresh balance)
     closeOrderPopup();
     if (window.WalletFlow && window.WalletFlow.loadBalance) window.WalletFlow.loadBalance();
     
-    // ลดจำนวนสินค้าในหน้าเว็บลง 1
+    // Decrease product quantity by 1 locally
     stock.stock_quantity -= 1;
     await Stock.updateQuantity(stock.stock_id, 1);
     mktRender();
 
   } catch (err) {
     console.error("Order failed:", err);
-    alert(`❌ การสั่งซื้อล้มเหลว: ${err.message || "ยอดเงินไม่พอ หรือระบบขัดข้อง"}`);
+    alert(`❌ Order failed: ${err.message || "Insufficient balance or system error"}`);
   }
 }
 
@@ -404,9 +404,7 @@ function shopRender() {
   if (!grid) return;
   const items = shopFilter();
   if (count) count.textContent = items.length;
-  grid.innerHTML = items.length
-    ? items.map(productCardHTML).join('')
-    : renderEmpty('ไม่มีสินค้าในร้านนี้');
+  grid.innerHTML = items.length ? items.map(productCardHTML).join('') : renderEmpty('No products in this shop');
 }
 
 function openShopDetailPopup(stock) {
@@ -430,7 +428,7 @@ function openShopDetailPopup(stock) {
 
   const badge = document.getElementById('shop-detail-popup-badge');
   if (badge) {
-    badge.textContent = isOut ? 'หมดชั่วคราว' : `มี ${stock.stock_quantity} ชิ้น`;
+    badge.textContent = isOut ? 'Out of stock' : `${stock.stock_quantity} in stock`;
     badge.className = `detail-popup__badge status-badge ${isOut ? 'status-badge--pending' : 'status-badge--confirmed'}`;
   }
 
@@ -471,12 +469,12 @@ export const Shop = {
     _shopShowAvail = true;
     _shopShowOut = false;
 
-    const sellerId = window._shopSellerId;
+    const grid = document.getElementById('shop-grid');
 
     document.getElementById('shop-back-btn')?.addEventListener('click', () => window.Router?.navigate('market'));
 
+    const sellerId = window._shopSellerId;
     if (!sellerId) {
-      const grid = document.getElementById('shop-grid');
       if (grid) grid.innerHTML = renderError();
       return;
     }
@@ -489,21 +487,17 @@ export const Shop = {
         ? _shopAll[0].shop_name
         : (window._shopSellerName && !window._shopSellerName.startsWith('http')
           ? window._shopSellerName
-          : `ร้านค้า`);
+          : 'Shop');
 
       const nameEl = document.getElementById('shop-name');
-      const countEl = document.getElementById('shop-item-count');
       if (nameEl) nameEl.textContent = shopName;
-      if (countEl) countEl.textContent = `${_shopAll.length} รายการสินค้า`;
 
       shopRender();
     } catch (err) {
       console.error('[Shop]', err);
-      const grid = document.getElementById('shop-grid');
       if (grid) grid.innerHTML = renderError();
     }
 
-    // Search & sort
     document.getElementById('shop-search')?.addEventListener('input', e => {
       _shopSearch = e.target.value;
       shopRender();
@@ -514,7 +508,6 @@ export const Shop = {
       shopRender();
     });
 
-    // Price range
     const priceRange = document.getElementById('shop-price-range');
     const priceDisplay = document.getElementById('shop-price-display');
     priceRange?.addEventListener('input', e => {
@@ -523,35 +516,24 @@ export const Shop = {
       shopRender();
     });
 
-    // Stock filter
     document.getElementById('shop-filter-available')?.addEventListener('change', e => {
       _shopShowAvail = e.target.checked;
       shopRender();
     });
+
     document.getElementById('shop-filter-outofstock')?.addEventListener('change', e => {
       _shopShowOut = e.target.checked;
       shopRender();
     });
 
-    // Filter sidebar
-    const filterSidebar = document.getElementById('shop-filter-sidebar');
-    const filterBackdrop = document.getElementById('shop-filter-backdrop');
-    const openFilter = () => { filterSidebar?.classList.add('open'); filterBackdrop?.classList.add('open'); };
-    const closeFilter = () => { filterSidebar?.classList.remove('open'); filterBackdrop?.classList.remove('open'); };
-    document.getElementById('shop-filter-toggle-btn')?.addEventListener('click', () =>
-      filterSidebar?.classList.contains('open') ? closeFilter() : openFilter()
-    );
-    document.getElementById('shop-filter-close-btn')?.addEventListener('click', closeFilter);
-    filterBackdrop?.addEventListener('click', closeFilter);
-
-    // Detail popup
+    // Detail popup bindings
     document.getElementById('shop-detail-overlay')?.addEventListener('click', closeShopDetailPopup);
     document.getElementById('shop-detail-close-btn')?.addEventListener('click', closeShopDetailPopup);
     document.getElementById('shop-detail-popup-order-btn')?.addEventListener('click', () => {
       if (_shopDetailStock) openShopOrderPopup(_shopDetailStock);
     });
 
-    // Order popup
+    // Order popup bindings
     document.getElementById('shop-order-overlay')?.addEventListener('click', closeShopOrderPopup);
     document.getElementById('shop-order-popup-cancel')?.addEventListener('click', closeShopOrderPopup);
     document.getElementById('shop-order-popup-confirm')?.addEventListener('click', async () => {
@@ -559,7 +541,7 @@ export const Shop = {
       closeShopOrderPopup();
     });
 
-    // Grid clicks
+    // Grid click: order button → order popup | card click → detail popup
     document.getElementById('shop-grid')?.addEventListener('click', e => {
       if (e.target.closest('[data-order-stock]')) {
         const stockId = e.target.closest('[data-order-stock]').dataset.orderStock;
@@ -572,5 +554,23 @@ export const Shop = {
       const stock = _shopAll.find(s => String(s.stock_id) === String(card.dataset.stockId));
       if (stock) openShopDetailPopup(stock);
     });
+
+    const filterSidebar = document.getElementById('shop-filter-sidebar');
+    const filterBackdrop = document.getElementById('shop-filter-backdrop');
+
+    function openFilter() {
+      filterSidebar?.classList.add('open');
+      filterBackdrop?.classList.add('open');
+    }
+    function closeFilter() {
+      filterSidebar?.classList.remove('open');
+      filterBackdrop?.classList.remove('open');
+    }
+
+    document.getElementById('shop-filter-toggle-btn')?.addEventListener('click', () => {
+      filterSidebar?.classList.contains('open') ? closeFilter() : openFilter();
+    });
+    document.getElementById('shop-filter-close-btn')?.addEventListener('click', closeFilter);
+    filterBackdrop?.addEventListener('click', closeFilter);
   }
 };
