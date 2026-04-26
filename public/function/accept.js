@@ -10,6 +10,7 @@ function badgeClass(status) {
     if (status === "accepted") return "badge accepted";
     if (status === "rejected") return "badge rejected";
     if (status === "done")     return "badge done";
+    if (status === "complete") return "badge complete";
     return "badge pending";
 }
 
@@ -74,7 +75,8 @@ async function updateStatus(btn) {
     card.querySelectorAll("button").forEach(b => b.disabled = true);
 
     try {
-        await Requests.updateRequestStatus(id, { request_status: status });
+        const seller_id = status === "accepted" ? localStorage.getItem("user_id") : null;
+        await Requests.updateRequestStatus(id, { request_status: status, seller_id });
         await loadRequests();
     } catch {
         card.querySelectorAll("button").forEach(b => b.disabled = false);

@@ -1024,6 +1024,12 @@ img {
   border: 1px solid rgba(99,102,241,0.3);
 }
 
+.status-badge--complete {
+  background: rgba(246, 246, 246, 0.15);
+  color: #ffffff;
+  border: 1px solid rgba(177, 177, 177, 0.3);
+}
+
 /* custom scrollbar for booking list */
 #booking .main-content::-webkit-scrollbar { width: 5px; }
 #booking .main-content::-webkit-scrollbar-track { background: transparent; }

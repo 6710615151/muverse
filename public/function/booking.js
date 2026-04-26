@@ -1,17 +1,19 @@
-import { Requests, serviceType } from "./api.js";
+import { Requests, serviceType, Wallet } from "./api.js";
 
 const getCustomerId = () => localStorage.getItem("user_id");
 
 const STATUS_LABEL = {
-  pending:  "Pending",
-  accepted: "Accepted",
-  done:     "Done",
+  pending:   "Pending",
+  accepted:  "Accepted",
+  done:      "Done",
+  complete:  "Complete",
 };
 
 const STATUS_CLASS = {
-  pending:  "status-badge--pending",
-  accepted: "status-badge--accepted",
-  done:     "status-badge--done",
+  pending:   "status-badge--pending",
+  accepted:  "status-badge--accepted",
+  done:      "status-badge--done",
+  complete:  "status-badge--complete",
 };
 
 let _allRequests = [];
@@ -55,7 +57,16 @@ function renderList(requests) {
           </div>
         </div>
         <div class="booking-item__actions">
-          <span class="status-badge ${statusClass}">${statusLabel}</span>
+          ${r.request_status === "done" && r.seller_id
+        ? `<button class="btn btn--primary btn--sm btn-pay-now"
+                 data-id="${r.request_id}"
+                 data-seller="${r.seller_id}"
+                 data-amount="${r.budget || 0}"
+                 data-title="${r.request_title}">
+                 payment ฿${Number(r.budget || 0).toLocaleString()}
+               </button>`
+        : `<span class="status-badge ${statusClass}">${statusLabel}</span>`
+      }
         </div>
       </div>
     `;
@@ -110,6 +121,18 @@ function bindEvents() {
 
   // submit
   document.getElementById("btnSubmitRequest")?.addEventListener("click", submitRequest);
+
+  // pay รอคนกดชำระเงิน
+  document.getElementById("requestList")?.addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn-pay-now");
+    if (!btn) return;
+    handleServicePayment({
+      id: btn.dataset.id,
+      seller_id: btn.dataset.seller,
+      amount: btn.dataset.amount,
+      title: btn.dataset.title,
+    });
+  });
 }
 
 function closeModal() {
@@ -121,9 +144,9 @@ function closeModal() {
 }
 
 async function submitRequest() {
-  const title           = document.getElementById("inputTitle")?.value.trim();
-  const detail          = document.getElementById("inputDetail")?.value.trim();
-  const budget          = document.getElementById("inputBudget")?.value;
+  const title = document.getElementById("inputTitle")?.value.trim();
+  const detail = document.getElementById("inputDetail")?.value.trim();
+  const budget = document.getElementById("inputBudget")?.value;
   const service_type_id = document.getElementById("inputServiceType")?.value;
 
   if (!title || !service_type_id) {
@@ -133,17 +156,41 @@ async function submitRequest() {
 
   try {
     await Requests.createRequest({
-      request_title:  title,
+      request_title: title,
       request_detail: detail,
-      budget:         budget || 0,
+      budget: budget || 0,
       request_status: "pending",
-      customer_id:    getCustomerId(),
+      customer_id: getCustomerId(),
       service_type_id,
     });
     closeModal();
     await loadRequests();
   } catch (err) {
     alert("Error: " + err.message);
+  }
+}
+
+async function handleServicePayment({ id, seller_id, amount, title }) {
+  if (!confirm(`ยืนยันชำระเงิน ฿${Number(amount).toLocaleString()} สำหรับ "${title}"?`)) return;
+
+  const customer_id = getCustomerId();
+
+  try {
+    await Wallet.transfer({
+      customer_id,
+      amount: Number(amount),
+      seller_id,
+      payment_method: "WALLET",
+      description: `ชำระค่าบริการ: ${title}`,
+    });
+
+    await Requests.updateStatus(id, "complete");
+
+    alert("ชำระเงินสำเร็จ!");
+    await loadRequests();
+    window.WalletFlow?.loadBalance?.();
+  } catch (err) {
+    alert("เกิดข้อผิดพลาด: " + err.message);
   }
 }
 

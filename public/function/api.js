@@ -148,6 +148,11 @@ export const Requests = {
     deleteRequest: (id) => apiFetch(`/api/request/${id}`, {
         method: "DELETE",
     }),
+
+    updateStatus: (id, status) => apiFetch(`/api/request/updateStatus/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ request_status: status }),
+    }),
 };
 
 export const serviceType = {
