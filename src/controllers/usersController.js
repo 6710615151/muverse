@@ -21,6 +21,7 @@ export async function getById(req, res) {
         res.status(500).json({ success: false, error: err.message });
     }
 }
+
 export async function create(req, res) {
     try {
         const { name, email, password, phone } = req.body;

@@ -1,7 +1,7 @@
 import sql from "../config/db.js";
 
 export async function createUserWithCustomer(name, email, password_hash, phone) {
-  return await sql.begin(async (tx) => {
+  return await sql(async (tx) => {
 
     const users = await tx`
       INSERT INTO users (name, email, password_hash, phone)
