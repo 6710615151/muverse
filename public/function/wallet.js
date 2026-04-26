@@ -79,38 +79,76 @@ export const WalletFlow = {
 
         const list = document.getElementById('payment-method-list');
 
-        list.style.cssText = "max-height:180px;overflow-y:auto;padding-right:4px;";
+        list.style.cssText = "position:relative;";
 
-        list.innerHTML = methods.map(m => {
-            const isActive = m.id === WalletFlow.selectedMethod;
-            return `
-            <div class="payment-method-item ${isActive ? 'active' : ''}" data-id="${m.id}" style="
-                display:flex; align-items:center; justify-content:space-between;
-                padding:10px 14px; margin-bottom:8px; border-radius:10px; cursor:pointer;
-                border:2px solid ${isActive ? '#c084fc' : 'rgba(255,255,255,0.1)'};
-                background:${isActive ? 'rgba(192,132,252,0.15)' : 'rgba(255,255,255,0.05)'};
-                transition:all 0.2s; position:relative;
-            ">
-                <span style="color:#e2e8f0;font-size:0.9rem;font-weight:500">${m.name}</span>
-                <div style="display:flex;align-items:center;gap:8px">
-                    ${isActive ? '<span style="color:#c084fc;font-size:1rem;font-weight:700">✓</span>' : ''}
-                    ${m.id !== 'WALLET' ? `<button class="btn-remove-payment" data-id="${m.id}" title="ลบ" style="
-                        opacity:0; transition:opacity 0.2s;
-                        background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);
-                        color:#f87171;border-radius:6px;width:24px;height:24px;cursor:pointer;
-                        font-size:0.75rem;display:flex;align-items:center;justify-content:center;
-                        line-height:1;padding:0;
-                    ">✕</button>` : ''}
+        const selected = methods.find(m => m.id === WalletFlow.selectedMethod) || methods[0];
+        let dropdownOpen = false;
+
+        list.innerHTML = `
+            <div id="pm-selector" style="position:relative;">
+                <div id="pm-trigger" style="
+                    display:flex;align-items:center;justify-content:space-between;
+                    padding:10px 14px;border-radius:10px;cursor:pointer;
+                    border:2px solid #c084fc;background:rgba(192,132,252,0.15);
+                    color:#e2e8f0;font-size:0.9rem;font-weight:500;
+                    user-select:none;
+                ">
+                    <span>${selected.name}</span>
+                    <span id="pm-arrow" style="transition:transform 0.2s;font-size:0.75rem;color:#c084fc;">▼</span>
                 </div>
-            </div>`;
-        }).join('');
+                <div id="pm-dropdown" style="
+                    display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;
+                    background:#1e1b2e;border:1.5px solid rgba(192,132,252,0.4);
+                    border-radius:10px;overflow:hidden;z-index:100;
+                    max-height:160px;overflow-y:auto;
+                ">
+                    ${methods.map(m => `
+                        <div class="pm-option" data-id="${m.id}" style="
+                            display:flex;align-items:center;justify-content:space-between;
+                            padding:10px 14px;cursor:pointer;
+                            background:${m.id === WalletFlow.selectedMethod ? 'rgba(192,132,252,0.2)' : 'transparent'};
+                            transition:background 0.15s;
+                        ">
+                            <span style="color:#e2e8f0;font-size:0.9rem;">${m.name}</span>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                ${m.id === WalletFlow.selectedMethod ? '<span style="color:#c084fc;font-weight:700;">✓</span>' : ''}
+                                ${m.id !== 'WALLET' ? `<button class="btn-remove-payment" data-id="${m.id}" style="
+                                    background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);
+                                    color:#f87171;border-radius:6px;width:22px;height:22px;cursor:pointer;
+                                    font-size:0.7rem;padding:0;line-height:1;
+                                ">✕</button>` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
 
-        list.querySelectorAll('.payment-method-item').forEach(el => {
-            const removeBtn = el.querySelector('.btn-remove-payment');
-            if (removeBtn) {
-                el.addEventListener('mouseenter', () => removeBtn.style.opacity = '1');
-                el.addEventListener('mouseleave', () => removeBtn.style.opacity = '0');
+        const trigger  = list.querySelector('#pm-trigger');
+        const dropdown = list.querySelector('#pm-dropdown');
+        const arrow    = list.querySelector('#pm-arrow');
+
+        trigger.addEventListener('click', () => {
+            dropdownOpen = !dropdownOpen;
+            dropdown.style.display = dropdownOpen ? 'block' : 'none';
+            arrow.style.transform  = dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!list.contains(e.target)) {
+                dropdownOpen = false;
+                dropdown.style.display = 'none';
+                arrow.style.transform  = 'rotate(0deg)';
             }
+        }, { once: true });
+
+        list.querySelectorAll('.pm-option').forEach(el => {
+            el.addEventListener('mouseenter', () => { if (el.dataset.id !== WalletFlow.selectedMethod) el.style.background = 'rgba(255,255,255,0.07)'; });
+            el.addEventListener('mouseleave', () => { if (el.dataset.id !== WalletFlow.selectedMethod) el.style.background = 'transparent'; });
+            el.addEventListener('click', () => {
+                WalletFlow.selectedMethod = el.dataset.id;
+                WalletFlow.loadPaymentMethods();
+            });
         });
 
         list.querySelectorAll('.payment-method-item').forEach(el => {
