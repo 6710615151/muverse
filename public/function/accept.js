@@ -9,7 +9,23 @@ let activeStatus = "all";
 function badgeClass(status) {
     if (status === "accepted") return "badge accepted";
     if (status === "rejected") return "badge rejected";
+    if (status === "done")     return "badge done";
     return "badge pending";
+}
+
+function actionButtons(r) {
+    if (r.request_status === "pending") {
+        return `
+            <button class="btn btn--primary" data-id="${r.request_id}" data-status="accepted">Accept</button>
+            <button class="btn btn--ghost"   data-id="${r.request_id}" data-status="rejected">Reject</button>
+        `;
+    }
+    if (r.request_status === "accepted") {
+        return `
+            <button class="btn btn--done" data-id="${r.request_id}" data-status="done">Mark as Done</button>
+        `;
+    }
+    return "";
 }
 
 function renderRequests(requests) {
@@ -25,20 +41,21 @@ function renderRequests(requests) {
     }
 
     listEl.innerHTML = filtered.map(r => `
-        <div class="booking-card" data-id="${r.request_id}">
+        <div class="booking-card booking-card--${r.request_status}" data-id="${r.request_id}">
+            <div class="booking-card__top-bar"></div>
             <div class="booking-card__header">
-                <span class="booking-card__title">${r.request_title}</span>
+                <div class="booking-card__title-group">
+                    <span class="booking-card__title">${r.request_title}</span>
+                    <span class="booking-card__customer">👤 ${r.customer_name || "Customer"}</span>
+                </div>
                 <span class="${badgeClass(r.request_status)}">${r.request_status}</span>
             </div>
             <p class="booking-card__detail">${r.request_detail || "-"}</p>
             <div class="booking-card__meta">
-                <span>Budget: ${r.budget ?? "-"} THB</span>
-                <span>Service Type: ${r.service_type_name || "-"}</span>
+                <span class="booking-card__meta-chip">💰 ${Number(r.budget ?? 0).toLocaleString()} THB</span>
+                <span class="booking-card__meta-chip">🔖 ${r.service_type_name || "-"}</span>
             </div>
-            <div class="booking-card__actions">
-                <button class="btn btn--primary" data-id="${r.request_id}" data-status="accepted">Accept</button>
-                <button class="btn btn--ghost" data-id="${r.request_id}" data-status="rejected">Reject</button>
-            </div>
+            ${actionButtons(r) ? `<div class="booking-card__actions">${actionButtons(r)}</div>` : ""}
         </div>
     `).join("");
 

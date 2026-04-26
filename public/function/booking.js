@@ -10,8 +10,8 @@ const STATUS_LABEL = {
 
 const STATUS_CLASS = {
   pending:  "status-badge--pending",
-  accepted: "status-badge--confirmed",
-  done:     "status-badge--delivered",
+  accepted: "status-badge--accepted",
+  done:     "status-badge--done",
 };
 
 let _allRequests = [];
@@ -41,14 +41,18 @@ function renderList(requests) {
     const statusLabel = STATUS_LABEL[r.request_status] || r.request_status;
 
     return `
-      <div class="booking-item">
+      <div class="booking-item booking-item--${r.request_status}">
+        <div class="booking-item__accent"></div>
         <div class="booking-item__date">
           <span class="booking-item__day">${day}</span>
           <span class="booking-item__month">${month}</span>
         </div>
         <div class="booking-item__info">
           <div class="booking-item__name">${r.request_title}</div>
-          <div class="booking-item__meta">${r.request_detail || "-"} · งบ ${Number(r.budget || 0).toLocaleString()} บาท</div>
+          <div class="booking-item__meta">
+            <span class="booking-item__detail-text">${r.request_detail || "-"}</span>
+            <span class="booking-item__budget">฿ ${Number(r.budget || 0).toLocaleString()}</span>
+          </div>
         </div>
         <div class="booking-item__actions">
           <span class="status-badge ${statusClass}">${statusLabel}</span>
