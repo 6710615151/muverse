@@ -140,52 +140,25 @@ function closeOrderPopup() {
 }
 
 async function handleConfirmOrder(stock) {
-  // Place order
   try {
-    // Buyer's user ID
     const currentUserId = window.WalletFlow?.userId || localStorage.getItem('user_id');
-    if (!currentUserId) {
-        return alert("Please log in before placing an order");
-    }
+    if (!currentUserId) return alert("Please log in before placing an order");
 
-    // Verify seller user ID exists
-    if (!stock.seller_user_id) {
-        return alert("Error: Seller information not found");
-    }
-
-    // Call API
-    console.log("Processing payment...", { customer: currentUserId, seller: stock.seller_user_id, price: stock.price });
-    
-    // await Wallet.transfer({
-    //     customer_id: currentUserId,         // buyer UUID
-    //     amount: Number(stock.price),        // item price
-    //     seller_id: stock.seller_user_id,    // seller UUID
-    //     payment_method: "WALLET"
-    // });
-
-    // 4. (Optional) Create order record in ORDERS table
-    /* await Order.create({
-        customer_id: currentUserId,
-        seller_id: stock.seller_id,
-        total_price: stock.price,
-        order_status: "PAID"
+    await Wallet.pay({
+      user_id:        currentUserId,
+      amount:         Number(stock.price),
+      payment_method: "WALLET",
     });
-    */
 
-    alert(`Order "${stock.item_name}" placed successfully!`);
+    await Stock.updateQuantity(stock.stock_id, 1);
+    stock.stock_quantity -= 1;
 
-    // 5. Close popup and update UI (reduce quantity, refresh balance)
-    closeOrderPopup();
-    if (window.WalletFlow && window.WalletFlow.loadBalance) window.WalletFlow.loadBalance();
-    
-    // Decrease product quantity by 1 locally
-    // stock.stock_quantity -= 1;
-    // await Stock.updateQuantity(stock.stock_id, 1);
-    // mktRender();
+    alert(`ซื้อ "${stock.item_name}" สำเร็จ!`);
+    window.WalletFlow?.loadBalance?.();
+    mktRender();
 
   } catch (err) {
-    console.error("Order failed:", err);
-    alert(`  Order failed: ${err.message || "Insufficient balance or system error"}`);
+    alert(`ซื้อไม่สำเร็จ: ${err.message || "ยอดเงินไม่เพียงพอ"}`);
   }
 }
 
