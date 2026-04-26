@@ -1664,56 +1664,11 @@ img {
   overflow: hidden;
 }
 
-.main-content {
-  position: relative;
-  z-index: 2;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding-top: 40px;
-}
-
-.filter-bar {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.filter-bar__tabs {
-  display: flex;
-  gap: 10px;
-  background: rgba(255,255,255,0.03);
-  padding: 6px;
-  border-radius: 999px;
-  backdrop-filter: blur(10px);
-}
-
-.filter-tab {
-  border: none;
-  background: transparent;
-  color: #94a3b8;
-  padding: 8px 18px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: all 0.25s ease;
-}
-
-.filter-tab:hover {
-  color: #e5e7eb;
-}
-
-.filter-tab.active {
-  background: #6366f1;
-  color: white;
-  box-shadow: 0 0 12px rgba(99,102,241,0.6);
-}
-
 .booking-list {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
-
 .booking-item {
   display: flex;
   align-items: center;
@@ -1731,7 +1686,6 @@ img {
   background: rgba(255,255,255,0.06);
 }
 
-/* accent line */
 .booking-item__accent {
   width: 4px;
   height: 100%;
@@ -1740,9 +1694,7 @@ img {
   margin-right: 14px;
 }
 
-/* =========================
-   DATE
-========================= */
+
 .booking-item__date {
   text-align: center;
   margin-right: 16px;
@@ -1759,9 +1711,6 @@ img {
   color: #94a3b8;
 }
 
-/* =========================
-   INFO
-========================= */
 .booking-item__info {
   flex: 1;
 }
@@ -1783,9 +1732,6 @@ img {
   font-weight: 600;
 }
 
-/* =========================
-   STATUS BADGE
-========================= */
 .status-badge {
   font-size: 0.75rem;
   padding: 6px 12px;
@@ -1793,7 +1739,6 @@ img {
   font-weight: 600;
 }
 
-/* statuses */
 .status-badge--pending {
   background: rgba(251,191,36,0.15);
   color: #fbbf24;
