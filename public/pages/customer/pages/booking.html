@@ -3,7 +3,7 @@
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
     <div class="orb orb-4"></div>
-    <div class="main-content">
+    <div class="main-content" style="height: 100%;display: flex;flex-direction: column;overflow-y: hidden;">
 
         <div class="page-header"
             style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div style="padding: 12px 24px 32px;">
+        <div style="padding: 12px 24px 32px;overflow-y: scroll; height: 100%;flex-grow: 1;">
             <div class="booking-list" id="requestList">
                 <p style="color: var(--clr-text-muted); text-align:center; padding: 40px 0;">Loading...</p>
                 
