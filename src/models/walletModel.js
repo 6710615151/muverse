@@ -146,7 +146,7 @@ export async function lockFunds(user_id, amount) {
   if (walletResult.length === 0) throw new Error("ยอดเงินไม่เพียงพอสำหรับการจอง");
   await sql`
     INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
-    VALUES (${walletResult[0].account_id}, 'HOLD', ${amount}, 'wallet', 'SUCCESS')
+    VALUES (${walletResult[0].account_id}, 'PAYMENT', ${amount}, 'wallet', 'SUCCESS')
   `;
   return walletResult[0];
 }
@@ -195,4 +195,25 @@ export async function getWalletRecords(user_id) {
     ORDER BY r.created_at DESC
   `;
   return records;
+}
+
+//-------------------------------------------------------------------------------//
+// 11. Admin — ดูธุรกรรมทั้งหมดในระบบ (Reconciliation)
+export async function getAllWalletRecords() {
+  return await sql`
+    SELECT
+      rw.record_id,
+      rw.payment_type,
+      rw.amount,
+      rw.payment_method,
+      rw.status,
+      rw.created_at,
+      u.user_id,
+      u.name  AS user_name,
+      u.email AS user_email
+    FROM record_wallet rw
+    JOIN account_wallet aw ON rw.account_id = aw.account_id
+    JOIN users u           ON aw.user_id    = u.user_id
+    ORDER BY rw.created_at DESC
+  `;
 }

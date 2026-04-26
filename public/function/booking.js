@@ -1,4 +1,4 @@
-import { Requests, serviceType, Wallet, Review } from "./api.js";
+import { Requests, serviceType, Review } from "./api.js";
 
 const getCustomerId = () => localStorage.getItem("user_id");
 
@@ -63,10 +63,9 @@ function renderList(requests) {
       actionBtn = `
         <button class="btn btn--primary btn--sm btn-pay-now"
           data-id="${r.request_id}"
-          data-seller="${r.seller_id}"
           data-amount="${r.budget || 0}"
           data-title="${r.request_title}">
-          payment ฿${Number(r.budget || 0).toLocaleString()}
+          ยืนยันรับบริการ ฿${Number(r.budget || 0).toLocaleString()}
         </button>`;
     } else if (statusUp === "COMPLETE" && r.seller_id) {
       actionBtn = `
@@ -100,10 +99,9 @@ function renderList(requests) {
 
   list.querySelectorAll(".btn-pay-now").forEach(btn => {
     btn.addEventListener("click", () => handleServicePayment({
-      id:        btn.dataset.id,
-      seller_id: btn.dataset.seller,
-      amount:    btn.dataset.amount,
-      title:     btn.dataset.title,
+      id:     btn.dataset.id,
+      amount: btn.dataset.amount,
+      title:  btn.dataset.title,
     }));
   });
 
@@ -112,23 +110,13 @@ function renderList(requests) {
   });
 }
 
-async function handleServicePayment({ id, seller_id, amount, title }) {
-  if (!confirm(`ยืนยันชำระเงิน ฿${Number(amount).toLocaleString()} สำหรับ "${title}"?`)) return;
-
-  const customer_id = getCustomerId();
+async function handleServicePayment({ id, amount, title }) {
+  if (!confirm(`ยืนยันรับบริการและปลดล็อกเงิน ฿${Number(amount).toLocaleString()} ให้ผู้ขาย?`)) return;
 
   try {
-    await Wallet.transfer({
-      customer_id,
-      amount:         Number(amount),
-      seller_id,
-      payment_method: "WALLET",
-      description:    `ชำระค่าบริการ: ${title}`,
-    });
+    await Requests.completeRequest(id);
 
-    await Requests.updateStatus(id, "complete");
-
-    alert("ชำระเงินสำเร็จ!");
+    alert("ยืนยันเสร็จสิ้น ระบบโอนเงินให้ผู้ขายแล้ว!");
     await loadRequests();
     window.WalletFlow?.loadBalance?.();
   } catch (err) {
@@ -295,7 +283,7 @@ async function submitRequest() {
       request_title:  title,
       request_detail: detail,
       budget:         budget || 0,
-      request_status: "pending",
+      request_status: "WAITING",
       customer_id:    getCustomerId(),
       service_type_id,
     });

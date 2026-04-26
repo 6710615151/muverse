@@ -1,5 +1,6 @@
 import { Requests } from "./api.js";
 
+
 let listEl;
 let filterBtns;
 let allRequests  = [];
@@ -75,8 +76,12 @@ async function updateStatus(btn) {
     card.querySelectorAll("button").forEach(b => b.disabled = true);
 
     try {
-        const seller_id = status === "ACCEPTED" ? localStorage.getItem("user_id") : null;
-        await Requests.updateRequestStatus(id, { request_status: status, seller_id });
+        if (status === "ACCEPTED") {
+            const seller_user_id = localStorage.getItem("user_id");
+            await Requests.acceptRequest(id, { seller_user_id });
+        } else {
+            await Requests.updateRequestStatus(id, { request_status: status });
+        }
         await loadRequests();
     } catch (err) {
         alert("เกิดข้อผิดพลาด: " + err.message);

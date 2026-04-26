@@ -21,4 +21,7 @@ router.post('/transfer', WalletController.transfer);
 // 6. ดูประวัติธุรกรรม
 router.get('/records/:user_id', WalletController.getRecords);
 
+// 7. Admin — ดูธุรกรรมทั้งหมด
+router.get('/admin/records', WalletController.getAdminRecords);
+
 export default router;

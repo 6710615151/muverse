@@ -4,6 +4,7 @@ import { Logout } from "./logout.js";
 import { WalletFlow } from "./wallet.js";
 import { SellerStock } from "./stockManager.js";
 import { Accept } from "./accept.js";
+import { SellerOrders } from "./sellerOrders.js";
 
 checkRole?.();
 
@@ -11,15 +12,16 @@ checkRole?.();
 
         const PAGE_MAP = {
             accept: "../../pages/seller/pages/accept.html",
+            orders: "../../pages/seller/pages/orders.html",
             stock: "../../pages/seller/pages/stock.html",
             user: "../../pages/seller/pages/user.html",
             logout: "../../pages/seller/pages/logout.html",
             wallet: "../../pages/seller/pages/wallet.html",
-
         };
 
         const PAGE_INIT = {
-            accept: () => requestAnimationFrame(() =>Accept.init()),
+            accept: () => requestAnimationFrame(() => Accept.init()),
+            orders: () => requestAnimationFrame(() => SellerOrders.init()),
             stock: () => requestAnimationFrame(() => SellerStock.init()),
             user: () => requestAnimationFrame(() => Role?.init()),
             logout: () => requestAnimationFrame(() => Logout.init()),

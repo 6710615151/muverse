@@ -1,6 +1,6 @@
 import { checkRole } from "./pageRole.js";
 import { Logout } from "./logout.js";
-import { Users, Wallet, Stock, Requests, serviceType, seller } from "./api.js";
+import { Users, Wallet, Stock, Requests } from "./api.js";
 
 checkRole?.();
 
@@ -203,22 +203,147 @@ const ManageRequests = (() => {
 })();
 
 /* =========================
+   MANAGE WALLET (RECONCILIATION)
+========================= */
+const ManageWallet = (() => {
+    let _all = [];
+
+    const TYPE_COLOR = {
+        DEPOSIT:  "#22c55e",
+        INCOME:   "#22c55e",
+        WITHDRAW: "#ef4444",
+        PAYMENT:  "#ef4444",
+        HOLD:     "#f59e0b",
+        REFUND:   "#6366f1",
+    };
+
+    function formatDate(str) {
+        const d = new Date(str);
+        return d.toLocaleString("th-TH", {
+            day: "2-digit", month: "short", year: "numeric",
+            hour: "2-digit", minute: "2-digit",
+        });
+    }
+
+    function renderSummary(records) {
+        const totals = {};
+        records.forEach(r => {
+            totals[r.payment_type] = (totals[r.payment_type] || 0) + Number(r.amount);
+        });
+
+        const el = document.getElementById("recon-summary");
+        if (!el) return;
+
+        el.innerHTML = Object.entries(totals).map(([type, sum]) => `
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+                border-radius:12px;padding:14px 20px;min-width:130px;">
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:4px;">${type}</div>
+                <div style="font-size:1.15rem;font-weight:700;color:${TYPE_COLOR[type] || '#e5e7eb'};">
+                    ฿${sum.toLocaleString("th-TH", { minimumFractionDigits: 2 })}
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function renderTable(records) {
+        const list = document.getElementById("recon-list");
+        const count = document.getElementById("recon-count");
+        if (!list) return;
+
+        if (count) count.textContent = `${records.length} records`;
+
+        if (!records.length) {
+            list.innerHTML = `<tr><td colspan="6"
+                style="text-align:center;padding:40px;color:rgba(255,255,255,0.4);">
+                No records found</td></tr>`;
+            return;
+        }
+
+        list.innerHTML = records.map(r => `
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+                <td style="padding:10px 14px;color:rgba(255,255,255,0.6);font-size:0.82rem;">
+                    ${formatDate(r.created_at)}
+                </td>
+                <td style="padding:10px 14px;">
+                    <div style="font-weight:500;">${r.user_name}</div>
+                    <div style="font-size:0.78rem;color:rgba(255,255,255,0.45);">${r.user_email}</div>
+                </td>
+                <td style="padding:10px 14px;">
+                    <span style="padding:3px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;
+                        background:rgba(255,255,255,0.07);color:${TYPE_COLOR[r.payment_type] || '#e5e7eb'};">
+                        ${r.payment_type}
+                    </span>
+                </td>
+                <td style="padding:10px 14px;text-align:right;font-weight:600;
+                    color:${TYPE_COLOR[r.payment_type] || '#e5e7eb'};">
+                    ฿${Number(r.amount).toLocaleString("th-TH", { minimumFractionDigits: 2 })}
+                </td>
+                <td style="padding:10px 14px;color:rgba(255,255,255,0.7);">${r.payment_method}</td>
+                <td style="padding:10px 14px;color:rgba(255,255,255,0.7);">${r.status}</td>
+            </tr>
+        `).join("");
+    }
+
+    function applyFilter() {
+        const typeFilter = document.getElementById("recon-type-filter")?.value || "";
+        const search     = (document.getElementById("recon-search")?.value || "").toLowerCase();
+
+        const filtered = _all.filter(r => {
+            const matchType   = !typeFilter || r.payment_type === typeFilter;
+            const matchSearch = !search ||
+                r.user_name?.toLowerCase().includes(search) ||
+                r.user_email?.toLowerCase().includes(search);
+            return matchType && matchSearch;
+        });
+
+        renderTable(filtered);
+    }
+
+    return {
+        init: async () => {
+            try {
+                _all = await Wallet.getAdminRecords();
+                renderSummary(_all);
+                renderTable(_all);
+
+                document.getElementById("recon-type-filter")?.addEventListener("change", applyFilter);
+                document.getElementById("recon-search")?.addEventListener("input", applyFilter);
+            } catch (err) {
+                const list = document.getElementById("recon-list");
+                if (list) list.innerHTML = `<tr><td colspan="6"
+                    style="text-align:center;padding:40px;color:#ef4444;">
+                    ${err.message}</td></tr>`;
+            }
+        }
+    };
+})();
+
+/* =========================
    ROUTER
 ========================= */
 const Router = (() => {
 
     const PAGE_MAP = {
+<<<<<<< Updated upstream
         user: "../../pages/admin/pages/manageUser.html",
         stock: "../../pages/admin/pages/manageStock.html",
         request: "../../pages/admin/pages/manageRequest.html",
         logout: "../../pages/admin/pages/logout.html",
+=======
+        user:           "/pages/admin/pages/manageUser.html",
+        stock:          "/pages/admin/pages/manageStock.html",
+        request:        "/pages/admin/pages/manageRequest.html",
+        reconciliation: "/pages/admin/pages/reconciliation.html",
+        logout:         "/pages/admin/pages/logout.html",
+>>>>>>> Stashed changes
     };
 
     const PAGE_INIT = {
-        user: () => ManageUsers.init(),
-        stock: () => ManageStocks.init(),
-        request: () => ManageRequests.init(),
-        logout: () => Logout.init(),
+        user:           () => ManageUsers.init(),
+        stock:          () => ManageStocks.init(),
+        request:        () => ManageRequests.init(),
+        reconciliation: () => ManageWallet.init(),
+        logout:         () => Logout.init(),
     };
 
     const canvas = () => document.getElementById("canvasContent");
