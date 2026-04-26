@@ -15,6 +15,6 @@ router.get("/customer",    servePage("customer/index.html"));
 router.get("/seller",    servePage("seller/index.html"));
 router.get("/admin",     servePage("admin/index.html"));
 router.get("/upload",    servePage("testUpload.html"));
-router.get("/yantra",    servePage("customer/pages/nft/yantra.html"));
+router.get("/yantra",    servePage("customer/pages/NFT/yantra.html"));
 router.get("/customer",    servePage("customer/pages/NFT/yantra.html"));
 export default router;
