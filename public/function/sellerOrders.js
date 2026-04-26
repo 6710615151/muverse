@@ -42,7 +42,7 @@ function orderCard(order) {
       <div class="booking-card__top-bar"></div>
       <div class="booking-card__header">
         <div class="booking-card__title-group">
-          <span class="booking-card__title">Order #${order.order_id}</span>
+          <span class="booking-card__title">Order ID :${order.order_id}</span>
           <span class="booking-card__customer"><span class="fi fi-ts-user"></span> ${order.customer_name || "Customer"}</span>
         </div>
         <span class="${statusClass}">${statusLabel}</span>
