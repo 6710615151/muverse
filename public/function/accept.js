@@ -7,17 +7,10 @@ let activeStatus = "all";
 let currentSellerId = null;
 
 function badgeClass(status) {
-<<<<<<< Updated upstream
-    if (status === "accepted") return "badge accepted";
-    if (status === "rejected") return "badge rejected";
-    if (status === "done")     return "badge done";
-    if (status === "complete") return "badge complete";
-=======
     const s = (status || "").toUpperCase();
     if (s === "ACCEPTED")  return "badge accepted";
     if (s === "REJECTED")  return "badge rejected";
     if (s === "COMPLETED") return "badge done";
->>>>>>> Stashed changes
     return "badge pending";
 }
 
@@ -83,16 +76,11 @@ async function updateStatus(btn) {
     card.querySelectorAll("button").forEach(b => b.disabled = true);
 
     try {
-<<<<<<< Updated upstream
-        const seller_id = status === "accepted" ? localStorage.getItem("user_id") : null;
-        await Requests.updateRequestStatus(id, { request_status: status, seller_id });
-=======
         const body = { request_status: status };
         if (status === "ACCEPTED" && currentSellerId) {
             body.seller_id = currentSellerId;
         }
         await Requests.updateRequestStatus(id, body);
->>>>>>> Stashed changes
         await loadRequests();
     } catch {
         card.querySelectorAll("button").forEach(b => b.disabled = false);
@@ -125,7 +113,7 @@ function bindFilters() {
 
 export const Accept = {
     async init() {
-        listEl    = document.getElementById("requestList");
+        listEl     = document.getElementById("requestList");
         filterBtns = document.querySelectorAll(".filter-tab");
 
         if (!listEl) return;
