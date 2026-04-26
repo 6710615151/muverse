@@ -1,5 +1,4 @@
 import * as userModel from "../models/userModel.js";
-import * as customerModel from "../models/customerModel.js";
 import bcrypt from "bcrypt";
 
 export async function getAll(req, res) {

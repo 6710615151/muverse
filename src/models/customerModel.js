@@ -18,13 +18,3 @@ export async function getCustomerByUserId(userId) {
     WHERE user_id = ${userId}
   `;
 }
-
-import sql from "../config/db.js";
-
-export async function createCustomer(userId) {
-  return await sql`
-        INSERT INTO customers (user_id)
-        VALUES (${userId})
-        RETURNING *
-    `;
-}
