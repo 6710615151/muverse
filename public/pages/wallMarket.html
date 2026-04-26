@@ -1,0 +1,356 @@
+<style>
+    .order-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 2000;
+    }
+
+    .order-overlay.open {
+        display: block;
+    }
+
+    .order-popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 340px;
+        background: #111827;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 20px;
+        padding: 32px 24px;
+        z-index: 2001;
+        text-align: center;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.25);
+    }
+
+    .order-popup.open {
+        display: block;
+    }
+
+    .order-popup__icon {
+        font-size: 2.5rem;
+        margin-bottom: 14px;
+    }
+
+    .order-popup__title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #e5e7eb;
+        margin-bottom: 10px;
+    }
+
+    .order-popup__item {
+        font-size: 0.95rem;
+        color: #e5e7eb;
+        margin-bottom: 4px;
+    }
+
+    .order-popup__price {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fbbf24;
+        margin-bottom: 24px;
+    }
+
+    .order-popup__actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+
+    .order-popup__cancel {
+        padding: 10px 28px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: transparent;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: 0.2s;
+    }
+
+    .order-popup__cancel:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: #e5e7eb;
+    }
+
+    .order-popup__confirm {
+        padding: 10px 28px;
+        border-radius: 10px;
+        border: none;
+        background: #6366f1;
+        color: #fff;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    .order-popup__confirm:hover {
+        background: #4f46e5;
+    }
+
+    /* Product Detail Popup */
+    .detail-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 1500;
+    }
+
+    .detail-overlay.open {
+        display: block;
+    }
+
+    .detail-popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 440px;
+        max-height: 88vh;
+        background: #111827;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 20px;
+        z-index: 1501;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(99, 102, 241, 0.2);
+        flex-direction: column;
+    }
+
+    .detail-popup.open {
+        display: flex;
+    }
+
+    .detail-popup__close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(0, 0, 0, 0.45);
+        border: none;
+        color: #e5e7eb;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 0.85rem;
+        z-index: 1;
+        transition: 0.2s;
+    }
+
+    .detail-popup__close:hover {
+        background: rgba(0, 0, 0, 0.75);
+    }
+
+    .detail-popup__img {
+        width: 100%;
+        height: 220px;
+        background: #1f2937;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .detail-popup__img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .detail-popup__img>div {
+        width: 100%;
+        height: 100%;
+    }
+
+    .detail-popup__body {
+        padding: 20px 24px 26px;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        overflow-y: auto;
+    }
+
+    .detail-popup__brand {
+        font-size: 0.8rem;
+        color: #6366f1;
+        font-weight: 500;
+    }
+
+    .detail-popup__title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #e5e7eb;
+    }
+
+    .detail-popup__stars {
+        font-size: 0.9rem;
+        color: #fbbf24;
+        min-height: 1em;
+    }
+
+    .detail-popup__price-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 4px;
+    }
+
+    .detail-popup__price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #fbbf24;
+    }
+
+    .detail-popup__order-btn {
+        margin-top: 10px;
+        width: 100%;
+        padding: 13px;
+        border-radius: 12px;
+        border: none;
+        background: #6366f1;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .detail-popup__order-btn:hover {
+        background: #4f46e5;
+    }
+
+    .detail-popup__order-btn:disabled {
+        background: #374151;
+        color: #6b7280;
+        cursor: not-allowed;
+    }
+</style>
+
+<div id="wall-market-page">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+    <div class="main-content" style="height: 100%;display: flex;flex-direction: column;">
+
+        <div class="page-header" style="margin: 20px;">
+
+            <h1 class="page-header__title">MARKET <em>PLACE</em></h1>
+            <p class="page-header__sub">__________________________________________</p>
+        </div>
+
+        <!-- ─── Category Tabs + Search ─── -->
+        <div class="filter-bar">
+            <div class="filter-bar__tabs" id="wm-cat-tabs">
+                <button class="filter-tab active" data-cat-id="all">✦ All</button>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content: center;">
+                <div><span style="font-size: 2rem;color:#ffffff;margin-right: 2px;font-size:0.82rem;font-weight:500;letter-spacing:0.05em;
+      text-transform:uppercase;margin-bottom:10px" class="fi fi-ts-search"></span></div>
+                <input type="text" id="wm-search" class="form-input" placeholder="Search products..."
+                    style="width:200px;padding:8px 14px">
+            </div>
+        </div>
+
+        <div class="marketplace-layout">
+            <!-- Main content -->
+            <div class="marketplace-main">
+                <div class="marketplace-toolbar">
+                    <p class="marketplace-count" style="color: #ffffffc9;font-size: 0.75rem;">
+                        Found <strong id="wm-count">0</strong> items
+                    </p>
+                    <div class="marketplace-view-toggle">
+                        <button class="view-btn active" id="wm-filter-toggle-btn" title="Filter">⊞</button>
+                    </div>
+                </div>
+
+                <div class="market-content" style="padding:32px 64px;overflow-y: scroll; height: 100%;flex-grow: 1;">
+                    <div class="product-grid" id="wm-grid">
+                        <div style="grid-column:1/-1;padding:80px;text-align:center;color:var(--clr-text-muted)">
+                            <!-- <p style="font-size:2rem;margin-bottom:12px"></p> -->
+                            <p>Loading products...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Detail Popup -->
+        <div class="detail-overlay" id="wm-detail-overlay"></div>
+        <div class="detail-popup" id="wm-detail-popup">
+            <button class="detail-popup__close" id="wm-detail-close-btn">✕</button>
+            <div class="detail-popup__img" id="wm-detail-popup-img"></div>
+            <div class="detail-popup__body">
+                <p class="detail-popup__brand" id="wm-detail-popup-brand"></p>
+                <h2 class="detail-popup__title" id="wm-detail-popup-title"></h2>
+                <p class="detail-popup__description" id="wm-detail-popup-description"></p>
+                <p class="detail-popup__stars" id="wm-detail-popup-stars"></p>
+                <div class="detail-popup__price-row">
+                    <span class="detail-popup__price" id="wm-detail-popup-price"></span>
+                    <span class="detail-popup__badge" id="wm-detail-popup-badge"></span>
+                </div>
+                <button class="detail-popup__order-btn" id="wm-detail-popup-order-btn">Order Now</button>
+            </div>
+        </div>
+
+        <!-- Order Confirmation Popup -->
+        <div class="order-overlay" id="wm-order-overlay"></div>
+        <div class="order-popup" id="wm-order-popup">
+            <div class="order-popup__icon">🛒</div>
+            <h3 class="order-popup__title">Confirm Order</h3>
+            <p class="order-popup__item" id="wm-order-popup-item"></p>
+            <p class="order-popup__price" id="wm-order-popup-price"></p>
+            <div class="order-popup__actions">
+                <button class="order-popup__cancel" id="wm-order-popup-cancel">Cancel</button>
+                <button class="order-popup__confirm" id="wm-order-popup-confirm">Confirm</button>
+            </div>
+        </div>
+
+        <div class="filter-backdrop" id="wm-filter-backdrop"></div>
+        <aside class="marketplace-sidebar" id="wm-filter-sidebar">
+            <div class="sidebar-header">
+                <h3 class="sidebar-title">Filters</h3>
+                <button class="sidebar-close-btn" id="wm-filter-close-btn">✕</button>
+            </div>
+
+            <div class="sidebar-section">
+                <p class="sidebar-section__title">Sort by</p>
+                <select id="wm-sort" class="filter-select" style="width:100%">
+                    <option value="">Sort by</option>
+                    <option value="price-asc">Price ↑ Low to High</option>
+                    <option value="price-desc">Price ↓ High to Low</option>
+                    <option value="name">Name A–Z</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section">
+                <p class="sidebar-section__title">Max Price</p>
+                <div class="price-range">
+                    <input type="range" class="range-slider" id="wm-price-range" min="0" max="10000" value="10000"
+                        step="100">
+                    <div class="price-range__labels">
+                        <span>฿0</span>
+                        <span id="wm-price-display">฿10,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <p class="sidebar-section__title">Availability</p>
+                <label class="sidebar-check">
+                    <input type="checkbox" id="wm-filter-available" checked>
+                    In Stock
+                </label>
+                <label class="sidebar-check">
+                    <input type="checkbox" id="wm-filter-outofstock">
+                    Out of Stock
+                </label>
+            </div>
+        </aside>
+    </div>
+</div>
