@@ -1,0 +1,161 @@
+body {
+  margin: 0;
+  background: #000000;
+  font-family: 'Arial', sans-serif;
+  color: #fff;
+  overflow: hidden;
+}
+
+.scene {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1600px;
+}
+
+.card {
+
+  width: 98%;
+  max-width: 1200px;
+  height: 600px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(37, 6, 44, 0.41);
+  border-radius: 30px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  border: 1px solid rgba(255, 255, 255, 0.79);
+  position: relative;
+
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease;
+
+  box-shadow:
+    0 0 40px rgba(255,255,255,0.1),
+    inset 0 0 60px rgba(255,255,255,0.05);
+}
+
+.left, .right {
+  width: 25%;
+  padding: 40px;
+}
+
+.center {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#yantra {
+  width: 500px;
+  transition: transform 0.2s ease, filter 0.2s;
+  transform-style: preserve-3d;
+}
+
+.card:hover #yantra {
+  filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
+}
+
+h1 { font-size: 40px; letter-spacing: 2px; }
+h2 { font-size: 32px; }
+h3 { font-size: 48px; margin-top: 20px; }
+
+p {
+  margin-top: 20px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.buy {
+  margin-top: 30px;
+  padding: 12px 30px;
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.buy:hover {
+  background: white;
+  color: black;
+}
+
+.glow {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255,255,255,0.2), transparent);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: blur(40px);
+}
+
+.flash {
+  animation: glowFlash 0.3s ease;
+}
+
+@keyframes glowFlash {
+  0% { filter: brightness(2); transform: scale(0.98); }
+  100% { filter: brightness(1); transform: scale(1); }
+}
+
+.right {
+  display: flex;
+  flex-direction: column; /* สำคัญ */
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.right button {
+  background: none;
+  border: none;
+  outline: none;
+  color: #aaa;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  cursor: pointer;
+  position: relative;
+  padding: 6px 0;
+  transition: all 0.3s ease;
+}
+
+/* เส้นขีดด้านซ้าย (เท่กว่า underline สำหรับแนวตั้ง) */
+.right button::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 2px;
+  background: #fff;
+  transition: width 0.3s ease;
+}
+
+/* hover */
+.right button:hover {
+  color: #fff;
+  transform: translateX(6px); /* ขยับนิดๆ ฟีลเกม */
+}
+
+.right button:hover::before {
+  width: 8px;
+}
+
+/* active */
+.right button.active {
+  color: #fff;
+}
+
+.right button.active::before {
+  width: 12px;
+}
