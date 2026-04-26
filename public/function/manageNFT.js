@@ -72,7 +72,7 @@ function render() {
   if (outEl)   outEl.textContent   = _all.filter(s => s.stock_quantity <= 0 || s.stock_status === 'out_of_stock').length;
 
   if (!items.length) {
-    list.innerHTML = `<p class="nft-empty">🖼️<br>No NFTs found.</p>`;
+    list.innerHTML = `<p class="nft-empty">🖼️<br>No found.</p>`;
     return;
   }
 
@@ -100,8 +100,8 @@ function openModal() {
   _editId = null;
   document.getElementById('nft-form')?.reset();
   resetImagePreview();
-  document.getElementById('nft-modal-title').textContent = 'Add New NFT';
-  document.getElementById('nft-modal-save').textContent = 'Add NFT';
+  document.getElementById('nft-modal-title').textContent = 'Add New';
+  document.getElementById('nft-modal-save').textContent = 'Add ';
   document.getElementById('nft-modal').style.display = 'flex';
 }
 
@@ -112,7 +112,7 @@ function openEditModal(stockId) {
   _editId = stockId;
   resetImagePreview();
 
-  document.getElementById('nft-modal-title').textContent = 'Edit NFT';
+  document.getElementById('nft-modal-title').textContent = 'Edit';
   document.getElementById('nft-modal-save').textContent = 'Save Changes';
   document.getElementById('nf-item-name').value   = item.item_name ?? '';
   document.getElementById('nf-category').value    = item.category_id ?? '';
@@ -177,7 +177,7 @@ async function handleSubmit(e) {
     if (_selectedFile) {
       if (resultEl) resultEl.textContent = 'Uploading image...';
       url = await uploadImage(_selectedFile);
-      if (resultEl) resultEl.textContent = 'Upload successful ✅';
+      if (resultEl) resultEl.textContent = 'Upload successful';
     }
 
     const body = {
@@ -191,7 +191,7 @@ async function handleSubmit(e) {
       stock_status:   document.getElementById('nf-status').value,
       url,
     };
-    console.log('Submitting NFT data:', body);
+
     if (_editId) {
       await Stock.update(_editId, body);
     } else {
@@ -254,7 +254,7 @@ export const ManageNFT = {
 
     } catch (err) {
       console.error('[ManageNFT]', err);
-      if (list) list.innerHTML = `<p class="nft-empty">Failed to load NFT data</p>`;
+      if (list) list.innerHTML = `<p class="nft-empty">Failed to load data</p>`;
     }
 
     document.getElementById('nft-add-btn')?.addEventListener('click', openModal);
