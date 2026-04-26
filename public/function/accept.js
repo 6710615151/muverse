@@ -84,13 +84,12 @@ filterBtns.forEach(btn => {
     });
 });
 
-async function init() {
+export const Accept = {
+    init() {
     try {
         categories = await Category.getAll();
     } catch {
         categories = [];
     }
-    await loadRequests();
-}
-
-init();
+    await loadRequests();}
+};
