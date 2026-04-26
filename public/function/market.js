@@ -1,4 +1,4 @@
-import { Stock, Category, seller as SellerAPI } from "./api.js";
+import { Stock, Category, seller as SellerAPI, Wallet } from "./api.js";
 
 // ─── Shared helpers ───────────────────────────────────────────────────────────
 
@@ -22,10 +22,10 @@ function productCardHTML(stock) {
   height: 400px;">
       <div class="product-card__img">
         ${stock.url
-          ? `<img src="${stock.url}" alt="${stock.item_name}" loading="lazy" style="border-radius: 7px;" onerror="this.style.display='none'">`
-          : `<div class="product-card__img-placeholder product-card__img--${num}"></div>`}
-        ${isOut  ? `<span class="product-card__tag">หมด</span>` : ''}
-        ${isNew  ? `<span class="product-card__tag product-card__tag--new">ใหม่</span>` : ''}
+      ? `<img src="${stock.url}" alt="${stock.item_name}" loading="lazy" style="border-radius: 7px;" onerror="this.style.display='none'">`
+      : `<div class="product-card__img-placeholder product-card__img--${num}"></div>`}
+        ${isOut ? `<span class="product-card__tag">หมด</span>` : ''}
+        ${isNew ? `<span class="product-card__tag product-card__tag--new">ใหม่</span>` : ''}
 
       </div>
       <div class="product-card__body">
@@ -47,8 +47,8 @@ function productCardHTML(stock) {
             ${isOut ? 'sold out' : `have ${stock.stock_quantity} piece${stock.stock_quantity > 1 ? 's' : ''}`}
           </span>
           ${!isOut
-            ? `<button class="btn btn--primary btn--sm" data-order-stock="${stock.stock_id}">Buy</button>`
-            : ''}
+      ? `<button class="btn btn--primary btn--sm" data-order-stock="${stock.stock_id}">Buy</button>`
+      : ''}
         </div>
       </div>
     </div>`;
@@ -144,7 +144,52 @@ function closeOrderPopup() {
 }
 
 async function handleConfirmOrder(stock) {
-  // TODO: implement order logic here
+  //การสั่งซื้อ
+  try {
+    //UserID ของคนซื้อ 
+    const currentUserId = window.WalletFlow?.userId || localStorage.getItem('user_id'); 
+    if (!currentUserId) {
+        return alert("กรุณาล็อกอินก่อนทำการสั่งซื้อ");
+    }
+
+    //หา UserID ของคนขายเจอไหม
+    if (!stock.seller_user_id) {
+        return alert("เกิดข้อผิดพลาด: ไม่พบข้อมูลเจ้าของร้าน");
+    }
+
+    //เรียก API
+    console.log("กำลังหักเงิน...", { customer: currentUserId, seller: stock.seller_user_id, price: stock.price });
+    
+    await Wallet.transfer({
+        customer_id: currentUserId,         // UUID คนซื้อ
+        amount: Number(stock.price),        // ราคาสินค้า
+        seller_id: stock.seller_user_id,    // UUID คนขาย
+        payment_method: "WALLET"
+    });
+
+    // 4. (ทางเลือก) สร้างใบสั่งซื้อลงตาราง ORDERS
+    /* await Order.create({
+        customer_id: currentUserId,
+        seller_id: stock.seller_id,
+        total_price: stock.price,
+        order_status: "PAID"
+    });
+    */
+
+    alert(`🎉 สั่งซื้อ "${stock.item_name}" สำเร็จ!`);
+
+    // 5. ปิด Popup และอัปเดตหน้าจอ (ลดจำนวนสินค้า, อัปเดตยอดเงิน)
+    closeOrderPopup();
+    if (window.WalletFlow && window.WalletFlow.loadBalance) window.WalletFlow.loadBalance();
+    
+    // ลดจำนวนสินค้าในหน้าเว็บลง 1
+    stock.stock_quantity -= 1;
+    mktRender();
+
+  } catch (err) {
+    console.error("Order failed:", err);
+    alert(`❌ การสั่งซื้อล้มเหลว: ${err.message || "ยอดเงินไม่พอ หรือระบบขัดข้อง"}`);
+  }
 }
 
 // ─── Market page ──────────────────────────────────────────────────────────────
@@ -210,7 +255,12 @@ export const Market = {
     try {
       const [stocks, cats, sellers] = await Promise.all([Stock.getAll(), Category.getAll(), SellerAPI.getAllSeller()]);
       const sellerMap = Object.fromEntries((sellers ?? []).map(s => [String(s.seller_id), s.shop_name]));
-      _mktAll = (stocks ?? []).map(s => ({ ...s, shop_name: sellerMap[String(s.seller_id)] ?? s.shop_name }));
+      const sellerUserIdMap = Object.fromEntries((sellers ?? []).map(s => [String(s.seller_id), s.user_id]));
+      _mktAll = (stocks ?? []).map(s => ({
+        ...s,
+        shop_name: sellerMap[String(s.seller_id)] ?? s.shop_name,
+        seller_user_id: s.seller_user_id || sellerUserIdMap[String(s.seller_id)]
+      }));
 
       if (tabs && cats?.length) {
         const extra = cats
@@ -437,8 +487,8 @@ export const Shop = {
       const shopName = _shopAll[0]?.shop_name && !_shopAll[0].shop_name.startsWith('http')
         ? _shopAll[0].shop_name
         : (window._shopSellerName && !window._shopSellerName.startsWith('http')
-            ? window._shopSellerName
-            : `ร้านค้า`);
+          ? window._shopSellerName
+          : `ร้านค้า`);
 
       const nameEl = document.getElementById('shop-name');
       const countEl = document.getElementById('shop-item-count');

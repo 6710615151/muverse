@@ -1,7 +1,75 @@
 import { checkRole } from "./pageRole.js";
 import { Logout } from "./logout.js";
+import { Users } from "./api.js";
 
 checkRole?.();
+
+const ManageUsers = {
+
+    //เริ่ม
+    init: async () => {
+        await ManageUsers.loadUsers();
+        document.getElementById('user-search')?.addEventListener('input', ManageUsers.onSearch);
+    },
+
+    //แสดงผู้ใช้
+    loadUsers: async () => {
+        const list = document.getElementById('user-list');
+        if (!list) return;
+        list.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;opacity:0.5">กำลังโหลด...</td></tr>`;
+        try {
+            const users = await Users.getAll();
+            ManageUsers.renderUsers(users);
+        } catch (err) {
+            list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:40px">${err.message}</td></tr>`;
+        }
+    },
+    
+    //จัดเรียงผู้ใช้
+    renderUsers: (users) => {
+        const list = document.getElementById('user-list');
+        if (!list) return;
+        if (users.length === 0) {
+            list.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;opacity:0.5">ไม่พบผู้ใช้</td></tr>`;
+            return;
+        }
+        list.innerHTML = users.map(u => `
+            <tr data-user-id="${u.user_id}" data-name="${u.name}" data-email="${u.email}">
+                <td>${u.user_id.slice(0, 8)}…</td>
+                <td>${u.name}</td>
+                <td>${u.email}</td>
+                <td><span class="role-badge role-badge--${u.role.toLowerCase()}">${u.role}</span></td>
+                <td style="text-align:center">
+                    <button class="btn-delete" data-id="${u.user_id}" data-name="${u.name}">🗑</button>
+                </td>
+            </tr>
+        `).join('');
+
+        list.querySelectorAll('.btn-delete').forEach(btn =>
+            btn.addEventListener('click', () => ManageUsers.deleteUser(btn.dataset.id, btn.dataset.name))
+        );
+    },
+
+    //ลบผู้ใช้
+    deleteUser: async (id, name) => {
+        if (!confirm(`ลบผู้ใช้ "${name}" ใช่หรือไม่?`)) return;
+        try {
+            await Users.delete(id);
+            await ManageUsers.loadUsers();
+        } catch (err) {
+            alert('ลบไม่สำเร็จ: ' + err.message);
+        }
+    },
+
+    //ค้นหาผู้ใช้
+    onSearch: (e) => {
+        const q = e.target.value.toLowerCase();
+        document.querySelectorAll('#user-list tr[data-user-id]').forEach(row => {
+            const match = row.dataset.name.toLowerCase().includes(q) || row.dataset.email.toLowerCase().includes(q);
+            row.style.display = match ? '' : 'none';
+        });
+    },
+};
 
 const Router = (() => {
 
@@ -15,6 +83,7 @@ const Router = (() => {
 
     const PAGE_INIT = {
         logout: () => requestAnimationFrame(() => Logout.init()),
+        user:   () => requestAnimationFrame(() => ManageUsers.init()),
     };
 
     const cache = {};

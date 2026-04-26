@@ -38,11 +38,14 @@ export async function updateUser(userId, name, email, password,phone) {
 }
 
 export async function deleteUser(user_id) {
-  const result = await sql`
-    DELETE FROM users
-    WHERE user_id = ${user_id}
-    RETURNING *
-  `;
+  await sql`DELETE FROM record_wallet WHERE account_id IN (SELECT account_id FROM account_wallet WHERE user_id = ${user_id})`;
+  await sql`DELETE FROM account_wallet WHERE user_id = ${user_id}`;
+  await sql`DELETE FROM order_items WHERE order_id IN (SELECT order_id FROM orders WHERE customer_id = ${user_id} OR seller_id = ${user_id})`;
+  await sql`DELETE FROM orders WHERE customer_id = ${user_id} OR seller_id = ${user_id}`;
+  await sql`DELETE FROM stocks WHERE seller_id IN (SELECT seller_id FROM sellers WHERE user_id = ${user_id})`;
+  await sql`DELETE FROM sellers WHERE user_id = ${user_id}`;
+  await sql`DELETE FROM customers WHERE user_id = ${user_id}`;
+  const result = await sql`DELETE FROM users WHERE user_id = ${user_id} RETURNING *`;
   return result[0] || null;
 }
 

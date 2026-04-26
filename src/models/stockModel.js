@@ -32,9 +32,14 @@ export async function deleteStock(stock_id) {
 
 export async function getStocksBySeller(seller_id) {
   return await sql`
-    SELECT s.*, c.name AS category_name
+    SELECT 
+        s.*, 
+        c.name AS category_name,
+        sel.user_id AS seller_user_id, 
+        sel.shop_name
     FROM stocks s
     LEFT JOIN categories c ON s.category_id = c.category_id
+    LEFT JOIN sellers sel ON s.seller_id = sel.seller_id
     WHERE s.seller_id = ${seller_id}
     ORDER BY s.created_at DESC
   `;
@@ -44,9 +49,14 @@ export async function getStocksBySeller(seller_id) {
 
 export async function getAllStocks() {
   return await sql`
-    SELECT s.*, c.name AS category_name
+    SELECT 
+        s.*, 
+        c.name AS category_name,
+        sel.user_id AS seller_user_id, 
+        sel.shop_name
     FROM stocks s
     LEFT JOIN categories c ON s.category_id = c.category_id
+    LEFT JOIN sellers sel ON s.seller_id = sel.seller_id
     WHERE s.stock_status = 'available'
     ORDER BY s.created_at DESC
   `;
@@ -54,9 +64,14 @@ export async function getAllStocks() {
 
 export async function getStockById(stock_id) {
   const result = await sql`
-    SELECT s.*, c.name AS category_name
+    SELECT 
+        s.*, 
+        c.name AS category_name,
+        sel.user_id AS seller_user_id, 
+        sel.shop_name
     FROM stocks s
     LEFT JOIN categories c ON s.category_id = c.category_id
+    LEFT JOIN sellers sel ON s.seller_id = sel.seller_id
     WHERE s.stock_id = ${stock_id}
   `;
   return result[0] || null;
@@ -64,9 +79,14 @@ export async function getStockById(stock_id) {
 
 export async function getStocksByCategory(category_id) {
   return await sql`
-    SELECT s.*, c.name AS category_name
+    SELECT 
+        s.*, 
+        c.name AS category_name,
+        sel.user_id AS seller_user_id, 
+        sel.shop_name
     FROM stocks s
     JOIN categories c ON s.category_id = c.category_id
+    LEFT JOIN sellers sel ON s.seller_id = sel.seller_id
     WHERE s.category_id = ${category_id}
       AND s.stock_status = 'available'
     ORDER BY s.created_at DESC

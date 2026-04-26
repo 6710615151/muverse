@@ -9,7 +9,7 @@ async function apiFetch(url, options = {}) {
 
     const data = await res.json();
 
-    if (!data.success) throw new Error(data.error || "Request failed");
+    if (!data.success) throw new Error(data.message || data.error || "Request failed");
 
     return data.data;
 }

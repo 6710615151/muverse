@@ -96,44 +96,42 @@ export async function payWithWallet(user_id, amount, payment_method) {
 //-------------------------------------------------------------------------------//
 // 6. โอนเงินการซื้อขาย 
 export async function transferWallet(customer_id, seller_id, amount, payment_method) {
-  return await sql.begin(async (tx) => {
-    const customerResult = await tx`
-      UPDATE account_wallet
-      SET wallet = wallet - ${amount}
-      WHERE user_id = ${customer_id} AND wallet >= ${amount}
-      RETURNING *
-    `;
+  const customerResult = await sql`
+    UPDATE account_wallet
+    SET wallet = wallet - ${amount}
+    WHERE user_id = ${customer_id} AND wallet >= ${amount}
+    RETURNING *
+  `;
 
-    if (customerResult.length === 0) {
-      throw new Error("ยอดเงินของผู้ซื้อไม่เพียงพอ");
-    }
+  if (customerResult.length === 0) {
+    throw new Error("ยอดเงินของผู้ซื้อไม่เพียงพอ");
+  }
 
-    const sellerResult = await tx`
-      UPDATE account_wallet
-      SET wallet = wallet + ${amount}
-      WHERE user_id = ${seller_id}
-      RETURNING *
-    `;
+  const sellerResult = await sql`
+    UPDATE account_wallet
+    SET wallet = wallet + ${amount}
+    WHERE user_id = ${seller_id}
+    RETURNING *
+  `;
 
-    if (sellerResult.length === 0) {
-      throw new Error("ไม่พบกระเป๋าเงินของผู้ขาย");
-    }
+  if (sellerResult.length === 0) {
+    throw new Error("ไม่พบกระเป๋าเงินของผู้ขาย");
+  }
 
-    await tx`
-      INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
-      VALUES (${customerResult[0].account_id}, 'PAYMENT', ${amount}, ${payment_method}, 'SUCCESS')
-    `;
+  await sql`
+    INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
+    VALUES (${customerResult[0].account_id}, 'PAYMENT', ${amount}, ${payment_method}, 'SUCCESS')
+  `;
 
-    await tx`
-      INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
-      VALUES (${sellerResult[0].account_id}, 'INCOME', ${amount}, ${payment_method}, 'SUCCESS')
-    `;
+  await sql`
+    INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
+    VALUES (${sellerResult[0].account_id}, 'INCOME', ${amount}, ${payment_method}, 'SUCCESS')
+  `;
 
-    return {
-      customer: customerResult[0],
-      seller: sellerResult[0]
-    };
-  });
+  return {
+    customer: customerResult[0],
+    seller: sellerResult[0]
+  };
 } 
 
 //-------------------------------------------------------------------------------//

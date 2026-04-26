@@ -1,4 +1,4 @@
-import { Wallet } from './api.js';
+import { Wallet, Stock, Order } from './api.js';
 
 
 export const WalletFlow = {

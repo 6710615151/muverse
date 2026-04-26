@@ -1,0 +1,84 @@
+<div id="wallet">
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+
+    <section class="wallet-layout">
+        <div class="wallet-column wallet-overview">
+            <header>
+                <h1>My Wallet</h1>
+                <div class="divider">
+                    <span class="line"></span>
+                    <span class="star">&#10022;</span>
+                    <span class="line"></span>
+                </div>
+            </header>
+
+            <section id="wallet-balance">
+                <div class="glow-overlay"></div>
+                <h2>Available Balance</h2>
+                <p class="balance">
+                    <span class="currency">฿</span>
+                    <span class="amount" id="wallet-balance-amount">0.00</span>
+                </p>
+            </section>
+
+            <section class="actions">
+                <button type="button" class="btn-primary" id="btn-deposit">
+                    <span>Deposit</span>
+                    <div class="shimmer"></div>
+                </button>
+                <button type="button" class="btn-secondary" id="btn-withdraw">
+                    <span>Withdraw</span>
+                </button>
+            </section>
+        </div>
+
+        <section class="wallet-column finance">
+            <div class="glass-card finance-card">
+                <div class="finance-header">
+                    <h2>Linked Accounts</h2>
+                    <p>Select your linked account</p>
+                </div>
+                <div id="payment-method-list"></div>
+                <button type="button" class="btn-add-payment" id="btn-add-payment">
+                    + Add Payment Method
+                </button>
+            </div>
+        </section>
+    </section>
+</div>
+
+<div id="wallet">
+    <section class="history history-bottom">
+        <div class="history-header">
+            <span class="line"></span>
+            <h2>Transaction History</h2>
+            <span class="line"></span>
+        </div>
+        <div id="transaction-list">
+            <div class="transaction-empty" id="transaction-empty">
+                <span class="transaction-empty__title">No Transaction History</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal-overlay" id="walletModal">
+        <div class="modal" style="max-width:420px; text-align:left; padding:36px;">
+            <h2 id="walletModalTitle"
+                style="font-family:var(--font-display); font-size:1.8rem; color:var(--clr-cream); margin-bottom:24px;"></h2>
+            <div class="form-grid">
+                <div class="form-field form-field--full">
+                    <label class="form-label" id="walletModalLabel"></label>
+                    <input class="form-input" id="walletModalInput" />
+                </div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn--ghost" id="walletModalCancel">Cancel</button>
+                <button class="btn btn--primary" id="walletModalConfirm">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
