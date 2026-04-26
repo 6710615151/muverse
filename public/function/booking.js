@@ -1,6 +1,6 @@
 import { Requests, serviceType } from "./api.js";
 
-const CUSTOMER_ID = "temp-customer-id"; // TODO: เปลี่ยนเป็น id จาก auth
+const getCustomerId = () => localStorage.getItem("user_id");
 
 const STATUS_LABEL = {
   pending:  "Pending",
@@ -60,7 +60,7 @@ function renderList(requests) {
 
 async function loadRequests() {
   try {
-    _allRequests = await Requests.getByIdCustomer(CUSTOMER_ID);
+    _allRequests = await Requests.getByIdCustomer(getCustomerId());
     renderList(_allRequests);
   } catch {
     const list = document.getElementById("requestList");
@@ -133,7 +133,7 @@ async function submitRequest() {
       request_detail: detail,
       budget:         budget || 0,
       request_status: "pending",
-      customer_id:    CUSTOMER_ID,
+      customer_id:    getCustomerId(),
       service_type_id,
     });
     closeModal();
