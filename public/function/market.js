@@ -13,7 +13,7 @@ function productCardHTML(stock) {
   const isOut = stock.stock_quantity <= 0 || stock.stock_status === 'out_of_stock';
   const price = Number(stock.price).toLocaleString('th-TH', { minimumFractionDigits: 0 });
   const shopName = stock.shop_name ?? ` #${stock.seller_id}`;
-  const rating = stock.rating ? `<span class="fi fi-ts-star"></span> ${stock.rating}` : '';
+  const rating = stock.rating ? `<span class="fi fi-ts-star" style="margin-top: 10px;"></span> ${stock.rating}` : '';
   const isNew = stock.stock_status === 'new';
 
   return `
@@ -28,8 +28,8 @@ function productCardHTML(stock) {
         ${isNew ? `<span class="product-card__tag product-card__tag--new">New</span>` : ''}
 
       </div>
-      <div class="product-card__body">
-        
+      <div class="product-card__body" style="display:flex; flex-direction:column; flex:1;">
+
         <h3 class="product-card__name" style="font-size: 1.1rem; font-weight: 400;margin-bottom: 3px;">${stock.item_name}</h3>
         <p class="product-card__brand" style="font-size:0.8rem;">
           <a href="#" class="shop-link"
@@ -39,10 +39,11 @@ function productCardHTML(stock) {
           </a>
         </p>
         <!-- <p class="product-card__stars">${rating}</p> -->
-        <div class="product-card__price-row" style="margin-top:4px;margin-bottom: 4px;">
+        <div class="product-card__price-row" style="margin-top:4px;margin-bottom: 4px; display:flex; align-items:center; gap:8px;">
           <span class="product-card__price" style="font-size: 1.2rem; font-weight: 600;">฿${price}</span>
+          ${stock.seller_rating ? `<span style="font-size:0.8rem; color:#ffffff94;"><span class="fi fi-ts-star" style="color:#f5c518;"></span> ${stock.seller_rating}</span>` : ''}
         </div>
-        <div class="service-card__footer" style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div class="service-card__footer" style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
           
           ${isOut ? `<span class="status-badge status-badge--pending" style="font-size: 0.85rem;color: #ff4c4cfd;margin-right: 100px;">Sold out</span>` : ''}
 
@@ -183,8 +184,10 @@ let _mktSort = '';
 let _mktShowAvail = true;
 let _mktShowOut = false;
 
+const HIDDEN_CATEGORY_IDS = ['927ab7ee-0a9c-438e-9483-c549ec3e444e'];
+
 function mktFilter() {
-  let items = [..._mktAll];
+  let items = _mktAll.filter(s => !HIDDEN_CATEGORY_IDS.includes(String(s.category_id)));
 
   if (_mktCatId !== 'all') {
     items = items.filter(s => String(s.category_id) === _mktCatId);
@@ -237,14 +240,17 @@ export const Market = {
       const [stocks, cats, sellers] = await Promise.all([Stock.getAll(), Category.getAll(), SellerAPI.getAllSeller()]);
       const sellerMap = Object.fromEntries((sellers ?? []).map(s => [String(s.seller_id), s.shop_name]));
       const sellerUserIdMap = Object.fromEntries((sellers ?? []).map(s => [String(s.seller_id), s.user_id]));
+      const sellerRatingMap = Object.fromEntries((sellers ?? []).map(s => [String(s.seller_id), s.rating]));
       _mktAll = (stocks ?? []).map(s => ({
         ...s,
         shop_name: sellerMap[String(s.seller_id)] ?? s.shop_name,
-        seller_user_id: s.seller_user_id || sellerUserIdMap[String(s.seller_id)]
+        seller_user_id: s.seller_user_id || sellerUserIdMap[String(s.seller_id)],
+        seller_rating: s.seller_rating ?? sellerRatingMap[String(s.seller_id)]
       }));
 
       if (tabs && cats?.length) {
         const extra = cats
+          .filter(c => !HIDDEN_CATEGORY_IDS.includes(String(c.category_id)))
           .map(c => `<button class="filter-tab" data-cat-id="${c.category_id}">${c.name}</button>`)
           .join('');
         tabs.innerHTML = `<button class="filter-tab active" data-cat-id="all">✦ All</button>${extra}`;
@@ -462,7 +468,10 @@ export const Shop = {
     }
 
     try {
-      const stocks = await Stock.getBySeller(sellerId);
+      const [stocks, sellerInfo] = await Promise.all([
+        Stock.getBySeller(sellerId),
+        SellerAPI.getByIdSeller(sellerId).catch(() => null)
+      ]);
       _shopAll = stocks ?? [];
 
       const shopName = _shopAll[0]?.shop_name && !_shopAll[0].shop_name.startsWith('http')
@@ -473,6 +482,11 @@ export const Shop = {
 
       const nameEl = document.getElementById('shop-name');
       if (nameEl) nameEl.textContent = shopName;
+
+      const ratingEl = document.getElementById('shop-rating');
+      if (ratingEl && sellerInfo?.rating) {
+        ratingEl.innerHTML = `<span class="fi fi-ts-star" style="color:#f5c518;"></span> ${sellerInfo.rating}`;
+      }
 
       shopRender();
     } catch (err) {
