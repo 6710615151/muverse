@@ -1,10 +1,251 @@
+<style>
+/* ── Stock Page ─────────────────────────────────────────────── */
+#seller-stock-page { display:flex; flex-direction:column; position:relative; overflow:hidden; }
+
+/* Header */
+.stock-pg-header {
+  display:flex; justify-content:space-between; align-items:flex-end;
+  flex-wrap:wrap; gap:16px; padding:28px 40px 0;
+}
+.stock-pg-header__title {
+  font-size:2.4rem; font-weight:800; color:#1a0a2e;
+  letter-spacing:-0.5px; line-height:1.1;
+}
+.stock-pg-header__title em {
+  font-style:normal;
+  background:linear-gradient(135deg,#7c3aed,#c026d3);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+.stock-pg-header__shop {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:0.88rem; font-weight:600; color:#92400e;
+  background:linear-gradient(135deg,#fef3c7,#fde68a);
+  border:1px solid rgba(180,130,50,0.35);
+  padding:3px 12px; border-radius:20px; margin-top:7px;
+}
+.stock-pg-header__sub { font-size:0.88rem; color:#6b7280; margin-top:4px; }
+
+.stock-add-btn {
+  padding:11px 22px; border-radius:12px; white-space:nowrap;
+  background:linear-gradient(135deg,#7c3aed,#6d28d9);
+  color:#fff; border:none; font-size:0.92rem; font-weight:700;
+  cursor:pointer; transition:all 0.25s;
+  box-shadow:0 4px 16px rgba(109,40,217,0.35);
+}
+.stock-add-btn:hover { transform:translateY(-2px); box-shadow:0 6px 22px rgba(109,40,217,0.45); }
+
+/* Stats */
+.stock-stats {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:14px; padding:20px 40px 24px;
+}
+.stock-stat-card {
+  background:linear-gradient(135deg,rgba(17,24,39,0.92),rgba(31,41,55,0.88));
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px; padding:18px 22px;
+  display:flex; flex-direction:column; align-items:center;
+  gap:4px; text-align:center; transition:all 0.25s;
+  position:relative; overflow:hidden;
+}
+.stock-stat-card::before {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:3px; border-radius:16px 16px 0 0;
+}
+.stock-stat-card--total::before   { background:linear-gradient(90deg,#6366f1,#818cf8); }
+.stock-stat-card--avail::before   { background:linear-gradient(90deg,#10b981,#34d399); }
+.stock-stat-card--out::before     { background:linear-gradient(90deg,#ef4444,#f87171); }
+.stock-stat-card:hover { transform:translateY(-3px); border-color:rgba(255,255,255,0.15); }
+.stock-stat-card__icon { font-size:1.25rem; opacity:0.75; }
+.stock-stat-card--total .stock-stat-card__icon { color:#818cf8; }
+.stock-stat-card--avail .stock-stat-card__icon { color:#34d399; }
+.stock-stat-card--out   .stock-stat-card__icon { color:#f87171; }
+.stock-stat-card__num {
+  font-size:1.8rem; font-weight:800; display:block;
+  color:rgba(255,255,255,0.9);
+}
+.stock-stat-card__label { font-size:0.8rem; color:#9ca3af; font-weight:500; }
+
+/* Filter Bar */
+.stock-filter-bar {
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:12px; padding:0 40px 16px;
+}
+.stock-filter-controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.stock-search-wrap { position:relative; display:flex; align-items:center; }
+.stock-search-icon {
+  position:absolute; left:11px; color:#9ca3af;
+  font-size:0.85rem; pointer-events:none;
+}
+#stock-search {
+  padding:8px 14px 8px 33px !important; width:215px;
+  background:rgba(17,24,39,0.85) !important;
+  border:1px solid rgba(255,255,255,0.1) !important;
+  color:#e5e7eb !important; border-radius:10px;
+  font-size:0.875rem; transition:border-color 0.2s;
+}
+#stock-search:focus { border-color:rgba(124,58,237,0.5) !important; outline:none; }
+#stock-search::placeholder { color:#6b7280; }
+#stock-cat-filter, #stock-sort {
+  padding:8px 14px;
+  background:rgba(17,24,39,0.85);
+  border:1px solid rgba(255,255,255,0.1);
+  color:#e5e7eb; border-radius:10px;
+  font-size:0.875rem; cursor:pointer;
+  transition:border-color 0.2s; outline:none;
+}
+#stock-cat-filter:focus, #stock-sort:focus { border-color:rgba(124,58,237,0.5); }
+.stock-count-label { font-size:0.85rem; color:#6b7280; white-space:nowrap; }
+.stock-count-label strong { color:#7c3aed; font-weight:700; }
+
+/* List wrapper */
+.stock-list-wrap {
+  padding:0 40px 32px; overflow-y:auto;
+  flex:1; min-height:0;
+}
+.stock-list-wrap::-webkit-scrollbar { width:5px; }
+.stock-list-wrap::-webkit-scrollbar-track { background:transparent; }
+.stock-list-wrap::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.15); border-radius:10px; }
+
+/* Stock Item Cards */
+.stock-item {
+  display:flex; align-items:center; gap:16px;
+  padding:16px 20px; border-radius:16px;
+  background:rgba(255,255,255,0.85);
+  border:1px solid rgba(224,175,120,0.25);
+  border-left:4px solid transparent;
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);
+  transition:all 0.25s ease; margin-bottom:10px;
+  backdrop-filter:blur(4px);
+}
+.stock-item--in  { border-left-color:#10b981; }
+.stock-item--out { border-left-color:#ef4444; }
+.stock-item:hover {
+  box-shadow:0 8px 24px rgba(0,0,0,0.1);
+  transform:translateY(-2px);
+  background:rgba(255,255,255,0.96);
+}
+
+.stock-item__img {
+  width:68px; height:68px; flex-shrink:0;
+  border-radius:12px; overflow:hidden;
+  background:linear-gradient(135deg,#fef3c7,#fde68a);
+  border:1px solid rgba(223,172,133,0.4);
+}
+.stock-item__img img { width:100%; height:100%; object-fit:cover; }
+.stock-item__img-ph {
+  width:100%; height:100%; display:flex;
+  align-items:center; justify-content:center;
+  font-size:1.7rem; color:#d97706;
+}
+
+.stock-item__body { flex:1; min-width:0; }
+.stock-item__badges { display:flex; gap:6px; margin-bottom:4px; flex-wrap:wrap; }
+.stock-badge {
+  font-size:0.68rem; font-weight:700;
+  padding:2px 9px; border-radius:20px;
+  letter-spacing:0.3px; line-height:1.6;
+}
+.stock-badge--cat {
+  background:linear-gradient(135deg,#fef3c7,#fde68a);
+  color:#92400e; border:1px solid rgba(180,130,50,0.3);
+}
+.stock-badge--in  { background:#dcfce7; color:#166534; border:1px solid #bbf7d0; }
+.stock-badge--out { background:#fee2e2; color:#991b1b; border:1px solid #fecaca; }
+
+.stock-item__name {
+  font-size:0.95rem; font-weight:700; color:#1a0a2e;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  margin:3px 0 2px;
+}
+.stock-item__desc {
+  font-size:0.78rem; color:#6b7280;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+.stock-item__price-block { text-align:right; flex-shrink:0; min-width:95px; }
+.stock-item__price {
+  font-size:1.18rem; font-weight:800; display:block;
+  background:linear-gradient(135deg,#7c3aed,#a855f7);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+.stock-item__qty { font-size:0.75rem; color:#9ca3af; margin-top:3px; display:block; }
+.stock-item__qty strong { color:#4b5563; }
+
+.stock-item__actions {
+  display:flex; flex-direction:column;
+  gap:7px; flex-shrink:0; margin-left:4px;
+}
+.stock-btn {
+  padding:7px 18px; border-radius:9px;
+  font-size:0.82rem; font-weight:600;
+  cursor:pointer; transition:all 0.2s; border:none; white-space:nowrap;
+}
+.stock-btn--edit {
+  background:linear-gradient(135deg,#7c3aed,#6d28d9); color:#fff;
+  box-shadow:0 2px 8px rgba(109,40,217,0.25);
+}
+.stock-btn--edit:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(109,40,217,0.4); }
+.stock-btn--del { background:transparent; color:#dc2626; border:1.5px solid #fca5a5; }
+.stock-btn--del:hover { background:#fee2e2; border-color:#ef4444; }
+
+/* Empty / Loading state */
+.stock-empty {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; padding:80px 40px;
+  color:#9ca3af; text-align:center;
+}
+.stock-empty__icon { font-size:2.5rem; margin-bottom:12px; opacity:0.5; }
+.stock-empty__text { font-size:0.95rem; }
+
+/* Modal overrides */
+#seller-stock-page .modal {
+  background:linear-gradient(135deg,#1a1f2e,#191c23);
+  border:1px solid rgba(255,255,255,0.08);
+}
+#seller-stock-page .modal__title {
+  background:linear-gradient(135deg,#e884ff,#7c3aed);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+#seller-stock-page .form-label { color:#9ca3af; font-size:0.8rem; margin-bottom:5px; display:block; }
+#seller-stock-page .form-input {
+  background:#1f2937; border:1px solid rgba(255,255,255,0.08);
+  color:#e5e7eb; border-radius:10px; padding:9px 13px;
+  width:100%; font-size:0.875rem; transition:border-color 0.2s;
+}
+#seller-stock-page .form-input:focus { border-color:rgba(124,58,237,0.5); outline:none; }
+#seller-stock-page .form-textarea { min-height:80px; resize:vertical; }
+#seller-stock-page .btn--primary {
+  background:linear-gradient(135deg,#7c3aed,#6d28d9); color:#fff;
+  padding:10px 22px; margin:0; font-weight:600;
+  box-shadow:0 4px 14px rgba(109,40,217,0.3);
+}
+#seller-stock-page .btn--primary:hover {
+  opacity:1; transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(109,40,217,0.4);
+}
+#seller-stock-page .btn--ghost {
+  background:transparent; border:1.5px solid rgba(255,255,255,0.1);
+  color:#9ca3af; padding:10px 22px;
+}
+#seller-stock-page .btn--ghost:hover {
+  background:rgba(255,255,255,0.05);
+  border-color:rgba(255,255,255,0.2); color:#e5e7eb;
+}
+#seller-stock-page .modal__icon { font-size:2.2rem; display:block; text-align:center; margin-bottom:10px; }
+#seller-stock-page .modal__sub  { color:#9ca3af; font-size:0.9rem; text-align:center; margin:6px 0; }
+#seller-stock-page .modal__note { font-size:0.78rem; color:#6b7280; text-align:center; margin-bottom:20px; }
+</style>
+
 <div id="seller-stock-page">
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
   <div class="orb orb-4"></div>
-  <div class="main-content" style="height: 100%;display: flex;flex-direction: column;">
 
+  <div class="main-content" style="height:100%;display:flex;flex-direction:column;">
+
+    <!-- Add / Edit Modal -->
     <div class="modal-overlay" id="stock-modal">
       <div class="modal" style="max-width:580px;width:90%;text-align:left;padding:36px 40px">
         <h2 class="modal__title" id="modal-title" style="text-align:left;font-size:1.8rem;margin-bottom:24px" >
@@ -24,7 +265,7 @@
             </div>
             <div class="form-field">
               <label class="form-label">Product Type</label>
-              <input type="text" class="form-input" id="f-item-type" placeholder="e.g., physical, digital">
+              <input type="text" class="form-input" id="f-item-type" placeholder="e.g. physical, digital">
             </div>
             <div class="form-field">
               <label class="form-label">Price (THB) *</label>
@@ -51,12 +292,12 @@
               <input type="file" id="f-image" accept="image/*" class="form-input" style="padding:6px">
               <div style="display:flex;align-items:center;gap:14px;margin-top:10px">
                 <img id="img-preview" src="" alt="preview"
-                  style="display:none;width:100px;height:100px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.1)">
+                  style="display:none;width:100px;height:100px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,0.1)">
                 <p id="upload-result" style="font-size:0.82rem;opacity:0.65"></p>
               </div>
             </div>
           </div>
-          <div class="btn-row" style="margin-top:16px">
+          <div class="btn-row" style="margin-top:20px">
             <button type="button" class="btn btn--ghost" id="modal-cancel-btn">Cancel</button>
             <button type="submit" class="btn btn--primary" id="modal-save-btn">Add Product</button>
           </div>
@@ -64,11 +305,12 @@
       </div>
     </div>
 
+    <!-- Delete Modal -->
     <div class="modal-overlay" id="delete-modal">
       <div class="modal">
         <span class="modal__icon"><span class="fi fi-ts-trash"></span></span>
-        <h2 class="modal__title">Confirm Deletion?</h2>
-        <p class="modal__sub" id="delete-modal-name">This item will be permanently removed from the system.</p>
+        <h2 class="modal__title" style="font-size:1.5rem;margin-bottom:8px">Confirm Deletion?</h2>
+        <p class="modal__sub" id="delete-modal-name">This item will be permanently removed.</p>
         <p class="modal__note">This action cannot be undone.</p>
         <div class="btn-row" style="justify-content:center;gap:12px">
           <button class="btn btn--ghost" id="delete-cancel-btn">Cancel</button>
@@ -80,8 +322,8 @@
       </div>
     </div>
 
-    <div class="page-header"
-      style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px">
+    <!-- Page Header -->
+    <div class="stock-pg-header">
       <div>
         <h1 class="page-header__title">MY <em>INVENTORY</em></h1>
 
@@ -113,7 +355,7 @@
         <select id="stock-cat-filter" class="filter-select">
           <option value="">All Categories</option>
         </select>
-        <select id="stock-sort" class="filter-select">
+        <select id="stock-sort">
           <option value="">Sort By</option>
           <option value="name">Name A–Z</option>
           <option value="price-asc">Price ↑</option>
@@ -121,16 +363,18 @@
           <option value="qty-asc">Quantity ↑ (Low first)</option>
         </select>
       </div>
-      <p class="marketplace-count">Total <strong id="stock-count">0</strong> items</p>
+      <p class="stock-count-label">Total <strong id="stock-count">0</strong> items</p>
     </div>
 
-    <div style="padding:32px 64px;overflow-y: scroll; height: 100%;flex-grow: 1;">
-      <div class="booking-list" id="stock-list">
-        <div style="padding:80px;text-align:center;color:var(--clr-text-muted)">
-          <p style="font-size:2rem;margin-bottom:12px"><span class="fi fi-ts-hourglass-end"></span></p>
-          <p>Loading products...</p>
+    <!-- Stock List -->
+    <div class="stock-list-wrap">
+      <div id="stock-list">
+        <div class="stock-empty">
+          <div class="stock-empty__icon"><span class="fi fi-ts-hourglass-end"></span></div>
+          <p class="stock-empty__text">Loading products...</p>
         </div>
       </div>
     </div>
+
   </div>
 </div>
