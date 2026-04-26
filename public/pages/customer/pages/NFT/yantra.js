@@ -43,22 +43,22 @@ async function loadData() {
     {
       name: "NAKA YANTRA",
       price: 99,
-      img: "/img/hanuman.png",
+      img: "./naka.png",
     },
     {
       name: "TIGER YANTRA",
       price: 129,
-      img: "/img/garuda.png",
+      img: "./tiger.png",
     },
     {
       name: "HANUMAN YANTRA",
       price: 79,
-      img: "/img/naka.png",
+      img: "./hanuman.png",
     },
     {
       name: "LORD GANESHA YANTRA",
       price: 79,
-      img: "/img/naka.png",
+      img: "./gens.png",
     }
   ]
   renderItem(0);
