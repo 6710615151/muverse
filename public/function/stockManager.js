@@ -15,39 +15,46 @@ const getSellerId = () => _sellerId;
 
 function stockRowHTML(stock) {
   const isOut = stock.stock_quantity <= 0 || stock.stock_status === 'out_of_stock';
-  const price = Number(stock.price).toLocaleString('en-US'); // Changed locale to US
-  const statusClass = isOut ? 'status-badge--pending' : 'status-badge--confirmed';
+  const price = Number(stock.price).toLocaleString('th-TH');
 
   return `
-    <div class="service-card" data-stock-id="${stock.stock_id}"
-      style="display:flex;align-items:center;gap:16px;padding:16px 20px">
-      <div style="width:72px;height:72px;flex-shrink:0;border-radius:8px;overflow:hidden;
-        background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08)">
+    <div data-stock-id="${stock.stock_id}" style="
+      display:flex;align-items:center;gap:16px;padding:14px 18px;margin-bottom:10px;
+      border-radius:14px;background:#fff;border:1px solid #ede8dc;
+      box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:box-shadow 0.2s;
+    " onmouseenter="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.12)'"
+       onmouseleave="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
+
+      <div style="width:64px;height:64px;flex-shrink:0;border-radius:10px;overflow:hidden;background:#f5f0e8;">
         ${stock.url
-          ? `<img src="${stock.url}" alt="${stock.item_name}"
-              style="width:100%;height:100%;object-fit:cover"
-              onerror="this.style.display='none'">`
-          : `<div style="width:100%;height:100%;display:flex;align-items:center;
-              justify-content:center;font-size:1.6rem;opacity:0.3">📦</div>`}
+          ? `<img src="${stock.url}" alt="${stock.item_name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`
+          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">📦</div>`}
       </div>
-      <div style="flex:1;min-width:0">
-        <p style="font-size:0.75rem;opacity:0.5;margin-bottom:2px">${stock.category_name ?? ''}</p>
-        <h3 style="font-size:1rem;font-weight:600;margin-bottom:4px;
-          white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${stock.item_name}</h3>
-        <p style="font-size:0.82rem;opacity:0.55;white-space:nowrap;overflow:hidden;
-          text-overflow:ellipsis">${stock.description ?? ''}</p>
+
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+          <span style="font-size:0.7rem;background:#f0e8d8;color:#92671a;padding:2px 8px;border-radius:20px;font-weight:600;">${stock.category_name ?? 'ไม่มีหมวดหมู่'}</span>
+          <span style="font-size:0.7rem;padding:2px 8px;border-radius:20px;font-weight:600;
+            background:${isOut ? '#fde8e8' : '#e8fdf0'};color:${isOut ? '#c53030' : '#276749'};">
+            ${isOut ? 'หมดสต็อก' : 'มีสินค้า'}
+          </span>
+        </div>
+        <h3 style="font-size:0.95rem;font-weight:700;color:#1a1a1a;margin:4px 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${stock.item_name}</h3>
+        <p style="font-size:0.78rem;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${stock.description ?? '-'}</p>
       </div>
-      <div style="text-align:right;flex-shrink:0">
-        <p style="font-size:1.1rem;font-weight:700;margin-bottom:4px">$${price}</p>
-        <p style="font-size:0.78rem;opacity:0.55;margin-bottom:6px">Qty: ${stock.stock_quantity}</p>
-        <span class="status-badge ${statusClass}">${isOut ? 'Out of Stock' : 'Available'}</span>
+
+      <div style="text-align:right;flex-shrink:0;min-width:90px;">
+        <p style="font-size:1.15rem;font-weight:800;color:#7c3aed;">฿${price}</p>
+        <p style="font-size:0.78rem;color:#999;margin-top:2px;">คงเหลือ ${stock.stock_quantity} ชิ้น</p>
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;margin-left:8px">
-        <button class="btn btn--outline btn--sm" data-edit-id="${stock.stock_id}">Edit</button>
-        <button class="btn btn--sm"
-          style="background:rgba(229,62,62,0.15);color:#e53e3e;border:1px solid rgba(229,62,62,0.3)"
-          data-delete-id="${stock.stock_id}"
-          data-delete-name="${stock.item_name}">Delete</button>
+
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;margin-left:8px;">
+        <button data-edit-id="${stock.stock_id}" style="
+          padding:6px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;
+          background:#7c3aed;color:#fff;border:none;">แก้ไข</button>
+        <button data-delete-id="${stock.stock_id}" data-delete-name="${stock.item_name}" style="
+          padding:6px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;
+          background:#fff;color:#e53e3e;border:1.5px solid #e53e3e;">ลบ</button>
       </div>
     </div>`;
 }
