@@ -135,7 +135,58 @@ export async function transferWallet(customer_id, seller_id, amount, payment_met
 } 
 
 //-------------------------------------------------------------------------------//
-// 7. ดูประวัติธุรกรรม by userId
+// 7. ล็อกเงิน (หักจากลูกค้า พักไว้ รอยืนยัน)
+export async function lockFunds(user_id, amount) {
+  const walletResult = await sql`
+    UPDATE account_wallet
+    SET wallet = wallet - ${amount}
+    WHERE user_id = ${user_id} AND wallet >= ${amount}
+    RETURNING *
+  `;
+  if (walletResult.length === 0) throw new Error("ยอดเงินไม่เพียงพอสำหรับการจอง");
+  await sql`
+    INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
+    VALUES (${walletResult[0].account_id}, 'HOLD', ${amount}, 'wallet', 'SUCCESS')
+  `;
+  return walletResult[0];
+}
+
+//-------------------------------------------------------------------------------//
+// 8. ปลดล็อกเงินให้ผู้ขาย (เมื่อลูกค้ายืนยันรับบริการ)
+export async function releaseFundsToSeller(seller_user_id, amount) {
+  const walletResult = await sql`
+    UPDATE account_wallet
+    SET wallet = wallet + ${amount}
+    WHERE user_id = ${seller_user_id}
+    RETURNING *
+  `;
+  if (walletResult.length === 0) throw new Error("ไม่พบกระเป๋าเงินของผู้ขาย");
+  await sql`
+    INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
+    VALUES (${walletResult[0].account_id}, 'INCOME', ${amount}, 'wallet', 'SUCCESS')
+  `;
+  return walletResult[0];
+}
+
+//-------------------------------------------------------------------------------//
+// 9. คืนเงินให้ลูกค้า (เมื่อ booking ถูก reject หลัง lock แล้ว)
+export async function refundFunds(user_id, amount) {
+  const walletResult = await sql`
+    UPDATE account_wallet
+    SET wallet = wallet + ${amount}
+    WHERE user_id = ${user_id}
+    RETURNING *
+  `;
+  if (walletResult.length === 0) throw new Error("ไม่พบกระเป๋าเงินของลูกค้า");
+  await sql`
+    INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
+    VALUES (${walletResult[0].account_id}, 'REFUND', ${amount}, 'wallet', 'SUCCESS')
+  `;
+  return walletResult[0];
+}
+
+//-------------------------------------------------------------------------------//
+// 10. ดูประวัติธุรกรรม by userId
 export async function getWalletRecords(user_id) {
   const records = await sql`
     SELECT r.* FROM record_wallet r

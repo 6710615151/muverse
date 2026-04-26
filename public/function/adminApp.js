@@ -1,6 +1,6 @@
 import { checkRole } from "./pageRole.js";
 import { Logout } from "./logout.js";
-import { Users, Wallet, Stock, Requests, serviceType } from "./api.js";
+import { Users, Wallet, Stock, Requests, serviceType, seller } from "./api.js";
 
 checkRole?.();
 
@@ -46,6 +46,7 @@ const ManageUsers = {
                     <button class="btn-view" data-id="${u.user_id}">👁️</button>
                     <button class="btn-toggle" data-id="${u.user_id}" data-name="${u.name}" data-role="${u.role}">🔄</button>
                     <button class="btn-tx" data-id="${u.user_id}" data-name="${u.name}">📄</button>
+                    ${u.role === 'seller' ? `<button class="btn-verify" data-id="${u.user_id}" data-name="${u.name}" title="Verify Seller">🛡️</button>` : ''}
                     <button class="btn-ban" data-id="${u.user_id}" data-name="${u.name}" data-status="${u.status}"
                         style="color:${u.status === 'banned' ? '#4ade80' : '#f87171'}">
                         ${u.status === 'banned' ? '✅' : '🚫'}
@@ -72,6 +73,9 @@ const ManageUsers = {
         );
         list.querySelectorAll('.btn-tx').forEach(btn =>
             btn.addEventListener('click', () => ManageUsers.viewTransactions(btn.dataset.id, btn.dataset.name))
+        );
+        list.querySelectorAll('.btn-verify').forEach(btn =>
+            btn.addEventListener('click', () => ManageUsers.verifySeller(btn.dataset.id, btn.dataset.name))
         );
     },
 
@@ -190,6 +194,31 @@ const ManageUsers = {
             await ManageUsers.loadUsers();
         } catch (err) {
             alert('Failed to delete: ' + err.message);
+        }
+    },
+
+    verifySeller: async (userId, name) => {
+        try {
+            const sellerData = await seller.getByUserId(userId);
+            if (!sellerData) {
+                alert(`No seller profile found for "${name}"`);
+                return;
+            }
+            const current = sellerData.seller_status || 'unverified';
+            const choice = prompt(
+                `Seller: ${name}\nCurrent status: ${current}\n\nEnter new status:\n  verified\n  unverified\n  suspended`,
+                current
+            );
+            if (!choice) return;
+            const newStatus = choice.trim().toLowerCase();
+            if (!['verified', 'unverified', 'suspended'].includes(newStatus)) {
+                alert('Invalid status. Use: verified, unverified, or suspended');
+                return;
+            }
+            await seller.verifySeller(sellerData.seller_id, newStatus);
+            alert(`Seller "${name}" status updated to "${newStatus}"`);
+        } catch (err) {
+            alert('Failed to update seller status: ' + err.message);
         }
     },
 

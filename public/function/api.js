@@ -177,4 +177,16 @@ export const seller = {
     getAllSeller: () => apiFetch("/api/seller"),
     getByIdSeller: (id) => apiFetch(`/api/seller/${id}`),
     getByUserId: (userId) => apiFetch(`/api/seller/user/${userId}`),
+    verifySeller: (id, seller_status) => apiFetch(`/api/seller/${id}/verify`, {
+        method: "PATCH",
+        body: JSON.stringify({ seller_status }),
+    }),
+};
+
+export const Review = {
+    create: (body) => apiFetch("/api/review", {
+        method: "POST",
+        body: JSON.stringify(body),
+    }),
+    getBySeller: (seller_id) => apiFetch(`/api/review/seller/${seller_id}`),
 };
