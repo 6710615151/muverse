@@ -60,6 +60,28 @@ body {
   z-index: 1;
 }
 
+.canvas {
+  flex: 1;
+  height: 100vh;
+  position: relative;
+  overflow-y: auto;
+  background: radial-gradient(circle at top, #42233e, #3c255c);
+}
+
+.canvas__content {
+  padding: 40px;
+}
+
+#canvasContent {
+  display: flex;
+  justify-content: center;
+  /* แนวนอน */
+  align-items: center;
+  /* แนวตั้ง */
+  height: 100%;
+  /* สำคัญ */
+}
+
 #admin-content {
   display: flex;
   flex-direction: column;
