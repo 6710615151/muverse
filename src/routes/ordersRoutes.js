@@ -14,5 +14,6 @@ router.get("/seller/:seller_id",         ctrl.getBySeller);
 router.get("/:id",                       ctrl.getById);
 router.patch("/:id/status",             ctrl.updateStatus);
 router.patch("/:id/payment",            ctrl.updatePayment);
+router.patch("/:id/confirm",            ctrl.confirmReceipt);
 
 export default router;

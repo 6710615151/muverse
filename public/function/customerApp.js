@@ -1,6 +1,7 @@
 
 import { Booking } from "./booking.js";
 import { Market, Shop } from "./market.js";
+import { Orders } from "./orders.js";
 import { Role } from "./changeRole.js";
 import { checkRole } from "./pageRole.js";
 import { WalletFlow } from "./wallet.js";
@@ -14,6 +15,7 @@ const Router = (() => {
         market: "../../pages/customer/pages/market.html",
         shop: "../../pages/customer/pages/shop.html",
         booking: "../../pages/customer/pages/booking.html",
+        orders: "../../pages/customer/pages/orders.html",
         wallet: "../../pages/customer/pages/wallet.html",
         user: "../../pages/customer/pages/user.html",
         nft: "../../pages/customer/pages/nft.html",
@@ -24,6 +26,7 @@ const Router = (() => {
         market: () => Market.init(),
         shop: () => Shop.init(),
         booking: () => Booking.init(),
+        orders: () => Orders.init(),
         wallet: () => WalletFlow.init(),
         nft: () => console.log("init nft"),
         user: () => requestAnimationFrame(() => Role?.init()),

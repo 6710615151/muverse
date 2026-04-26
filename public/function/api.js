@@ -100,7 +100,11 @@ export const Order = {
     updateOrderPayment: (id, body) => apiFetch(`/api/order/${id}/payment`, {
         method: "PATCH",
         body: JSON.stringify(body),
-    })
+    }),
+
+    confirmReceipt: (id) => apiFetch(`/api/order/${id}/confirm`, {
+        method: "PATCH",
+    }),
 }
 
 export const Wallet = {
@@ -127,6 +131,8 @@ export const Wallet = {
         method: "POST",
         body: JSON.stringify(body),
     }),
+
+    getAdminRecords: () => apiFetch("/api/wallet/admin/records"),
 };
 
 export const Requests = {
@@ -157,6 +163,15 @@ export const Requests = {
     updateStatus: (id, status) => apiFetch(`/api/request/updateStatus/${id}`, {
         method: "PUT",
         body: JSON.stringify({ request_status: status }),
+    }),
+
+    acceptRequest: (id, body) => apiFetch(`/api/request/${id}/accept`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+    }),
+
+    completeRequest: (id) => apiFetch(`/api/request/${id}/complete`, {
+        method: "PATCH",
     }),
 };
 

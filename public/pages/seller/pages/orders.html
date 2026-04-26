@@ -1,0 +1,31 @@
+<div id="seller-orders-page">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+  <div class="main-content">
+
+    <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
+      <div>
+        <h1 class="page-header__title">MANAGE <em>ORDERS</em></h1>
+        <p class="page-header__sub">Orders from customers in your shop</p>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-bar__tabs" id="seller-order-filter-tabs">
+        <button class="filter-tab active" data-status="all">All</button>
+        <button class="filter-tab" data-status="pending">Pending</button>
+        <button class="filter-tab" data-status="shipped">Shipped</button>
+        <button class="filter-tab" data-status="completed">Completed</button>
+      </div>
+    </div>
+
+    <div style="padding: 16px 32px 32px;">
+      <div class="request-list" id="sellerOrderList">
+        <p style="color: var(--clr-text-muted); text-align:center; padding: 40px 0;">Loading...</p>
+      </div>
+    </div>
+
+  </div>
+</div>

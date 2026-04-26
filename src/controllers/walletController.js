@@ -135,9 +135,9 @@ export async function transfer(req, res) {
 export async function getRecords(req, res) {
   try {
     const { user_id } = req.params;
-    
+
     const records = await WalletModel.getWalletRecords(user_id);
-    
+
     res.status(200).json({
         success: true,
         data: records
@@ -145,5 +145,17 @@ export async function getRecords(req, res) {
   } catch (error) {
     console.error("Error in getRecords:", error);
     res.status(500).json({ success: false, message: 'ดึงประวัติไม่สำเร็จ' });
+  }
+}
+
+// ------------------------------------------------------------------------------- //
+// 7. Admin — ดูธุรกรรมทั้งหมด (Reconciliation)
+export async function getAdminRecords(req, res) {
+  try {
+    const records = await WalletModel.getAllWalletRecords();
+    res.status(200).json({ success: true, data: records });
+  } catch (error) {
+    console.error("Error in getAdminRecords:", error);
+    res.status(500).json({ success: false, message: 'ดึงข้อมูลไม่สำเร็จ' });
   }
 }
