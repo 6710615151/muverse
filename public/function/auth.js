@@ -1,6 +1,7 @@
 import { Users } from "./api.js";
 import { pageRole } from "./pageRole.js";
 
+document.addEventListener("DOMContentLoaded", () => {
 pageRole()
 const imgs = document.querySelectorAll('.bg img');
 let cur = 0;
@@ -129,7 +130,7 @@ suForm.addEventListener('submit', async (e) => {
   const email = document.getElementById('su-email').value.trim();
   const pass  = document.getElementById('su-pass').value.trim();
   const phone = document.getElementById('su-phone').value.trim();
-
+  console.log("SEND:", { name, email, pass, phone });
   if (!name || !email || !pass || !phone) {
     showMsg(suMsg, 'Please fill in all fields.', 'error');
     return;
@@ -173,4 +174,6 @@ suForm.addEventListener('submit', async (e) => {
     suBtn.disabled = false;
     suBtn.textContent = 'Create Account';
   }
+});
+  
 });
