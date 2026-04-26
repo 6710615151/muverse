@@ -1,7 +1,7 @@
 import { Requests, Category } from "./api.js";
 
-const listEl   = document.getElementById("requestList");
-const filterBtns = document.querySelectorAll(".filter-tab");
+let listEl;
+let filterBtns;
 
 let categories   = [];
 let allRequests  = [];
@@ -19,6 +19,8 @@ function badgeClass(status) {
 }
 
 function renderRequests(requests) {
+    if (!listEl) return;
+
     const filtered = activeStatus === "all"
         ? requests
         : requests.filter(r => r.request_status === activeStatus);
@@ -41,7 +43,7 @@ function renderRequests(requests) {
             </div>
             <div class="booking-card__actions">
                 <button class="btn btn--primary" data-id="${r.request_id}" data-status="accepted">Accept</button>
-                <button class="btn btn--ghost"   data-id="${r.request_id}" data-status="rejected">Reject</button>
+                <button class="btn btn--ghost" data-id="${r.request_id}" data-status="rejected">Reject</button>
             </div>
         </div>
     `).join("");
@@ -56,17 +58,21 @@ async function updateStatus(btn) {
     const status = btn.dataset.status;
 
     const card = listEl.querySelector(`[data-id="${id}"]`);
+    if (!card) return;
+
     card.querySelectorAll("button").forEach(b => b.disabled = true);
 
     try {
         await Requests.updateRequestStatus(id, { request_status: status });
         await loadRequests();
-    } catch (err) {
+    } catch {
         card.querySelectorAll("button").forEach(b => b.disabled = false);
     }
 }
 
 async function loadRequests() {
+    if (!listEl) return;
+
     try {
         allRequests = await Requests.getRequests();
         renderRequests(allRequests);
@@ -75,21 +81,34 @@ async function loadRequests() {
     }
 }
 
-filterBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-        filterBtns.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        activeStatus = btn.dataset.status;
-        renderRequests(allRequests);
+function bindFilters() {
+    if (!filterBtns) return;
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            filterBtns.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeStatus = btn.dataset.status;
+            renderRequests(allRequests);
+        });
     });
-});
+}
 
 export const Accept = {
-    init() {
-    try {
-        categories =  Category.getAll();
-    } catch {
-        categories = [];
+    async init() {
+
+        listEl = document.getElementById("requestList");
+        filterBtns = document.querySelectorAll(".filter-tab");
+
+        if (!listEl) return; 
+
+        try {
+            categories = await Category.getAll();
+        } catch {
+            categories = [];
+        }
+
+        bindFilters();
+        loadRequests();
     }
-     loadRequests();}
 };
