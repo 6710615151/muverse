@@ -79,15 +79,28 @@ export const WalletFlow = {
 
         const list = document.getElementById('payment-method-list');
 
-        list.innerHTML = methods.map(m => `
-            <div class="payment-method-item ${m.id === WalletFlow.selectedMethod ? 'active' : ''}" data-id="${m.id}">
-                <span class="payment-method-name">${m.name}</span>
-                <div class="payment-method-actions">
-                    ${m.id === WalletFlow.selectedMethod ? '<span class="payment-method-check">&#10003;</span>' : ''}
-                    ${m.id !== 'WALLET' ? `<button class="btn-remove-payment" data-id="${m.id}" title="ลบ">&#10005;</button>` : ''}
+        list.innerHTML = methods.map(m => {
+            const isActive = m.id === WalletFlow.selectedMethod;
+            return `
+            <div class="payment-method-item ${isActive ? 'active' : ''}" data-id="${m.id}" style="
+                display:flex; align-items:center; justify-content:space-between;
+                padding:10px 14px; margin-bottom:8px; border-radius:10px; cursor:pointer;
+                border:2px solid ${isActive ? '#c084fc' : 'rgba(255,255,255,0.1)'};
+                background:${isActive ? 'rgba(192,132,252,0.15)' : 'rgba(255,255,255,0.05)'};
+                transition:all 0.2s;
+            ">
+                <span style="color:#e2e8f0;font-size:0.9rem;font-weight:500">${m.name}</span>
+                <div style="display:flex;align-items:center;gap:8px">
+                    ${isActive ? '<span style="color:#c084fc;font-size:1rem;font-weight:700">✓</span>' : ''}
+                    ${m.id !== 'WALLET' ? `<button class="btn-remove-payment" data-id="${m.id}" title="ลบ" style="
+                        background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);
+                        color:#f87171;border-radius:6px;width:24px;height:24px;cursor:pointer;
+                        font-size:0.75rem;display:flex;align-items:center;justify-content:center;
+                        line-height:1;padding:0;
+                    ">✕</button>` : ''}
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
 
         list.querySelectorAll('.payment-method-item').forEach(el => {
             el.addEventListener('click', () => {
