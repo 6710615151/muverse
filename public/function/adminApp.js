@@ -5,6 +5,7 @@ import { Users, Wallet, Stock, Requests, serviceType } from "./api.js";
 checkRole?.();
 
 const ManageUsers = {
+    _cache: [],
 
     //เริ่ม
     init: async () => {
@@ -19,6 +20,7 @@ const ManageUsers = {
         list.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;opacity:0.5">Loading...</td></tr>`;
         try {
             const users = await Users.getAll();
+            ManageUsers._cache = users;
             ManageUsers.renderUsers(users);
         } catch (err) {
             list.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#ef4444;padding:40px">${err.message}</td></tr>`;
@@ -35,12 +37,13 @@ const ManageUsers = {
         }
         list.innerHTML = users.map(u => `
             <tr data-user-id="${u.user_id}" data-name="${u.name}" data-email="${u.email}">
-                <td>${u.user_id.slice(0, 8)}…</td>
-                <td>${u.name}</td>
-                <td>${u.email}</td>
-                <td><span class="role-badge role-badge--${u.role.toLowerCase()}">${u.role}</span></td>
-                <td><span style="color:${u.status === 'banned' ? '#f87171' : '#4ade80'};font-weight:600">${u.status ?? 'active'}</span></td>
+                <td style="padding:10px 20px 10px 16px">${u.user_id.slice(0, 8)}…</td>
+                <td style="padding:10px 28px 10px 16px">${u.name}</td>
+                <td style="padding:10px 28px 10px 16px">${u.email}</td>
+                <td style="padding:10px 20px 10px 16px"><span class="role-badge role-badge--${u.role.toLowerCase()}">${u.role}</span></td>
+                <td style="padding:10px 16px"><span style="color:${u.status === 'banned' ? '#f87171' : '#4ade80'};font-weight:600">${u.status ?? 'active'}</span></td>
                 <td style="text-align:center;display:flex;gap:6px;justify-content:center">
+                    <button class="btn-view" data-id="${u.user_id}">👁️</button>
                     <button class="btn-toggle" data-id="${u.user_id}" data-name="${u.name}" data-role="${u.role}">🔄</button>
                     <button class="btn-tx" data-id="${u.user_id}" data-name="${u.name}">📄</button>
                     <button class="btn-ban" data-id="${u.user_id}" data-name="${u.name}" data-status="${u.status}"
@@ -52,6 +55,12 @@ const ManageUsers = {
             </tr>
         `).join('');
 
+        list.querySelectorAll('.btn-view').forEach(btn =>
+            btn.addEventListener('click', () => {
+                const u = ManageUsers._cache.find(x => x.user_id === btn.dataset.id);
+                if (u) ManageUsers.viewDetail(u);
+            })
+        );
         list.querySelectorAll('.btn-delete').forEach(btn =>
             btn.addEventListener('click', () => ManageUsers.deleteUser(btn.dataset.id, btn.dataset.name))
         );
@@ -65,6 +74,36 @@ const ManageUsers = {
             btn.addEventListener('click', () => ManageUsers.viewTransactions(btn.dataset.id, btn.dataset.name))
         );
     },
+
+    //ดูรายละเอียดผู้ใช้
+    viewDetail: (u) => {
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999';
+        modal.innerHTML = `
+            <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:28px;width:min(480px,95vw);max-height:85vh;overflow-y:auto">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+                    <h2 style="font-size:1.1rem;font-weight:600;color:#fff;">${u.name}</h2>
+                    <button id="close-user-modal" style="background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer">✕</button>
+                </div>
+                <table style="width:100%;font-size:0.88rem;border-collapse:collapse">
+                    ${[
+                        ['User ID', u.user_id],
+                        ['Name', u.name],
+                        ['Email', u.email],
+                        ['Role', u.role],
+                        ['Status', u.status ?? 'active'],
+                    ].map(([k, v]) => `
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                            <td style="padding:12px 14px;color:#e2e8f0;white-space:nowrap">${k}</td>
+                            <td style="padding:12px 14px;color:#cbd5e1;word-break:break-all">${v}</td>
+                        </tr>`).join('')}
+                </table>
+            </div>`;
+        document.body.appendChild(modal);
+        modal.querySelector('#close-user-modal').addEventListener('click', () => modal.remove());
+        modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    },
+
     //จัดการสิทธิ์ผู้ใช้
     banUser: async (id, name, currentStatus) => {
         const isBanned = currentStatus === 'banned';
@@ -96,15 +135,22 @@ const ManageUsers = {
             const records = await Wallet.getRecords(id);
             const rows = records.length === 0
                 ? `<tr><td colspan="4" style="text-align:center;padding:24px;opacity:0.5">No transaction history.</td></tr>`
-                : records.map(r => {
+                : records.map((r, i) => {
                     const isIncome = r.payment_type === 'DEPOSIT' || r.payment_type === 'INCOME';
-                    const color = isIncome ? '#4ade80' : '#f87171';
+                    const amountColor = isIncome ? '#4ade80' : '#f87171';
                     const sign = isIncome ? '+' : '-';
-                    return `<tr>
-                        <td style="padding:10px 12px;color:#fff">${new Date(r.created_at).toLocaleString('th-TH')}</td>
-                        <td style="padding:10px 12px;color:${color};font-weight:600">${r.payment_type}</td>
-                        <td style="padding:10px 12px;color:${color}">${sign}฿${Number(r.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                        <td style="padding:10px 12px;color:#fff">${r.payment_method}</td>
+                    const rowBg = i % 2 === 0 ? 'rgba(255,255,255,0.03)' : 'transparent';
+                    return `<tr style="background:${rowBg}">
+                        <td style="padding:10px 14px;color:#cbd5e1;white-space:nowrap">${new Date(r.created_at).toLocaleString('th-TH')}</td>
+                        <td style="padding:10px 14px">
+                            <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.78rem;font-weight:600;
+                                background:${isIncome ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)'};
+                                color:${amountColor}">
+                                ${r.payment_type}
+                            </span>
+                        </td>
+                        <td style="padding:10px 14px;color:${amountColor};font-weight:600;white-space:nowrap">${sign}฿${Number(r.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td style="padding:10px 14px;color:#e2e8f0">${r.payment_method}</td>
                     </tr>`;
                 }).join('');
 
@@ -113,16 +159,16 @@ const ManageUsers = {
             modal.innerHTML = `
                 <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:28px;width:min(700px,95vw);max-height:80vh;overflow-y:auto">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-                        <h2 style="font-size:1.1rem;font-weight:600">Transaction History — ${name}</h2>
+                        <h2 style="font-size:1.1rem;font-weight:600;color:#fff;">Transaction History — ${name}</h2>
                         <button id="close-tx-modal" style="background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer">✕</button>
                     </div>
                     <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
                         <thead>
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.1);opacity:0.6">
-                                <th style="text-align:left;padding:8px 12px">Date / Time</th>
-                                <th style="text-align:left;padding:8px 12px">Type</th>
-                                <th style="text-align:left;padding:8px 12px">Amount</th>
-                                <th style="text-align:left;padding:8px 12px">Method</th>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.12)">
+                                <th style="text-align:left;padding:8px 14px;color:#e2e8f0;font-weight:500">Date / Time</th>
+                                <th style="text-align:left;padding:8px 14px;color:#e2e8f0;font-weight:500">Type</th>
+                                <th style="text-align:left;padding:8px 14px;color:#e2e8f0;font-weight:500">Amount</th>
+                                <th style="text-align:left;padding:8px 14px;color:#e2e8f0;font-weight:500">Method</th>
                             </tr>
                         </thead>
                         <tbody>${rows}</tbody>
@@ -250,7 +296,7 @@ const ManageStocks = (() => {
         modal.innerHTML = `
             <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:28px;width:min(520px,95vw);max-height:85vh;overflow-y:auto">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-                    <h2 style="font-size:1.1rem;font-weight:600">${s.item_name}</h2>
+                    <h2 style="font-size:1.1rem;font-weight:600;color:#fff;">${s.item_name}</h2>
                     <button id="close-detail-modal" style="background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer">✕</button>
                 </div>
                 ${s.url ? `<img src="${s.url}" style="width:100%;max-height:220px;object-fit:cover;border-radius:8px;margin-bottom:16px">` : ''}
@@ -265,8 +311,8 @@ const ManageStocks = (() => {
                         ['Description', s.description ?? '—'],
                     ].map(([k, v]) => `
                         <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
-                            <td style="padding:8px 12px;opacity:0.5;white-space:nowrap">${k}</td>
-                            <td style="padding:8px 12px;color:#fff">${v}</td>
+                            <td style="padding:12px 14px;color:#e2e8f0;white-space:nowrap">${k}</td>
+                            <td style="padding:12px 14px;color:#cbd5e1;word-break:break-all">${v}</td>
                         </tr>`).join('')}
                 </table>
             </div>`;
@@ -361,7 +407,7 @@ const ManageRequests = (() => {
         modal.innerHTML = `
             <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:28px;width:min(520px,95vw);max-height:85vh;overflow-y:auto">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-                    <h2 style="font-size:1.1rem;font-weight:600">${r.request_title}</h2>
+                    <h2 style="font-size:1.1rem;font-weight:600;color:#fff;">${r.request_title}</h2>
                     <button id="close-req-modal" style="background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer">✕</button>
                 </div>
                 <table style="width:100%;font-size:0.88rem;border-collapse:collapse">
@@ -374,8 +420,8 @@ const ManageRequests = (() => {
                         ['Description', r.request_detail ?? '—'],
                     ].map(([k, v]) => `
                         <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
-                            <td style="padding:8px 12px;opacity:0.5;white-space:nowrap">${k}</td>
-                            <td style="padding:8px 12px;color:#fff">${v}</td>
+                            <td style="padding:12px 14px;color:#e2e8f0;white-space:nowrap">${k}</td>
+                            <td style="padding:12px 14px;color:#cbd5e1;word-break:break-all">${v}</td>
                         </tr>`).join('')}
                 </table>
             </div>`;
