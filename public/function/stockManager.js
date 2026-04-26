@@ -255,6 +255,13 @@ export const SellerStock = {
 
     try {
       const sellerData = await SellerAPI.getByUserId(userId);
+      const sellerShop = await SellerAPI.getByIdSeller(sellerData.seller_id);
+
+      const shopNameEl = document.getElementById('shop-name');
+      if (shopNameEl) {
+        // ใช้ sellerData.shop_name หรือชื่อ field ที่เก็บชื่อร้านใน Database ของคุณ
+        shopNameEl.textContent = sellerShop.shop_name || 'My Shop'; 
+      }
       _sellerId = sellerData.seller_id;
 
       const [stocks, cats] = await Promise.all([
