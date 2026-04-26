@@ -93,3 +93,31 @@ buttons.forEach(btn => {
     btn.classList.add("active");
   });
 });
+
+// clicl buy
+document.querySelector(".buy").addEventListener("click", async () => {
+  const item = items[current];
+
+  if (!confirm(`confirm "${item.name}" price: ฿${item.price}?`)) return;
+
+  const user_id = localStorage.getItem("user_id");
+  if (!user_id) {
+    alert("login required to purchase");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/wallet/pay", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id, amount: item.price, payment_method: "WALLET" }),
+    });
+
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message || data.error || "Error processing payment");
+
+    alert(`confirm "${item.name}" price: ฿${item.price} successful! Thank you`);
+  } catch (err) {
+    alert(`Failed to complete transaction: ${err.message || "Insufficient funds"}`);
+  }
+});
