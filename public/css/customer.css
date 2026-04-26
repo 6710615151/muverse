@@ -635,7 +635,7 @@ img {
   border: 1px solid rgba(226, 162, 241, 0.79);
   height: 98%;
   width: 98%;
-  color: #eca740;
+  color: #ffffff;
   font-family: "Segoe UI", sans-serif;
   padding: 20px;
 }
@@ -774,14 +774,14 @@ img {
 }
 
 .booking-card__budget {
-  color: #fbbf24;
+  color: #ffffff;
   font-weight: 600;
 }
 
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(239, 198, 62, 0.667);
+  background: rgba(208, 173, 57, 0.667);
   display: none;
   align-items: center;
   justify-content: center;
@@ -818,14 +818,14 @@ img {
   display: block;
   font-size: 0.8rem;
   margin-bottom: 6px;
-  color: #9ca3af;
+  color: #ffffff;
 }
 
 .form-input {
   width: 100%;
   padding: 8px 12px;
-  background: #1f2937;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #75a2e0;
+  border: 1px solid rgba(255, 255, 255, 0.41);
   border-radius: 8px;
   color: #e5e7eb;
   outline: none;
@@ -844,6 +844,104 @@ img {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+/* container item */
+.booking-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 14px 18px;
+  border-radius: 16px;
+
+  background: rgba(236, 189, 37, 0.223);
+  border: 1px solid rgba(255, 255, 255, 0.529);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  transition: 0.25s ease;
+}
+
+.booking-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* date block */
+.booking-item__date {
+  min-width: 55px;
+  text-align: center;
+  padding: 6px 8px;
+  border-radius: 12px;
+
+  background: linear-gradient(135deg, #23022f, #332358a8);
+  color: white;
+}
+
+.booking-item__day {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.booking-item__month {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+.booking-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.booking-item__name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.booking-item__meta {
+  font-size: 0.8rem;
+  opacity: 0.7;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.booking-item__actions {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.accepted {
+  background: rgba(34,197,94,0.15);
+  color: #22c55e;
+}
+
+.status-badge.rejected {
+  background: rgba(239,68,68,0.15);
+  color: #ef4444;
+}
+
+.status-badge.pending {
+  background: rgba(234,179,8,0.15);
+  color: #050400;
 }
 
 @keyframes fadeIn {
@@ -1333,6 +1431,7 @@ img {
 #nft-page {
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: rgba(137, 76, 150, 0.41);
@@ -1354,6 +1453,14 @@ img {
     gap: 40px;
     width: 100%;
     max-width: 1100px;
+}
+
+.gridbtn{
+  display: flex;
+    gap: 40px;
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 7%;
 }
 
 .btnlink {

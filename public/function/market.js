@@ -176,7 +176,7 @@ async function handleConfirmOrder(stock) {
     });
     */
 
-    alert(`🎉 Order "${stock.item_name}" placed successfully!`);
+    alert(`Order "${stock.item_name}" placed successfully!`);
 
     // 5. Close popup and update UI (reduce quantity, refresh balance)
     closeOrderPopup();
@@ -189,7 +189,7 @@ async function handleConfirmOrder(stock) {
 
   } catch (err) {
     console.error("Order failed:", err);
-    alert(`❌ Order failed: ${err.message || "Insufficient balance or system error"}`);
+    alert(`  Order failed: ${err.message || "Insufficient balance or system error"}`);
   }
 }
 

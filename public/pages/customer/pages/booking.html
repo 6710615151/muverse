@@ -8,13 +8,12 @@
         <div class="page-header"
             style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
             <div>
-                <h1 class="page-header__title">My Bookings</h1>
-                <p class="page-header__sub">Services you have requested or hired others to do</p>
+                <h1 class="page-header__title">MY <em>BOOKING</em></h1>
+                <p class="page-header__sub">__________________________________________</p>
             </div>
             <button class="btn btn--primary" id="btnNewRequest">+ New Request</button>
         </div>
 
-        <!-- Filter -->
         <div class="filter-bar">
             <div class="filter-bar__tabs">
                 <button class="filter-tab active" data-status="all">All</button>
@@ -24,14 +23,14 @@
             </div>
         </div>
 
-        <!-- List -->
         <div style="padding: 32px 64px;">
             <div class="booking-list" id="requestList">
                 <p style="color: var(--clr-text-muted); text-align:center; padding: 40px 0;">Loading...</p>
+                
             </div>
         </div>
+        
 
-        <!-- Modal: New Request -->
         <div class="modal-overlay" id="modalNewRequest">
             <div class="modal" style="max-width:520px; text-align:left; padding:36px;">
                 <h2
