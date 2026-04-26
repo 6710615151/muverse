@@ -1,4 +1,5 @@
 import { Users } from "./api.js";
+import { seller } from "./api.js";
 
 function init() {
     const btn = document.getElementById("btnChangeRole");
@@ -20,7 +21,12 @@ function init() {
             console.log("Current role:", role);
 
             if (role === "seller") {
-                window.location.href = "/seller";
+                const isSeller = await seller.existsByUserId(id);
+                if (isSeller) {
+                    window.location.href = "/seller";
+                } else {
+                    window.location.href = "/shop-name";
+                }
             } else if (role === "customer") {
                 window.location.href = "/customer";
             }

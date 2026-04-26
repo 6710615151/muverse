@@ -100,3 +100,29 @@ export async function getRole(req, res) {
         });
     }
 }
+
+export async function checkSellerExists(req, res) {
+    try {
+        const { userId } = req.params;
+
+        const { data, error } = await supabase
+            .from("sellers")
+            .select("seller_id")
+            .eq("user_id", userId)
+            .maybeSingle(); // เอาแค่ 1 record
+
+        if (error) throw error;
+
+        return res.json({
+            success: true,
+            data: !!data // มี = true, ไม่มี = false
+        });
+
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+}
+

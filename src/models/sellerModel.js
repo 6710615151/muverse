@@ -36,7 +36,6 @@ export async function getSellerById(seller_id) {
   return result[0] || null;
 }
 
-// Admin: เปลี่ยนสถานะการยืนยัน ('unverified' | 'verified' | 'suspended')
 export async function verifySeller(seller_id, seller_status) {
   const result = await sql`
     UPDATE sellers
@@ -47,7 +46,6 @@ export async function verifySeller(seller_id, seller_status) {
   return result[0] || null;
 }
 
-// คำนวณ rating เฉลี่ยจากตาราง reviews แล้วอัปเดตกลับ
 export async function updateSellerRating(seller_id) {
   const result = await sql`
     UPDATE sellers
