@@ -190,11 +190,6 @@ export async function toggleRole(req, res) {
                 error: "User not found"
             });
         }
-
-        if (user[0].role === "seller") {
-            await sellerModel.createSellerIfNotExists(req.params.id);
-        }
-
         res.json({
             success: true,
             data: user[0],
