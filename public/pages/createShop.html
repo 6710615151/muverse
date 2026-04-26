@@ -1,174 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Create Seller</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Create Seller</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    <style>
+       * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      height: 100vh;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-    }
+body {
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    overflow: hidden;
 
-    .card {
-      background: rgba(30, 41, 59, 0.9);
-      backdrop-filter: blur(10px);
-      padding: 40px;
-      border-radius: 20px;
-      width: 360px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-      animation: fadeIn 0.8s ease;
-    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-weight: 600;
-    }
+    background: linear-gradient(135deg, #eda724, #962d86);
+    color: rgb(255, 255, 255);
+    position: relative;
+}
 
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 10px;
-      border: none;
-      background: #334155;
-      color: white;
-      outline: none;
-      transition: 0.3s;
-    }
+/* ORBS BACKGROUND */
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.7;
+    z-index: 0;
+    animation: float 8s ease-in-out infinite;
+}
 
-    input:focus {
-      background: #475569;
-      transform: scale(1.02);
-    }
+.orb-1 {
+    width: 220px;
+    height: 220px;
+    background: #6366f1;
+    top: 10%;
+    left: 10%;
+}
 
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 20px;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(135deg, #3b82f6, #6366f1);
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+.orb-2 {
+    width: 280px;
+    height: 280px;
+    background: #fbbf24;
+    bottom: 10%;
+    left: 5%;
+}
 
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-    }
+.orb-3 {
+    width: 200px;
+    height: 200px;
+    background: #22c55e;
+    top: 20%;
+    right: 10%;
+}
 
-    #msg {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 14px;
-    }
+.orb-4 {
+    width: 260px;
+    height: 260px;
+    background: #ec4899;
+    bottom: 15%;
+    right: 5%;
+}
 
-    .loader {
-      margin-top: 10px;
-      display: none;
-      text-align: center;
-    }
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
 
-    .spinner {
-      width: 30px;
-      height: 30px;
-      border: 3px solid rgba(255,255,255,0.2);
-      border-top: 3px solid white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: auto;
-    }
+/* CARD */
+.card {
+    position: relative;
+    z-index: 1;
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    width: 90%;
+    max-width: 420px;
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+    padding: 30px;
+
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    animation: fadeIn 0.6s ease;
+}
+
+h2 {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 12px 14px;
+
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+
+    background: rgba(30, 41, 59, 0.8);
+    color: rgb(0, 0, 0);
+
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(1.02);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+
+    border-radius: 12px;
+    border: none;
+
+    background: linear-gradient(135deg, #dc8cfe, #420747);
+    color: white;
+
+    font-size: 16px;
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#msg {
+    text-align: center;
+    font-size: 14px;
+}
+
+/* LOADER */
+.loader {
+    display: none;
+    text-align: center;
+}
+
+.spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(255,255,255,0.2);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+    </style>
 </head>
+
 <body>
 
-<div class="card">
-  <h2>Create Your Shop</h2>
+    <div class="card">
+        <h2>YOUR SHOP NAME</h2>
 
-  <input type="text" id="shopName" placeholder="Enter shop name...">
+        <input type="text" id="shopName" placeholder="Enter shop name...">
 
-  <button id="createBtn">Create Seller</button>
+        <button id="createBtn">Create Seller</button>
 
-  <div class="loader" id="loader">
-    <div class="spinner"></div>
-  </div>
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+        </div>
 
-  <p id="msg"></p>
-</div>
+        <p id="msg"></p>
+    </div>
 
-<script type="module" >
-import { seller } from "../function/api.js";
+    <script type="module">
+        import { seller } from "../function/api.js";
 
-const btn = document.getElementById("createBtn");
-const loader = document.getElementById("loader");
+        const btn = document.getElementById("createBtn");
+        const loader = document.getElementById("loader");
 
-btn.addEventListener("click", handleCreateSeller);
+        btn.addEventListener("click", handleCreateSeller);
 
-async function handleCreateSeller() {
-  try {
-    const shop_name = document.getElementById("shopName").value.trim();
+        async function handleCreateSeller() {
+            try {
+                const shop_name = document.getElementById("shopName").value.trim();
 
-    if (!shop_name) {
-      return showMsg("Please enter a shop name", true);
-    }
+                if (!shop_name) {
+                    return showMsg("Please enter a shop name", true);
+                }
 
-    const user_id = localStorage.getItem("user_id");
+                const user_id = localStorage.getItem("user_id");
 
-    if (!user_id) {
-      return showMsg("Please login first", true);
-    }
+                if (!user_id) {
+                    return showMsg("Please login first", true);
+                }
 
-    toggleLoading(true);
+                toggleLoading(true);
 
-    const result = await seller.create({
-      user_id,
-      shop_name
-    });
+                const result = await seller.create({
+                    user_id,
+                    shop_name
+                });
 
-    toggleLoading(false);
+                toggleLoading(false);
 
-    showMsg("Shop created successfully ");
-    console.log(result);
+                showMsg("Shop created successfully ");
+                window.location.href = "/seller";
 
-  } catch (err) {
-    toggleLoading(false);
-    showMsg(err.message, true);
-  }
-}
+            } catch (err) {
+                toggleLoading(false);
+                showMsg(err.message, true);
+            }
+        }
 
-function showMsg(msg, isError = false) {
-  const el = document.getElementById("msg");
-  el.innerText = msg;
-  el.style.color = isError ? "#f87171" : "#4ade80";
-}
+        function showMsg(msg, isError = false) {
+            const el = document.getElementById("msg");
+            el.innerText = msg;
+            el.style.color = isError ? "#f87171" : "#4ade80";
+        }
 
-function toggleLoading(state) {
-  loader.style.display = state ? "block" : "none";
-  btn.disabled = state;
-  btn.innerText = state ? "Creating..." : "Create Seller";
-}
-</script>
+        function toggleLoading(state) {
+            loader.style.display = state ? "block" : "none";
+            btn.disabled = state;
+            btn.innerText = state ? "Creating..." : "Create Seller";
+        }
+    </script>
 
 </body>
+
 </html>
