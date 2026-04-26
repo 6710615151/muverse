@@ -19,7 +19,7 @@ function productCardHTML(stock) {
   return `
     <div class="product-card" data-stock-id="${stock.stock_id}" style="display: flex;
   flex-direction: column;
-  height: 400px;">
+  height: 370px;">
       <div class="product-card__img">
         ${stock.url
       ? `<img src="${stock.url}" alt="${stock.item_name}" loading="lazy" style="border-radius: 7px;" onerror="this.style.display='none'">`
