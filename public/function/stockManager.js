@@ -16,35 +16,31 @@ const getSellerId = () => _sellerId;
 function stockRowHTML(stock) {
   const isOut = stock.stock_quantity <= 0 || stock.stock_status === 'out_of_stock';
   const price = Number(stock.price).toLocaleString('th-TH');
+  const qty = stock.stock_quantity;
+  const qtyClass = qty <= 0 ? 'qty-num--out' : qty <= 5 ? 'qty-num--low' : 'qty-num--ok';
 
   return `
-    <div data-stock-id="${stock.stock_id}" style="
-      display:flex;align-items:center;gap:16px;padding:14px 18px;margin-bottom:10px;
-      border-radius:14px;background:#fff;border:1px solid #77126179;
-      box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:box-shadow 0.2s;
-    " onmouseenter="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.12)'"
-       onmouseleave="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
-
-      <div style="width:64px;height:64px;flex-shrink:0;border-radius:10px;overflow:hidden;background:#f5f0e8;">
+    <div class="stock-item ${isOut ? 'stock-item--out' : 'stock-item--in'}" data-stock-id="${stock.stock_id}">
+      <div class="stock-item__img">
         ${stock.url
           ? `<img src="${stock.url}" alt="${stock.item_name}" onerror="this.style.display='none'">`
           : `<div class="stock-item__img-ph"><span class="fi fi-ts-box-open"></span></div>`}
       </div>
       <div class="stock-item__body">
         <div class="stock-item__badges">
-          <span class="stock-badge stock-badge--cat">${stock.category_name ?? 'ไม่มีหมวดหมู่'}</span>
-          <span class="stock-badge ${isOut ? 'stock-badge--out' : 'stock-badge--in'}">${isOut ? 'หมดสต็อก' : 'มีสินค้า'}</span>
+          <span class="stock-badge stock-badge--cat">${stock.category_name ?? 'Uncategorized'}</span>
+          <span class="stock-badge ${isOut ? 'stock-badge--out' : 'stock-badge--in'}">${isOut ? 'Out of Stock' : 'In Stock'}</span>
         </div>
         <h3 class="stock-item__name">${stock.item_name}</h3>
         <p class="stock-item__desc">${stock.description ?? '-'}</p>
       </div>
       <div class="stock-item__price-block">
         <span class="stock-item__price">฿${price}</span>
-        <span class="stock-item__qty">คงเหลือ <strong>${stock.stock_quantity}</strong> ชิ้น</span>
+        <span class="stock-item__qty">Qty: <span class="qty-num ${qtyClass}">${qty}</span> pcs</span>
       </div>
       <div class="stock-item__actions">
-        <button class="stock-btn stock-btn--edit" data-edit-id="${stock.stock_id}">แก้ไข</button>
-        <button class="stock-btn stock-btn--del" data-delete-id="${stock.stock_id}" data-delete-name="${stock.item_name}">ลบ</button>
+        <button class="stock-btn stock-btn--edit" data-edit-id="${stock.stock_id}">✏ Edit</button>
+        <button class="stock-btn stock-btn--del" data-delete-id="${stock.stock_id}" data-delete-name="${stock.item_name}">✕ Delete</button>
       </div>
     </div>`;
 }
@@ -80,7 +76,8 @@ function render() {
   if (!items.length) {
     list.innerHTML = `<div class="stock-empty">
       <div class="stock-empty__icon"><span class="fi fi-ts-box-open"></span></div>
-      <p class="stock-empty__text">No products found. Click "Add New Product" to start.</p>
+      <p class="stock-empty__text" style="font-weight:600;color:#374151;margin-bottom:6px">No products found</p>
+      <p style="font-size:0.82rem;color:#9ca3af">Click "+ ADD PRODUCT" to add your first item</p>
     </div>`;
     return;
   }
@@ -255,8 +252,7 @@ export const SellerStock = {
 
       const shopNameEl = document.getElementById('shop-name');
       if (shopNameEl) {
-        // ใช้ sellerData.shop_name หรือชื่อ field ที่เก็บชื่อร้านใน Database ของคุณ
-        shopNameEl.textContent = sellerShop.shop_name || 'My Shop'; 
+          shopNameEl.textContent = sellerShop.shop_name || 'My Shop'; 
       }
       _sellerId = sellerData.seller_id;
 

@@ -1,102 +1,97 @@
 # CN230 MUVERSE
-ระบบฐานข้อมูลสำหรับวิชา CN230
----
-**Tech Stack:** Node.js · Express · PostgreSQL (Neon) · HTML/CSS/JS · Vercel
----
 
-## WEBSITE
-https://muverse-cn230-project.vercel.app/
+ระบบ Marketplace สำหรับซื้อ-ขายบริการดิจิทัล พัฒนาในวิชา CN230
+
+**Live:** https://muverse-cn230-project.vercel.app/
 
 ---
-### ไฟล์สำหรับ copy และ แก้ไข อยู่ใน folder แล้ว
 
-## โครงสร้างที่เราจะแก้ไขกันนะเตง
+## สมาชิกในกลุ่ม
+
+| ชื่อ-นามสกุล | รหัสนักศึกษา |
+|---|---|
+| ชื่อ นามสกุล | 67XXXXXXX |
+| ชื่อ นามสกุล | 67XXXXXXX |
+| ชื่อ นามสกุล | 67XXXXXXX |
+
+---
+
+## ภาพรวมระบบ
+
+MUVERSE เป็นแพลตฟอร์มที่เชื่อมระหว่าง **ผู้ซื้อ (Customer)** และ **ผู้ขาย (Seller)** บริการดิจิทัล เช่น งานออกแบบ งานเขียน หรืองาน freelance ทั่วไป
+
+**ฟีเจอร์หลัก:**
+
+| ฟีเจอร์ | คำอธิบาย |
+|---|---|
+| Booking / Request | ลูกค้าสร้าง request ระบุงานที่ต้องการและงบประมาณ |
+| Order & Payment | ระบบ order และการยืนยันรับบริการ พร้อมโอนเงินให้ผู้ขาย |
+| Review | ลูกค้าให้คะแนนและรีวิวผู้ขายหลังบริการเสร็จสิ้น |
+| Categories | จัดหมวดหมู่บริการและประเภทงาน |
+| File Upload | อัปโหลดรูปภาพผ่าน Supabase Storage |
+| Authentication | สมัคร / เข้าสู่ระบบ ด้วย JWT + bcrypt |
+| Role-based Access | แยกสิทธิ์ผู้ใช้ระหว่าง Customer, Seller และ Admin |
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Runtime | Node.js 20 · Express 4 |
+| Database | PostgreSQL via Neon (serverless) |
+| Storage | Supabase Storage (อัปโหลดรูปภาพ) |
+| Auth | JWT + bcrypt |
+| Frontend | HTML / CSS / Vanilla JS |
+| Deploy | Vercel |
+
+---
+
+## โครงสร้างโปรเจกต์
 
 ```
-muverse/
+cn230-muverse/
 ├── src/
-│   ├── index.js               # Entry point (import only) สร้าง server
+│   ├── index.js                  # Entry point — สร้าง Express server
 │   ├── config/
-│   │   ├── db.js              # Neon database
-│   │   └── paths.js           # Static file paths
-│   ├── models/
-│   │   ├── aModel.js          #ตัวอย่าง การเขียน
-│   │   └── usersModel.js       
-│   ├── controllers/
-│   │   ├── aController.js     #ตัวอย่าง การเขียน
-│   │   └── userController.js  
-│   ├── routes/
-│   │   ├── aRoutes.js         #ตัวอย่าง การเขียน
-│   │   ├── usersRoutes.js     
-│   │   └── pageRoutes.js
+│   │   ├── db.js                 # เชื่อมต่อ Neon (PostgreSQL)
+│   │   └── paths.js              # Static file paths
+│   ├── models/                   # SQL queries
+│   │   ├── aModel.js             # ตัวอย่าง
+│   │   ├── categoryModel.js
+│   │   ├── serviceTypesModel.js
+│   │   ├── orderModel.js
+│   │   ├── orderItemModel.js
+│   │   └── stockModel.js
+│   ├── controllers/              # Business logic
+│   │   ├── aController.js        # ตัวอย่าง
+│   │   ├── categoriesController.js
+│   │   ├── customerController.js
+│   │   └── serviceTypesController.js
+│   ├── routes/                   # API routing
+│   │   ├── aRoutes.js            # ตัวอย่าง
+│   │   ├── categoriesRoutes.js
+│   │   ├── customerRoutes.js
+│   │   ├── serviceTypesRoutes.js
+│   │   └── uploadRoutes.js
 │   └── middleware/
 │       └── errorHandler.js
 ├── public/
----
-```
-## PUSH GIT
-
-```bash
-npm git add .
-```
-```bash
-npm git commit -m "เลขversion"
-```
-```bash
-npm git push origin main
-```
----
-## Extensions vscode
-แนะนำให้ติดตั้ง ทุกตัวนะจั๊บ
-```
-Ruff
-```
-```
-Colorize
-```
-```
-HTML CSS support
-```
-```
-Indent-rainbow
-```
-```
-Live server
-```
----
-## Testing API
-```
-muverse/
-└── test_api/
-     └── testAPI.html 
+│   ├── pages/                    # HTML pages
+│   ├── function/                 # Frontend JS (booking, wallet ฯลฯ)
+│   ├── css/
+│   └── assets/
+├── scripts/
+│   ├── initDb.js                 # สร้างตารางในฐานข้อมูล
+│   └── seedDb.js                 # เพิ่มข้อมูลตัวอย่าง
+├── .env                          # Environment variables (ห้าม commit)
+├── vercel.json
+└── package.json
 ```
 
-กดเข้าfolder muvesre/test-api/testAPI.html 
-คลิ้กขวาที่ไฟล์ testAPI.html  บนสุดจะมีคำว่า open with live server 
-กดเข้าไปเลย แล้วจะขึ้นหน้าเว็บ
-
-
-## * ต้องใส่ Extensions แล้วเท่านั้น * 
-![API](assets/API.png)
 ---
 
-1. API ที่จะเทส
-```
-https://muverse-cn230-project.vercel.app/api/<ชื่อ api เทส>
-```
-2. ประเภท API เป็น get post put delete ใส่เอาคิดเอา จะเทสตัวไหน
-
-3. ID กรณีเทสตัว BY id ต่างๆ 
-
-4. json ไฟล์ ดูว่าถ้า api นี้ต้องใส่ req body ก็ใส่ไปให้มัน เช่นพวก post put ใส่ format ให้ถูก 
-### {key : value} เช็ค value ดีๆก่อนส่ง
-```
-{name: "น้องจีเจ"}
-```
-ส่งเสร็จ response จะกลับมา
-
-
-## วิธีติดตั้งและรัน อาจจะยังไม่ได้เขียน อันนี้จะใส่ให้อาจารย์
+## ติดตั้งและรัน
 
 ### 1. Clone และติดตั้ง dependencies
 ```bash
@@ -104,27 +99,32 @@ git clone <repo-url> cn230-muverse
 cd cn230-muverse
 npm install
 ```
-### 2. ตั้งค่า Environment Variable
-```bash
-cp .env.example .env
-# แก้ไข DATABASE_URL ใน .env ด้วย connection string จาก Neon
+
+### 2. ตั้งค่า Environment Variables
+สร้างไฟล์ `.env` แล้วใส่ค่าต่อไปนี้:
+```env
+DATABASE_URL=<Neon connection string>
+SUPABASE_URL=<Supabase project URL>
+SUPABASE_SERVICE_ROLE_KEY=<Supabase service role key>
+PORT = 3000
 ```
-### 3.กรณีฐานข้อมูลไม่มี
-#### 3.1 สร้างตารางในฐานข้อมูล
+
+### 3. สร้างตารางในฐานข้อมูล (ครั้งแรกเท่านั้น)
 ```bash
 npm run db:init
 ```
-#### 3.2 เพิ่มข้อมูลตัวอย่าง (optional)
+
+### 4. เพิ่มข้อมูลตัวอย่าง (optional)
 ```bash
 npm run db:seed
 ```
-### 5. รันในเครื่อง
+
+### 5. รัน
 ```bash
-npm run dev    # development (nodemon)
+npm run dev    # development (auto-reload ด้วย nodemon)
 npm start      # production
 ```
 เปิด http://localhost:3000
-
 
 ---
 

@@ -46,8 +46,10 @@ export const Users = {
 };
 
 export const Category = {
-    getAll: () => apiFetch("/api/category"),
-    getById: (id) => apiFetch(`/api/category/${id}`)
+    getAll:   () => apiFetch("/api/category"),
+    getById:  (id) => apiFetch(`/api/category/${id}`),
+    create:   (name) => apiFetch("/api/category", { method: "POST", body: JSON.stringify({ name }) }),
+    delete:   (id) => apiFetch(`/api/category/${id}`, { method: "DELETE" }),
 }
 
 export const Stock = {

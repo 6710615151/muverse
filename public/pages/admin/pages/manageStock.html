@@ -117,6 +117,91 @@
     background: rgba(124, 58, 237, 0.1)
   }
 
+  /* Category section */
+  .mgr-cat-section {
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 14px;
+    border: 1px solid rgba(124, 58, 237, 0.12);
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(63, 2, 80, 0.07)
+  }
+
+  .mgr-cat-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #7c3aed;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px
+  }
+
+  .mgr-cat-add-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px
+  }
+
+  .mgr-cat-add-row .mgr-input {
+    flex: 1;
+    min-width: 0
+  }
+
+  .mgr-cat-add-btn {
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25)
+  }
+
+  .mgr-cat-add-btn:hover {
+    opacity: 0.88;
+    transform: translateY(-1px)
+  }
+
+  .mgr-cat-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px
+  }
+
+  .mgr-cat-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: rgba(124, 58, 237, 0.09);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #6d28d9
+  }
+
+  .mgr-cat-del-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #a78bfa;
+    font-size: 0.85rem;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.15s
+  }
+
+  .mgr-cat-del-btn:hover {
+    color: #dc2626
+  }
+
   /* Card styles */
   .mgr-list-wrap {
     display: flex;
@@ -215,6 +300,18 @@
     <div class="mgr-header">
       <h1 class="mgr-title">MANAGE <em>STOCKS</em></h1>
       <p class="mgr-sub">Manage all stock items in the system.</p>
+    </div>
+
+    <!-- Category Management -->
+    <div class="mgr-cat-section">
+      <div class="mgr-cat-title">Categories</div>
+      <div class="mgr-cat-add-row">
+        <input id="cat-input" type="text" placeholder="New category name..." class="mgr-input">
+        <button class="mgr-cat-add-btn">+ Add</button>
+      </div>
+      <div class="mgr-cat-list" id="cat-list">
+        <span class="mgr-empty" style="padding:0;font-size:0.8rem">No categories yet.</span>
+      </div>
     </div>
 
     <div class="mgr-filter-bar">

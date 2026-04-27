@@ -1,6 +1,7 @@
 import * as userModel from "../models/userModel.js";
 import * as customerModel from "../models/customerModel.js"
 import * as sellerModel from "../models/sellerModel.js";
+import { createWallet } from "../models/walletModel.js";
 import bcrypt from "bcrypt";
 
 export async function getAll(req, res) {
@@ -45,6 +46,7 @@ export async function create(req, res) {
         );
 
         await customerModel.createCustomer(user.user_id);
+        await createWallet(user.user_id);
 
         res.status(201).json({
             success: true,

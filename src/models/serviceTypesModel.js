@@ -1,12 +1,13 @@
 import sql from "../config/db.js"
 
 export async function createService(name) {
-    return await sql`
+    const result = await sql`
         INSERT INTO service_types
         (name)
-        VALUES 
+        VALUES
         (${name})
         RETURNING *`;
+    return result[0] || null;
 }
 
 
