@@ -153,17 +153,89 @@
     background: #6d28d9
   }
 
-  #svt-list li {
+  /* Service type section */
+  .mgr-cat-section {
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 14px;
+    border: 1px solid rgba(124, 58, 237, 0.12);
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(63, 2, 80, 0.07)
+  }
+
+  .mgr-cat-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #7c3aed;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px
+  }
+
+  .mgr-cat-add-row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
+    gap: 8px;
+    margin-bottom: 12px
+  }
+
+  .mgr-cat-add-row .mgr-input {
+    flex: 1;
+    min-width: 0
+  }
+
+  .mgr-cat-add-btn {
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: #fff;
+    border: none;
     border-radius: 10px;
-    background: rgba(124, 58, 237, 0.06);
-    margin-bottom: 8px;
-    color: #1a1a2e;
     font-size: 0.88rem;
-    font-weight: 500
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25)
+  }
+
+  .mgr-cat-add-btn:hover {
+    opacity: 0.88;
+    transform: translateY(-1px)
+  }
+
+  .mgr-cat-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px
+  }
+
+  .mgr-cat-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: rgba(124, 58, 237, 0.09);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #6d28d9
+  }
+
+  .mgr-cat-del-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #a78bfa;
+    font-size: 0.85rem;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.15s
+  }
+
+  .mgr-cat-del-btn:hover {
+    color: #dc2626
   }
 
   /* Card styles */
@@ -264,12 +336,14 @@
     </div>
 
     <!-- Service Types -->
-    <div class="mgr-section">
-      <h2 class="mgr-section-title">Service Type Management</h2>
-      <ul id="svt-list" style="list-style:none;padding:0;margin:0 0 16px 0;min-height:32px"></ul>
-      <div style="display:flex;gap:8px">
+    <div class="mgr-cat-section">
+      <div class="mgr-cat-title">Service Types</div>
+      <div class="mgr-cat-add-row">
         <input id="svt-input" type="text" placeholder="New service type name..." class="mgr-input">
-        <button id="svt-add-btn" class="mgr-btn-add">+ Add</button>
+        <button id="svt-add-btn" class="mgr-cat-add-btn">+ Add</button>
+      </div>
+      <div class="mgr-cat-list" id="svt-list">
+        <span class="mgr-empty" style="padding:0;font-size:0.8rem">No service types yet.</span>
       </div>
     </div>
 

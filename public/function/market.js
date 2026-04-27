@@ -184,10 +184,10 @@ let _mktSort = '';
 let _mktShowAvail = true;
 let _mktShowOut = false;
 
-const HIDDEN_CATEGORY_IDS = ['927ab7ee-0a9c-438e-9483-c549ec3e444e'];
+let _hiddenCategoryIds = [];
 
 function mktFilter() {
-  let items = _mktAll.filter(s => !HIDDEN_CATEGORY_IDS.includes(String(s.category_id)));
+  let items = _mktAll.filter(s => !_hiddenCategoryIds.includes(String(s.category_id)));
 
   if (_mktCatId !== 'all') {
     items = items.filter(s => String(s.category_id) === _mktCatId);
@@ -238,6 +238,9 @@ export const Market = {
 
     try {
       const [stocks, cats, sellers] = await Promise.all([Stock.getAll(), Category.getAll(), SellerAPI.getAllSeller()]);
+      const wallpaperCat = (cats ?? []).find(c => c.name?.toLowerCase().includes('wallpaper'));
+      if (wallpaperCat) _hiddenCategoryIds = [String(wallpaperCat.category_id)];
+
       const sellerMap = Object.fromEntries((sellers ?? []).map(s => [String(s.seller_id), s.shop_name]));
       const sellerUserIdMap = Object.fromEntries((sellers ?? []).map(s => [String(s.seller_id), s.user_id]));
       const sellerRatingMap = Object.fromEntries((sellers ?? []).map(s => [String(s.seller_id), s.rating]));
@@ -250,7 +253,7 @@ export const Market = {
 
       if (tabs && cats?.length) {
         const extra = cats
-          .filter(c => !HIDDEN_CATEGORY_IDS.includes(String(c.category_id)))
+          .filter(c => !_hiddenCategoryIds.includes(String(c.category_id)))
           .map(c => `<button class="filter-tab" data-cat-id="${c.category_id}">${c.name}</button>`)
           .join('');
         tabs.innerHTML = `<button class="filter-tab active" data-cat-id="all">✦ All</button>${extra}`;
