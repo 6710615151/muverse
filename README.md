@@ -13,7 +13,7 @@
 | นายปัณณวิชญ์ สุทธิโมกข์  | 6710685030 |
 | นายธีรสุต ชาติบัญชาชัย | 6710615136 |
 | นายพิพัทธนชาติ คำมูลมาตย์ | 6710615151 |
-| นายพิพัทธนชาติ คำมูลมาตย์ | 6710685071 |
+| นายมนตรี พิมศรี | 6710685071 |
 
 
 ---
@@ -89,8 +89,8 @@ cn230-muverse/
 ## วิธีติดตั้ง 
 ### 1. Clone โปรเจค
 ```bash
-git clone <repository-url>
-cd done
+git clone <repository-url> (name_project)
+cd (name_project)
 ```
 
 ### 2. ติดตั้ง dependencies
@@ -295,6 +295,6 @@ INSERT INTO stocks (seller_id, category_id, item_name, description, price, stock
 
 INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status) VALUES
 ('uuid-account_id-1', 'DEPOSIT', 500.00, 'PromptPay', 'SUCCESS'),
-(''uuid-account_id-1', 'PAYMENT', 99.00, 'wallet', 'SUCCESS'),
-(''uuid-account_id-2, 'DEPOSIT', 1200.00, 'Credit Card', 'SUCCESS');
+('uuid-account_id-1', 'PAYMENT', 99.00, 'wallet', 'SUCCESS'),
+('uuid-account_id-2', 'DEPOSIT', 1200.00, 'Credit Card', 'SUCCESS');
 ```
