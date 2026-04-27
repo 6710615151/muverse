@@ -8,7 +8,6 @@ router.get("/customerReq/",  ctrl.getByCustomerId);
 router.put("/updateStatus/:id", ctrl.updateStatus);
 router.patch("/:id/accept",   ctrl.acceptRequest);
 router.patch("/:id/complete", ctrl.completeRequest);
-//router.get("/request/countSVT", ctrl.getCountServiceType);
 router.get("/:id",    ctrl.getById);
 router.post("/",      ctrl.create);
 router.put("/:id",    ctrl.update);

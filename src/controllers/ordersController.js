@@ -8,7 +8,6 @@ import * as walletModel from "../models/walletModel.js";
 export async function buyItem(req, res) {
   try {
     const { customer_id, seller_id, items } = req.body;
-    // items = [{ stock_id, item_quantity }, ...]
 
     if (!customer_id || !seller_id || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ success: false, error: "All fields required" });

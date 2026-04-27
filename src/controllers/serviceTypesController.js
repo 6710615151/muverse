@@ -38,12 +38,6 @@ export async function create(req, res) {
         res.status(201).json({ success: true, data: servicesData });
 
     } catch (err) {
-        // if (err.code === "23505") {
-        //     return res.status(409).json({
-        //         success: false,
-        //         error: "request already exists"
-        //     });
-        // }
         res.status(500).json({ success: false, error: err.message });
     }
 }
