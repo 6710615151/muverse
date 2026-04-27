@@ -108,9 +108,10 @@ SUPABASE_URL= your_supabase_url
 SUPABASE_SERVICE_ROLE_KEY = your_supabase_anon_key
 PORT=3000
 ```
-your_neondb_connection_string เอาจาก neon.tech สร้างโปรเจคแล้วนำ connection string มาใช้
-your_supabase_url             เอาจาก supabase สร้างโปรเจคแล้วนำ สร้างโปรเจค url มาใช้
-your_supabase_anon_key        ใน setting ของ supabase จะมี anon key ให้เอาส่วนนั้นมาใช้
+
+##### your_neondb_connection_string เอาจาก neon.tech สร้างโปรเจคแล้วนำ connection string มาใช้
+##### your_supabase_url             เอาจาก supabase สร้างโปรเจคแล้วนำ สร้างโปรเจค url มาใช้
+##### your_supabase_anon_key        ใน setting ของ supabase จะมี anon key ให้เอาส่วนนั้นมาใช้
 
 สร้าง bucket ใน storage supabase ชื่อ stock 
 
@@ -157,7 +158,6 @@ npm start
 | POST | `/api/review` | รีวิวผู้ขาย |
 | GET | `/api/wallet/balance/:id` | ดูยอดเงิน |
 
-================================================
 SQL script สำหรับสร้างตาราง และ ข้อมูลตัวอย่าง
 ================================================
 ```bash
