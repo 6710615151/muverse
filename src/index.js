@@ -24,12 +24,11 @@ dotenv.config();
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-//  Middleware
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static(PUBLIC_DIR));
 
-// API Routes
 app.use("/api/user",    usersRoutes);
 app.use("/api/request", requestRoutes);
 app.use("/api/wallet", walletRoutes);
@@ -42,10 +41,9 @@ app.use("/api/customer", customerRoutes);
 app.use("/api/review", reviewRoutes);
 app.use("/api", upload);
 
-//Page Routes
+
 app.use("/", pageRoutes);
 
-//  Error Handling
 app.use(errorHandler);
 
 
