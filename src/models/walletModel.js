@@ -143,7 +143,7 @@ export async function lockFunds(user_id, amount) {
     WHERE user_id = ${user_id} AND wallet >= ${amount}
     RETURNING *
   `;
-  if (walletResult.length === 0) throw new Error("ยอดเงินไม่เพียงพอสำหรับการจอง");
+  if (walletResult.length === 0) throw new Error("ลูกค้ายอดเงินไม่เพียงพอสำหรับการจอง");
   await sql`
     INSERT INTO record_wallet (account_id, payment_type, amount, payment_method, status)
     VALUES (${walletResult[0].account_id}, 'PAYMENT', ${amount}, 'wallet', 'SUCCESS')
