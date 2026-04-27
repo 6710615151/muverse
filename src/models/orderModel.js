@@ -16,7 +16,7 @@ export async function createOrder(customer_id, seller_id, total_price) {
 export async function getOrdersBySeller(seller_id) {
   return await sql`
     SELECT o.*,
-           u.name AS customer_name
+    u.name AS customer_name
     FROM orders o
     JOIN users u ON o.customer_id = u.user_id
     WHERE o.seller_id = ${seller_id}
@@ -44,8 +44,8 @@ export async function updatePaymentStatus(order_id, payment_status) {
 
 export async function getOrdersByCustomer(customer_id) {
   return await sql`
-    SELECT o.*,
-           u.name AS seller_name
+    SELECT o.*, 
+    u.name AS seller_name
     FROM orders o
     JOIN users u ON o.seller_id = u.user_id
     WHERE o.customer_id = ${customer_id}

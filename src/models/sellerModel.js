@@ -46,7 +46,7 @@ export async function verifySeller(seller_id, seller_status) {
   return result[0] || null;
 }
 
-export async function createSeller(userId,shop_name) {
+export async function createSeller(userId, shop_name) {
   const existing = await sql`SELECT seller_id, user_id, shop_name, seller_status FROM sellers WHERE user_id = ${userId}`;
   if (existing.length) return existing[0];
   const result = await sql`
