@@ -129,6 +129,7 @@ function openEditModal(stockId) {
   document.getElementById('f-status').value      = stock.stock_status ?? 'available';
 
   if (stock.url) {
+    const preview = document.getElementById('img-preview');
     const resultEl = document.getElementById('upload-result');
     if (preview) { preview.src = stock.url; preview.style.display = 'block'; }
     if (resultEl) resultEl.textContent = 'Current image exists (upload new to replace)';

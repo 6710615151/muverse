@@ -1,6 +1,6 @@
 # CN230 MUVERSE
 
-ระบบ Marketplace สำหรับซื้อ-ขายบริการดิจิทัล พัฒนาในวิชา CN230
+ระบบตลาดออนไลน์ (Marketplace) สำหรับซื้อขายสินค้าและบริการ ด้านตวามเชื่อ ผู้ใช้งานสามารถสลับบทบาทระหว่าง **Customer** และ **Seller** ได้ในบัญชีเดียว รองรับระบบ Wallet, การจัดการคำสั่งซื้อ, การรับงานบริการ (Requests) และการรีวิวผู้ขาย
 
 **Live:** https://muverse-cn230-project.vercel.app/
 
@@ -10,15 +10,15 @@
 
 | ชื่อ-นามสกุล | รหัสนักศึกษา |
 |---|---|
-| ชื่อ นามสกุล | 67XXXXXXX |
-| ชื่อ นามสกุล | 67XXXXXXX |
-| ชื่อ นามสกุล | 67XXXXXXX |
+| นายปัณณวิชญ์ สุทธิโมกข์  | 6710685030 |
+| นายธีรสุต ชาติบัญชาชัย | 6710615136 |
+| นายพิพัทธนชาติ คำมูลมาตย์ | 6710615151 |
+| นายพิพัทธนชาติ คำมูลมาตย์ | 6710685071 |
+
 
 ---
 
 ## ภาพรวมระบบ
-
-MUVERSE เป็นแพลตฟอร์มที่เชื่อมระหว่าง **ผู้ซื้อ (Customer)** และ **ผู้ขาย (Seller)** บริการดิจิทัล เช่น งานออกแบบ งานเขียน หรืองาน freelance ทั่วไป
 
 **ฟีเจอร์หลัก:**
 
@@ -81,50 +81,76 @@ cn230-muverse/
 │   ├── function/                 # Frontend JS (booking, wallet ฯลฯ)
 │   ├── css/
 │   └── assets/
-├── scripts/
-│   ├── initDb.js                 # สร้างตารางในฐานข้อมูล
-│   └── seedDb.js                 # เพิ่มข้อมูลตัวอย่าง
 ├── .env                          # Environment variables (ห้าม commit)
 ├── vercel.json
 └── package.json
 ```
+---
 
 ---
 
-## ติดตั้งและรัน
-
-### 1. Clone และติดตั้ง dependencies
+## วิธีติดตั้ง 
+### 1. Clone โปรเจค
 ```bash
-git clone <repo-url> cn230-muverse
-cd cn230-muverse
+git clone <repository-url>
+cd done
+```
+
+### 2. ติดตั้ง dependencies
+```bash
 npm install
 ```
 
-### 2. ตั้งค่า Environment Variables
-สร้างไฟล์ `.env` แล้วใส่ค่าต่อไปนี้:
+### 3. ตั้งค่า Environment Variables
+
+สร้างไฟล์ `.env` ที่ root ของโปรเจค แล้วใส่ค่าดังนี้
+
 ```env
-DATABASE_URL=<Neon connection string>
-SUPABASE_URL=<Supabase project URL>
-SUPABASE_SERVICE_ROLE_KEY=<Supabase service role key>
-PORT = 3000
+DATABASE_URL= your_neondb_connection_string
+SUPABASE_URL= your_supabase_url
+SUPABASE_KEY= your_supabase_anon_key
+PORT=3000
 ```
 
-### 3. สร้างตารางในฐานข้อมูล (ครั้งแรกเท่านั้น)
+### 4. สร้างตารางใน Database
+
 ```bash
 npm run db:init
 ```
 
-### 4. เพิ่มข้อมูลตัวอย่าง (optional)
+### 5. (Optional) เพิ่มข้อมูลตัวอย่าง
+
 ```bash
 npm run db:seed
 ```
 
-### 5. รัน
+---
+
+## วิธีรัน (Run)
+
+### Development (auto-restart)
 ```bash
-npm run dev    # development (auto-reload ด้วย nodemon)
-npm start      # production
+npm run dev
 ```
-เปิด http://localhost:3000
+
+### Production
+```bash
+npm start
+```
+
+เปิดเบราว์เซอร์ไปที่ `http://localhost:3000`
 
 ---
 
+---
+
+## API Endpoints หลักบางส่วน 
+
+| Method | Endpoint | คำอธิบาย |
+|--------|----------|----------|
+| POST | `/api/user/auth` | Login |
+| GET | `/api/stock` | ดูสินค้าทั้งหมด |
+| POST | `/api/order/buy` | สั่งซื้อสินค้า |
+| GET | `/api/request` | ดู requests ทั้งหมด |
+| POST | `/api/review` | รีวิวผู้ขาย |
+| GET | `/api/wallet/balance/:id` | ดูยอดเงิน |

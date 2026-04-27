@@ -7,6 +7,7 @@ let _sort = '';
 let _editId = null;
 let _deleteId = null;
 let _selectedFile = null;
+let _sellerId = null;
 
 // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -180,8 +181,15 @@ async function handleSubmit(e) {
       if (resultEl) resultEl.textContent = 'Upload successful';
     }
 
+    if (!_sellerId) {
+      alert('ไม่พบ seller account ของ admin กรุณา login ใหม่หรือตรวจสอบว่า admin มี seller account');
+      saveBtn.disabled = false;
+      saveBtn.textContent = origLabel;
+      return;
+    }
+
     const body = {
-      seller_id: 'b0ff6afd-b87a-495b-9506-48f3a9c379e5',
+      seller_id: _sellerId,
       category_id:    _wallpaperCatId,
       item_name:      document.getElementById('nf-item-name').value.trim(),
       description:    document.getElementById('nf-description').value.trim(),
@@ -236,10 +244,21 @@ export const ManageNFT = {
     _deleteId = null;
     _selectedFile = null;
     _wallpaperCatId = null;
+    _sellerId = null;
 
     const list = document.getElementById('nft-list');
 
     try {
+      const userId = localStorage.getItem('user_id');
+      if (userId) {
+        try {
+          const sellerData = await seller.getByUserId(userId);
+          _sellerId = sellerData?.seller_id ?? null;
+        } catch {
+          _sellerId = null;
+        }
+      }
+
       const cats = await Category.getAll();
       const wallpaperCat = (cats ?? []).find(c => c.name?.toLowerCase().includes('wallpaper'));
 
