@@ -4,6 +4,9 @@
 
 **Live:** https://muverse-cn230-project.vercel.app/
 
+## 🎥 Demo Video
+[▶️ Watch Demo](https://youtu.be/CSeHny2EhkA)
+
 ---
 
 ## สมาชิกในกลุ่ม
